@@ -11,26 +11,10 @@ export default function Dashboard() {
   const { t } = useLanguage();
   const [, setLocation] = useLocation();
 
+  // 프로필이 없으면 등록 페이지로 리다이렉트
   if (!userProfile) {
-    return (
-      <div className="max-w-2xl mx-auto">
-        <Card className="emergency-card">
-          <CardContent className="text-center py-8">
-            <i className="fas fa-user-plus text-4xl text-emergency mb-4" aria-hidden="true"></i>
-            <h2 className="text-2xl font-bold mb-4">{t('dashboard.welcome')}</h2>
-            <p className="text-gray-600 mb-6">
-              {t('dashboard.welcome_message')}
-            </p>
-            <Link href="/registration">
-              <Button className="bg-emergency hover:bg-emergency-dark">
-                <i className="fas fa-arrow-right mr-2" aria-hidden="true"></i>
-                {t('dashboard.register_info')}
-              </Button>
-            </Link>
-          </CardContent>
-        </Card>
-      </div>
-    );
+    setLocation('/registration');
+    return null;
   }
 
   return (
