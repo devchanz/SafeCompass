@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 
 export type Language = 'ko' | 'en' | 'vi' | 'zh';
 
@@ -196,11 +196,7 @@ const translations = {
   }
 };
 
-interface LanguageProviderProps {
-  children: React.ReactNode;
-}
-
-export const LanguageProvider: React.FC<LanguageProviderProps> = ({ children }) => {
+export function LanguageProvider({ children }: { children: ReactNode }) {
   const [currentLanguage, setCurrentLanguage] = useState<Language>('ko');
 
   useEffect(() => {
@@ -221,21 +217,23 @@ export const LanguageProvider: React.FC<LanguageProviderProps> = ({ children }) 
   };
 
   return (
-    <LanguageContext.Provider value={{ 
-      currentLanguage, 
-      language: currentLanguage, 
-      setLanguage, 
-      t 
-    }}>
+    <LanguageContext.Provider 
+      value={{ 
+        currentLanguage, 
+        language: currentLanguage, 
+        setLanguage, 
+        t 
+      }}
+    >
       {children}
     </LanguageContext.Provider>
   );
-};
+}
 
-export const useLanguage = () => {
+export function useLanguage() {
   const context = useContext(LanguageContext);
   if (context === undefined) {
     throw new Error('useLanguage must be used within a LanguageProvider');
   }
   return context;
-};
+}
