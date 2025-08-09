@@ -274,12 +274,19 @@ export default function ShelterMapFixed() {
 
     try {
       // T-Map API로 실제 도보 경로 가져오기
+      console.log('🔍 T-Map 경로 요청 시작:', { 
+        출발: [userLocation.lat, userLocation.lng], 
+        도착: [shelter.lat, shelter.lng] 
+      });
+      
       const route = await tmapService.current.getWalkingRoute(
         userLocation.lat, 
         userLocation.lng, 
         shelter.lat, 
         shelter.lng
       );
+      
+      console.log('📍 T-Map 응답 데이터:', route);
 
       if (route) {
         // T-Map 실제 경로는 파란색 실선, 직선 경로는 빨간색 점선

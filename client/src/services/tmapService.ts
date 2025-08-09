@@ -67,8 +67,18 @@ export class TMapService {
       const data = await response.json();
       
       // 서버에서 이미 파싱된 데이터가 옴
+      console.log('🔍 서버 응답 데이터 확인:', { 
+        hasCoordinates: !!data.coordinates, 
+        coordLength: data.coordinates?.length,
+        totalDistance: data.totalDistance,
+        totalTime: data.totalTime 
+      });
+      
       if (data.coordinates && data.coordinates.length > 0) {
-        console.log(`✅ T-Map 실제 경로 받음: ${data.totalDistance}m, ${data.totalTime}초`);
+        console.log(`✅ T-Map 실제 경로 받음: ${data.totalDistance}m, ${data.totalTime}초, ${data.coordinates.length}개 좌표`);
+        console.log('📍 첫 번째 좌표:', data.coordinates[0]);
+        console.log('📍 마지막 좌표:', data.coordinates[data.coordinates.length - 1]);
+        
         return {
           totalDistance: data.totalDistance,
           totalTime: data.totalTime,
