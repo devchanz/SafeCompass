@@ -96,13 +96,23 @@ export default function ShelterMapInteractive() {
       console.log('Initializing Leaflet map with location:', location);
       
       try {
-        // 기존 지도가 있다면 제거
+        // 기존 지도가 있다면 완전히 제거
         if ((mapRef.current as any)._leaflet_id) {
-          (mapRef.current as any)._leaflet_id = null;
+          // 기존 지도 인스턴스가 있으면 제거
+          if (map) {
+            map.remove();
+          }
+          (mapRef.current as any)._leaflet_id = undefined;
+          mapRef.current.innerHTML = '';
         }
 
         // Leaflet 지도 생성
-        const newMap = window.L.map(mapRef.current).setView(
+        const newMap = window.L.map(mapRef.current, {
+          zoomControl: true,
+          scrollWheelZoom: true,
+          doubleClickZoom: true,
+          dragging: true
+        }).setView(
           [location.coords.latitude, location.coords.longitude], 
           13
         );
@@ -422,7 +432,7 @@ export default function ShelterMapInteractive() {
                 <div className="flex items-center space-x-4 mt-3">
                   <span className="text-sm text-emergency font-medium">
                     <i className="fas fa-walking mr-1" aria-hidden="true"></i>
-                    {selectedShelter.distance}m
+                    {selectedShelter.distance}km
                   </span>
                   <span className="text-sm text-gray-600">
                     <i className="fas fa-clock mr-1" aria-hidden="true"></i>
@@ -443,7 +453,7 @@ export default function ShelterMapInteractive() {
                 주변 대피소 ({shelters?.length || 0}곳)
                 {shelters && shelters.length > 0 && (
                   <span className="ml-2 text-sm text-gray-500">
-                    (최근거리 {Math.round(shelters[0].distance/1000)}km)
+                    (최근거리 {shelters[0].distance}km)
                   </span>
                 )}
               </h3>
