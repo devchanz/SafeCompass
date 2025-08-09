@@ -13,7 +13,7 @@ import PersonalizedGuide from "@/pages/PersonalizedGuide";
 import ShelterMap from "@/pages/ShelterMap";
 import SOSButton from "@/components/SOSButton";
 import { AccessibilityProvider } from "@/components/AccessibilityProvider";
-import { LanguageProvider, useLanguage, type Language } from "@/contexts/LanguageContext";
+import { LanguageProvider, useLanguage, Language } from "@/contexts/LanguageContext";
 import { useUserProfile } from "@/hooks/useUserProfile";
 import { useEmergencyNotification } from "@/hooks/useEmergencyNotification";
 

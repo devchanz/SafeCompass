@@ -1,5 +1,9 @@
 import { type User, type InsertUser, type Companion, type InsertCompanion, type EmergencyEvent, type InsertEmergencyEvent } from "@shared/schema";
 import { randomUUID } from "crypto";
+import { drizzle } from 'drizzle-orm/neon-http';
+import { neon } from '@neondatabase/serverless';
+import { users, companions, emergencyEvents } from "@shared/schema";
+import { eq } from 'drizzle-orm';
 
 export interface IStorage {
   // Users
@@ -65,7 +69,7 @@ export class MemStorage implements IStorage {
       ...insertUser,
       id,
       gender: insertUser.gender || null,
-      accessibility: insertUser.accessibility as string[] || null,
+      accessibility: insertUser.accessibility || null,
       createdAt: new Date()
     };
     this.users.set(id, user);
@@ -80,7 +84,7 @@ export class MemStorage implements IStorage {
       ...existingUser, 
       ...updates,
       gender: updates.gender !== undefined ? updates.gender || null : existingUser.gender,
-      accessibility: updates.accessibility !== undefined ? (Array.isArray(updates.accessibility) ? updates.accessibility : null) : existingUser.accessibility
+      accessibility: updates.accessibility !== undefined ? updates.accessibility : existingUser.accessibility
     };
     this.users.set(id, updatedUser);
     return updatedUser;
@@ -124,4 +128,68 @@ export class MemStorage implements IStorage {
   }
 }
 
-export const storage = new MemStorage();
+// Database Storage Implementation using Drizzle ORM
+export class DatabaseStorage implements IStorage {
+  private db;
+
+  constructor() {
+    if (!process.env.DATABASE_URL) {
+      throw new Error('DATABASE_URL environment variable is required');
+    }
+    const sql = neon(process.env.DATABASE_URL);
+    this.db = drizzle(sql);
+  }
+
+  async getUser(id: string): Promise<User | undefined> {
+    const result = await this.db.select().from(users).where(eq(users.id, id)).limit(1);
+    return result[0];
+  }
+
+  async createUser(insertUser: InsertUser): Promise<User> {
+    const userData = {
+      ...insertUser,
+      accessibility: insertUser.accessibility || null,
+      gender: insertUser.gender || null,
+    };
+    const result = await this.db.insert(users).values(userData).returning();
+    return result[0];
+  }
+
+  async updateUser(id: string, updateData: Partial<InsertUser>): Promise<User | undefined> {
+    const cleanedData = {
+      ...updateData,
+      accessibility: updateData.accessibility || null,
+      gender: updateData.gender || null,
+    };
+    const result = await this.db.update(users).set(cleanedData).where(eq(users.id, id)).returning();
+    return result[0];
+  }
+
+  async getCompanionsByUserId(userId: string): Promise<Companion[]> {
+    return await this.db.select().from(companions).where(eq(companions.userId, userId));
+  }
+
+  async createCompanion(companion: InsertCompanion): Promise<Companion> {
+    const result = await this.db.insert(companions).values(companion).returning();
+    return result[0];
+  }
+
+  async createEmergencyEvent(event: InsertEmergencyEvent): Promise<EmergencyEvent> {
+    const eventData = {
+      ...event,
+      location: event.location || null,
+      situation: event.situation || null,
+      personalizedGuide: event.personalizedGuide || null,
+    };
+    const result = await this.db.insert(emergencyEvents).values(eventData).returning();
+    return result[0];
+  }
+
+  async getEmergencyEventsByUserId(userId: string): Promise<EmergencyEvent[]> {
+    return await this.db.select().from(emergencyEvents).where(eq(emergencyEvents.userId, userId));
+  }
+}
+
+// Switch between MemStorage and DatabaseStorage
+// Use DatabaseStorage for production, MemStorage for development/testing
+export const storage = process.env.DATABASE_URL ? new DatabaseStorage() : new MemStorage();

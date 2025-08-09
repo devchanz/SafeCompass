@@ -1,6 +1,6 @@
 import { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 
-type Language = 'korean' | 'english' | 'vietnamese' | 'chinese';
+export type Language = 'korean' | 'english' | 'vietnamese' | 'chinese';
 
 interface LanguageContextType {
   language: Language;

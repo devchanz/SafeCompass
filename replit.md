@@ -17,6 +17,8 @@ The server is built with Express.js and follows a RESTful API design pattern. Th
 ## Data Storage Design
 The database schema is defined using Drizzle ORM with PostgreSQL as the target database. Three main entities are modeled: users (storing personal information and accessibility preferences), companions (emergency contacts), and emergency events (disaster response history). The schema supports JSONB fields for complex data like GPS coordinates and accessibility settings.
 
+**Updated**: The application now uses real Supabase PostgreSQL database instead of in-memory storage. The DatabaseStorage class automatically handles database operations using Drizzle ORM, with automatic fallback to MemStorage if DATABASE_URL is not configured.
+
 ## Authentication and User Management
 The application uses a simplified user management system with demo user IDs for proof-of-concept purposes. User profiles store comprehensive accessibility information including visual/hearing impairments, mobility limitations, and language preferences to enable personalized emergency responses.
 
