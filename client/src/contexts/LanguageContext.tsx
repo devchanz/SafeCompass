@@ -35,7 +35,9 @@ const translations: Record<Language, Record<string, string>> = {
     
     // Registration
     'registration.title': '사용자 정보 등록',
-    'registration.subtitle': '맞춤형 지진 대응을 위한 개인정보를 입력해주세요',
+    'registration.edit_title': '정보 수정',
+    'registration.subtitle': '맞춤형 안전 가이드를 위해 정보를 입력해주세요',
+    'registration.basic_info': '기본 정보',
     'registration.name': '이름',
     'registration.age': '나이',
     'registration.gender': '성별',
@@ -279,8 +281,8 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     // Load language preference from localStorage
-    const saved = localStorage.getItem('preferred-language') as Language;
-    if (saved && (saved === 'korean' || saved === 'english' || saved === 'vietnamese' || saved === 'chinese')) {
+    const saved = localStorage.getItem('selectedLanguage') as Language;
+    if (saved && (saved === 'ko' || saved === 'en' || saved === 'vi' || saved === 'zh')) {
       setLanguage(saved);
     }
   }, []);

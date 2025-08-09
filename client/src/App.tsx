@@ -28,12 +28,16 @@ function AppContent() {
   // For demo: Always start with language selection
   const [hasSelectedLanguage, setHasSelectedLanguage] = useState(false);
 
-  // Force redirect to language selection for demo - clear any stored state
+  // Check if language is selected, if not redirect to language selection
   useEffect(() => {
-    localStorage.removeItem('selectedLanguage');
-    console.log('Current location:', location);
-    setLocation('/language');
-  }, [location, setLocation]);
+    const storedLanguage = localStorage.getItem('selectedLanguage');
+    if (!storedLanguage && location !== '/language') {
+      setLocation('/language');
+    } else if (storedLanguage) {
+      setHasSelectedLanguage(true);
+      setLanguage(storedLanguage as Language);
+    }
+  }, [location, setLocation, setLanguage]);
 
   // Listen for language selection changes
   useEffect(() => {

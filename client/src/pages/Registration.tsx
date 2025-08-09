@@ -10,6 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useToast } from "@/hooks/use-toast";
 import { useUserProfile } from "@/hooks/useUserProfile";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { insertUserSchema } from "@shared/schema";
 import { z } from "zod";
 
@@ -26,6 +27,7 @@ type RegistrationData = z.infer<typeof registrationSchema>;
 export default function Registration() {
   const [, setLocation] = useLocation();
   const { toast } = useToast();
+  const { language, t } = useLanguage();
   const { data: existingProfile, createProfile, updateProfile, createCompanion } = useUserProfile();
   const [selectedAccessibility, setSelectedAccessibility] = useState<string[]>(
     existingProfile?.accessibility || []
@@ -38,7 +40,7 @@ export default function Registration() {
       age: existingProfile?.age || 0,
       gender: existingProfile?.gender || "",
       address: existingProfile?.address || "",
-      language: existingProfile?.language || "ko",
+      language: existingProfile?.language || language,
       accessibility: existingProfile?.accessibility || [],
       mobility: existingProfile?.mobility || "independent",
       partner: {
@@ -56,7 +58,7 @@ export default function Registration() {
         age: data.age,
         gender: data.gender,
         address: data.address,
-        language: data.language,
+        language: language, // Use the selected language from context
         mobility: data.mobility,
         accessibility: selectedAccessibility,
       };
@@ -126,10 +128,10 @@ export default function Registration() {
           <div className="w-3 h-3 bg-gray-300 rounded-full"></div>
         </div>
         <h2 className="text-2xl font-bold text-center text-gray-900">
-          {existingProfile ? "정보 수정" : "개인정보 등록"}
+          {existingProfile ? t('registration.edit_title') : t('registration.title')}
         </h2>
         <p className="text-center text-gray-600 mt-2">
-          맞춤형 안전 가이드를 위해 정보를 입력해주세요
+          {t('registration.subtitle')}
         </p>
       </div>
 
@@ -139,12 +141,12 @@ export default function Registration() {
           <CardContent className="pt-6">
             <h3 className="text-lg font-semibold mb-4 flex items-center">
               <i className="fas fa-user text-emergency mr-2" aria-hidden="true"></i>
-              기본 정보
+              {t('registration.basic_info')}
             </h3>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <Label htmlFor="name">이름 <span className="text-emergency">*</span></Label>
+                <Label htmlFor="name">{t('registration.name')} <span className="text-emergency">*</span></Label>
                 <Input
                   id="name"
                   {...form.register("name")}
@@ -157,7 +159,7 @@ export default function Registration() {
               </div>
               
               <div>
-                <Label htmlFor="age">나이 <span className="text-emergency">*</span></Label>
+                <Label htmlFor="age">{t('registration.age')} <span className="text-emergency">*</span></Label>
                 <Input
                   id="age"
                   type="number"
