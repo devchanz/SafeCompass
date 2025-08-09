@@ -1,18 +1,29 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useEmergency } from "@/hooks/useEmergency";
+import { useEmergencyNotification } from "@/hooks/useEmergencyNotification";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function EmergencyAlert() {
   const [, setLocation] = useLocation();
   const [locationContext, setLocationContext] = useState<string>("");
   const [canMove, setCanMove] = useState<boolean>(true);
   const { generateGuide } = useEmergency();
+  const { currentAlert, markAlertAsRead } = useEmergencyNotification();
+  const { t } = useLanguage();
+
+  useEffect(() => {
+    // Mark alert as read when user enters the emergency page
+    markAlertAsRead();
+  }, [markAlertAsRead]);
 
   const handleGenerateGuide = async () => {
     if (!locationContext) {
-      alert("현재 위치를 선택해주세요");
+      alert(t('emergency.location_question'));
       return;
     }
 
@@ -33,77 +44,86 @@ export default function EmergencyAlert() {
       <Card className="emergency-card bg-emergency text-white mb-6 emergency-pulse">
         <CardContent className="pt-6 text-center">
           <i className="fas fa-exclamation-triangle text-6xl mb-4" aria-hidden="true"></i>
-          <h1 className="text-3xl font-bold mb-2">지진 경보</h1>
-          <p className="text-lg">규모 5.2 지진이 감지되었습니다</p>
-          <p className="text-sm mt-2">
-            발생시간: <span>2024년 1월 15일 14:30</span>
-          </p>
+          <h1 className="text-3xl font-bold mb-2">{t('emergency.earthquake_detected')}</h1>
+          {currentAlert && (
+            <>
+              <p className="text-lg">
+                {currentAlert.type === 'earthquake' ? 
+                  `${currentAlert.magnitude ? `규모 ${currentAlert.magnitude}` : ''} 지진` : 
+                  currentAlert.type} - {currentAlert.location}
+              </p>
+              <p className="text-sm mt-2">
+                발생시간: <span>{new Date(currentAlert.timestamp).toLocaleString()}</span>
+              </p>
+            </>
+          )}
         </CardContent>
       </Card>
 
       {/* Current Status Input */}
       <Card className="emergency-card mb-6">
-        <CardContent className="pt-6">
-          <h2 className="text-xl font-bold mb-4 flex items-center">
-            <i className="fas fa-location-dot text-emergency mr-2" aria-hidden="true"></i>
-            현재 상황을 알려주세요
-          </h2>
-          
-          <div className="space-y-4">
-            {/* Location Status */}
-            <div>
-              <p className="text-sm font-medium text-gray-700 mb-2">현재 위치:</p>
-              <div className="grid grid-cols-2 gap-3">
-                <Button
-                  variant={locationContext === "indoor" ? "default" : "outline"}
-                  className="p-4 h-auto flex-col space-y-2"
-                  onClick={() => setLocationContext("indoor")}
-                >
-                  <i className="fas fa-home text-2xl" aria-hidden="true"></i>
-                  <p className="text-sm font-medium">실내</p>
-                </Button>
-                <Button
-                  variant={locationContext === "outdoor" ? "default" : "outline"}
-                  className="p-4 h-auto flex-col space-y-2"
-                  onClick={() => setLocationContext("outdoor")}
-                >
-                  <i className="fas fa-tree text-2xl" aria-hidden="true"></i>
-                  <p className="text-sm font-medium">실외</p>
-                </Button>
+        <CardHeader>
+          <CardTitle className="text-xl font-bold text-emergency">
+            {t('emergency.title')}
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          <div>
+            <Label className="text-lg font-semibold mb-3 block">
+              {t('emergency.location_question')}
+            </Label>
+            <RadioGroup value={locationContext} onValueChange={setLocationContext}>
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="집 안 (거실/침실)" id="home-indoor" />
+                <Label htmlFor="home-indoor">집 안 (거실/침실)</Label>
               </div>
-            </div>
-            
-            {/* Movement Ability */}
-            <div>
-              <p className="text-sm font-medium text-gray-700 mb-2">이동 가능 여부:</p>
-              <div className="grid grid-cols-2 gap-3">
-                <Button
-                  variant={canMove ? "default" : "outline"}
-                  className="p-4 h-auto flex-col space-y-2"
-                  onClick={() => setCanMove(true)}
-                >
-                  <i className="fas fa-walking text-2xl" aria-hidden="true"></i>
-                  <p className="text-sm font-medium">이동 가능</p>
-                </Button>
-                <Button
-                  variant={!canMove ? "default" : "outline"}
-                  className="p-4 h-auto flex-col space-y-2"
-                  onClick={() => setCanMove(false)}
-                >
-                  <i className="fas fa-wheelchair text-2xl" aria-hidden="true"></i>
-                  <p className="text-sm font-medium">이동 어려움</p>
-                </Button>
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="사무실/학교" id="office" />
+                <Label htmlFor="office">사무실/학교</Label>
               </div>
-            </div>
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="길거리/야외" id="outdoor" />
+                <Label htmlFor="outdoor">길거리/야외</Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="지하철/버스" id="transport" />
+                <Label htmlFor="transport">지하철/버스</Label>
+              </div>
+            </RadioGroup>
           </div>
-          
+
+          <div>
+            <Label className="text-lg font-semibold mb-3 block">
+              {t('emergency.mobility_question')}
+            </Label>
+            <RadioGroup value={canMove.toString()} onValueChange={(value) => setCanMove(value === 'true')}>
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="true" id="can-move" />
+                <Label htmlFor="can-move">네, 움직일 수 있습니다</Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="false" id="cannot-move" />
+                <Label htmlFor="cannot-move">아니요, 움직이기 어렵습니다</Label>
+              </div>
+            </RadioGroup>
+          </div>
+
           <Button 
             onClick={handleGenerateGuide}
-            disabled={!locationContext || generateGuide.isPending}
-            className="w-full mt-6 bg-emergency hover:bg-emergency-dark py-3 text-lg"
+            className="w-full bg-emergency hover:bg-emergency/90 text-white text-lg py-3"
+            disabled={generateGuide.isPending}
           >
-            <i className="fas fa-magic mr-2" aria-hidden="true"></i>
-            {generateGuide.isPending ? "생성 중..." : "맞춤 안전 가이드 생성"}
+            {generateGuide.isPending ? (
+              <>
+                <i className="fas fa-spinner fa-spin mr-2" aria-hidden="true"></i>
+                {t('common.loading')}
+              </>
+            ) : (
+              <>
+                <i className="fas fa-compass mr-2" aria-hidden="true"></i>
+                {t('emergency.generate_guide')}
+              </>
+            )}
           </Button>
         </CardContent>
       </Card>
