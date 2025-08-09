@@ -19,6 +19,15 @@ Preferred communication style: Simple, everyday language.
   - Dedicated cache clearing page (/clear-cache.html) 
   - Cross-platform shell scripts (clear-cache.sh, clear-cache.bat)
   - Cache clearing button integrated into Dashboard demo section
+- **T-Map Interactive Map Implementation**: 
+  - Created ShelterMapInteractive.tsx with full T-Map SDK integration
+  - Real-time GPS location tracking with user position marker
+  - Interactive shelter markers with click-to-select functionality
+  - Visual route calculation and polyline display from user to selected shelter
+  - Automatic map bounds adjustment to show full route
+  - Color-coded shelter types (blue=실내, green=옥외, purple=구호소)
+  - Real shelter coordinate data integration from backend API
+  - Enhanced UI with map status indicators and shelter information cards
 
 # System Architecture
 
