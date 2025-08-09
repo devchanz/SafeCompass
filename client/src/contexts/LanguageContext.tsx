@@ -151,3 +151,9 @@ export function useLanguage() {
   }
   return context;
 }
+
+// Optional: provide a hook that returns null instead of throwing
+export function useLanguageOptional() {
+  const context = useContext(LanguageContext);
+  return context;
+}
