@@ -212,14 +212,14 @@ export default function ProfileModify() {
                   <Label htmlFor="gender" className="text-sm font-semibold text-gray-700">
                     {t('registration.gender')}
                   </Label>
-                  <Select onValueChange={(value) => form.setValue("gender", value)} defaultValue={form.getValues("gender")}>
+                  <Select onValueChange={(value) => form.setValue("gender", value)} defaultValue={form.getValues("gender") || undefined}>
                     <SelectTrigger className="h-12 text-base border-2 border-gray-200 focus:border-emergency">
                       <SelectValue placeholder={t('registration.gender')} />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="male">남성</SelectItem>
-                      <SelectItem value="female">여성</SelectItem>
-                      <SelectItem value="other">기타</SelectItem>
+                      <SelectItem value="male">{t('registration.gender_male')}</SelectItem>
+                      <SelectItem value="female">{t('registration.gender_female')}</SelectItem>
+                      <SelectItem value="other">{t('registration.gender_other')}</SelectItem>
                     </SelectContent>
                   </Select>
                   {form.formState.errors.gender && (
@@ -276,9 +276,9 @@ export default function ProfileModify() {
                     </div>
                     <div className="text-center">
                       <p className={`text-sm font-semibold ${selectedAccessibility.length === 0 ? 'text-gray-800' : 'text-gray-700'}`}>
-                        일반 사용자
+                        {t('registration.accessibility_normal')}
                       </p>
-                      <p className="text-xs text-gray-600">특별한 지원 불필요</p>
+                      <p className="text-xs text-gray-600">{t('registration.accessibility_normal_desc')}</p>
                     </div>
                   </Button>
                   
@@ -297,9 +297,9 @@ export default function ProfileModify() {
                     </div>
                     <div className="text-center">
                       <p className={`text-sm font-semibold ${selectedAccessibility.includes('visual') ? 'text-blue-800' : 'text-gray-700'}`}>
-                        시각 지원
+                        {t('registration.accessibility_visual')}
                       </p>
-                      <p className="text-xs text-gray-600">음성 안내, 큰 글씨</p>
+                      <p className="text-xs text-gray-600">{t('registration.accessibility_visual_desc')}</p>
                     </div>
                   </Button>
                   
@@ -318,9 +318,9 @@ export default function ProfileModify() {
                     </div>
                     <div className="text-center">
                       <p className={`text-sm font-semibold ${selectedAccessibility.includes('hearing') ? 'text-yellow-800' : 'text-gray-700'}`}>
-                        청각 지원
+                        {t('registration.accessibility_hearing')}
                       </p>
-                      <p className="text-xs text-gray-600">진동 알림, 시각 신호</p>
+                      <p className="text-xs text-gray-600">{t('registration.accessibility_hearing_desc')}</p>
                     </div>
                   </Button>
                 </div>
@@ -347,9 +347,9 @@ export default function ProfileModify() {
                     </div>
                     <div className="text-center">
                       <p className={`text-sm font-semibold ${form.watch("mobility") === "independent" ? 'text-green-800' : 'text-gray-700'}`}>
-                        자력대피 가능
+                        {t('registration.mobility_independent')}
                       </p>
-                      <p className="text-xs text-gray-600">혼자 대피할 수 있음</p>
+                      <p className="text-xs text-gray-600">{t('registration.mobility_independent_desc')}</p>
                     </div>
                   </Button>
                   
@@ -368,9 +368,9 @@ export default function ProfileModify() {
                     </div>
                     <div className="text-center">
                       <p className={`text-sm font-semibold ${form.watch("mobility") === "unable" ? 'text-red-800' : 'text-gray-700'}`}>
-                        도움 필요
+                        {t('registration.mobility_assisted')}
                       </p>
-                      <p className="text-xs text-gray-600">대피 시 도움이 필요함</p>
+                      <p className="text-xs text-gray-600">{t('registration.mobility_assisted_desc')}</p>
                     </div>
                   </Button>
                 </div>
@@ -390,25 +390,25 @@ export default function ProfileModify() {
               
               <p className="text-gray-600 bg-gray-50 p-4 rounded-lg border-l-4 border-warning">
                 <i className="fas fa-info-circle text-warning mr-2" aria-hidden="true"></i>
-                긴급 상황 시 연락할 동행 파트너 정보를 입력하세요. (선택사항)
+                {t('registration.companion_subtitle')}
               </p>
               
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div className="space-y-2">
                   <Label htmlFor="partner-name" className="text-sm font-semibold text-gray-700">
-                    파트너 이름
+                    {t('registration.companion_name')}
                   </Label>
                   <Input
                     id="partner-name"
                     {...form.register("partner.name")}
                     className="h-12 text-base border-2 border-gray-200 focus:border-emergency"
-                    placeholder="파트너 이름"
+                    placeholder={t('registration.companion_name_placeholder')}
                   />
                 </div>
 
                 <div className="space-y-2">
                   <Label htmlFor="partner-phone" className="text-sm font-semibold text-gray-700">
-                    전화번호
+                    {t('registration.companion_phone')}
                   </Label>
                   <Input
                     id="partner-phone"

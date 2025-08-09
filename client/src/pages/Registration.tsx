@@ -116,8 +116,8 @@ export default function Registration() {
       }
     } catch (error) {
       toast({
-        title: "오류가 발생했습니다",
-        description: "정보 저장 중 문제가 발생했습니다. 다시 시도해주세요.",
+        title: t('registration.error'),
+        description: t('registration.error_desc'),
         variant: "destructive",
       });
     }

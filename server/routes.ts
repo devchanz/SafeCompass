@@ -188,18 +188,49 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Shelter information
+  // Shelter information - 실제 API 연동 대응
   app.get("/api/shelters", async (req, res) => {
     try {
       const { lat, lng } = req.query;
       
-      // In a real implementation, this would calculate distances based on GPS
-      // For now, return mock data with simulated distances
-      res.json(mockShelters);
+      if (!lat || !lng) {
+        return res.status(400).json({
+          message: "위치 정보(lat, lng)가 필요합니다",
+          error: "Missing required parameters"
+        });
+      }
+
+      const userLat = parseFloat(lat as string);
+      const userLng = parseFloat(lng as string);
+      
+      // 실제 API 연동 시도
+      const { createShelterService } = await import('./services/shelterService');
+      const shelterService = createShelterService();
+      
+      if (shelterService) {
+        console.log(`🌍 실제 API로 대피소 검색: 위치(${userLat}, ${userLng})`);
+        const realShelters = await shelterService.getNearbyRealShelters(userLat, userLng, 5);
+        
+        if (realShelters.length > 0) {
+          console.log(`✅ 실제 대피소 ${realShelters.length}개 발견`);
+          return res.json(realShelters);
+        }
+      }
+
+      // API 연동 실패 또는 설정 없음 - 에러 반환
+      console.warn('⚠️ 실제 대피소 API 연동 불가 - 재난안전 API 설정 필요');
+      return res.status(503).json({
+        message: "대피소 데이터 서비스를 이용할 수 없습니다",
+        error: "실제 대피소 API 연동이 필요합니다. 관리자에게 문의하세요.",
+        requiresApiSetup: true
+      });
+      
     } catch (error) {
+      console.error("❌ 대피소 조회 오류:", error);
       res.status(500).json({ 
         message: "대피소 정보 조회에 실패했습니다",
-        error: (error as Error).message 
+        error: (error as Error).message,
+        requiresApiSetup: true
       });
     }
   });
