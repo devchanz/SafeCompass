@@ -26,8 +26,8 @@ export class MemStorage implements IStorage {
     this.companions = new Map();
     this.emergencyEvents = new Map();
     
-    // Add demo user for testing - temporarily disabled to test registration flow
-    // this.seedDemoData();
+    // Add demo user for testing
+    this.seedDemoData();
   }
 
   private seedDemoData() {
@@ -48,8 +48,7 @@ export class MemStorage implements IStorage {
       userId: 'demo-user-1',
       name: '김영희',
       phone: '010-1234-5678',
-      relationship: 'family',
-      createdAt: new Date()
+      relationship: 'family'
     };
 
     this.users.set(demoUser.id, demoUser);
@@ -66,7 +65,7 @@ export class MemStorage implements IStorage {
       ...insertUser,
       id,
       gender: insertUser.gender || null,
-      accessibility: Array.isArray(insertUser.accessibility) ? insertUser.accessibility : null,
+      accessibility: insertUser.accessibility as string[] || null,
       createdAt: new Date()
     };
     this.users.set(id, user);

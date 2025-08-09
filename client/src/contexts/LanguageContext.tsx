@@ -1,6 +1,6 @@
 import { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 
-type Language = 'korean' | 'english';
+type Language = 'korean' | 'english' | 'vietnamese' | 'chinese';
 
 interface LanguageContextType {
   language: Language;
@@ -59,7 +59,17 @@ const translations: Record<Language, Record<string, string>> = {
     'common.cancel': '취소',
     'common.next': '다음',
     'common.back': '이전',
-    'common.close': '닫기'
+    'common.close': '닫기',
+    
+    // Location options
+    'emergency.location.home': '집 안 (거실/침실)',
+    'emergency.location.office': '사무실/학교',
+    'emergency.location.outdoor': '길거리/야외',
+    'emergency.location.transport': '지하철/버스',
+    
+    // Mobility options
+    'emergency.mobility.yes': '네, 움직일 수 있습니다',
+    'emergency.mobility.no': '아니요, 움직이기 어렵습니다'
   },
   english: {
     // Navigation
@@ -111,7 +121,141 @@ const translations: Record<Language, Record<string, string>> = {
     'common.cancel': 'Cancel',
     'common.next': 'Next',
     'common.back': 'Back',
-    'common.close': 'Close'
+    'common.close': 'Close',
+    
+    // Location options
+    'emergency.location.home': 'Home (Living room/Bedroom)',
+    'emergency.location.office': 'Office/School',
+    'emergency.location.outdoor': 'Street/Outdoor',
+    'emergency.location.transport': 'Subway/Bus',
+    
+    // Mobility options
+    'emergency.mobility.yes': 'Yes, I can move',
+    'emergency.mobility.no': 'No, it\'s difficult to move'
+  },
+  vietnamese: {
+    // Navigation
+    'nav.dashboard': 'Bảng điều khiển',
+    'nav.registration': 'Đăng ký',
+    'nav.emergency': 'Khẩn cấp',
+    'nav.shelter': 'Tìm nơi trú ẩn',
+    'nav.guide': 'Hướng dẫn tùy chỉnh',
+    
+    // Dashboard
+    'dashboard.title': 'La bàn an toàn',
+    'dashboard.subtitle': 'Hướng dẫn ứng phó động đất cá nhân hóa',
+    'dashboard.emergency_alert': 'Cảnh báo động đất đã được phát',
+    'dashboard.earthquake_info': 'Cường độ 6.2, Địa điểm: Gần Seoul',
+    'dashboard.time_ago': '2 phút trước',
+    'dashboard.respond': 'Ứng phó',
+    'dashboard.profile_info': 'Thông tin hồ sơ',
+    'dashboard.name': 'Tên',
+    'dashboard.age': 'Tuổi',
+    'dashboard.evacuation_ability': 'Khả năng sơ tán tự lực',
+    'dashboard.accessibility': 'Hỗ trợ tiếp cận',
+    'dashboard.address': 'Địa chỉ',
+    'dashboard.companion': 'Bạn đồng hành khẩn cấp',
+    'dashboard.edit_profile': 'Chỉnh sửa hồ sơ',
+    
+    // Registration
+    'registration.title': 'Đăng ký người dùng',
+    'registration.subtitle': 'Vui lòng nhập thông tin cá nhân để ứng phó động đất tùy chỉnh',
+    'registration.name': 'Tên',
+    'registration.age': 'Tuổi',
+    'registration.gender': 'Giới tính',
+    'registration.address': 'Địa chỉ',
+    'registration.language': 'Ngôn ngữ',
+    'registration.accessibility_support': 'Hỗ trợ tiếp cận & Khả năng sơ tán tự lực',
+    'registration.companion': 'Bạn đồng hành khẩn cấp (Tùy chọn)',
+    'registration.save': 'Lưu',
+    
+    // Emergency
+    'emergency.title': 'Cho chúng tôi biết tình huống hiện tại của bạn',
+    'emergency.earthquake_detected': 'Phát hiện động đất',
+    'emergency.location_question': 'Bạn hiện đang ở đâu?',
+    'emergency.mobility_question': 'Bạn có thể di chuyển ngay bây giờ không?',
+    'emergency.generate_guide': 'Tạo hướng dẫn tùy chỉnh',
+    
+    // Common
+    'common.loading': 'Đang tải...',
+    'common.error': 'Đã xảy ra lỗi',
+    'common.save': 'Lưu',
+    'common.cancel': 'Hủy',
+    'common.next': 'Tiếp theo',
+    'common.back': 'Trở lại',
+    'common.close': 'Đóng',
+    
+    // Location options
+    'emergency.location.home': 'Nhà (Phòng khách/Phòng ngủ)',
+    'emergency.location.office': 'Văn phòng/Trường học',
+    'emergency.location.outdoor': 'Đường phố/Ngoài trời',
+    'emergency.location.transport': 'Tàu điện ngầm/Xe buýt',
+    
+    // Mobility options
+    'emergency.mobility.yes': 'Có, tôi có thể di chuyển',
+    'emergency.mobility.no': 'Không, khó di chuyển'
+  },
+  chinese: {
+    // Navigation
+    'nav.dashboard': '仪表板',
+    'nav.registration': '注册',
+    'nav.emergency': '紧急情况',
+    'nav.shelter': '寻找避难所',
+    'nav.guide': '自定义指南',
+    
+    // Dashboard
+    'dashboard.title': '安全指南针',
+    'dashboard.subtitle': '个性化地震应对指南',
+    'dashboard.emergency_alert': '地震警报已发布',
+    'dashboard.earthquake_info': '震级6.2，地点：首尔附近',
+    'dashboard.time_ago': '2分钟前',
+    'dashboard.respond': '响应',
+    'dashboard.profile_info': '个人资料信息',
+    'dashboard.name': '姓名',
+    'dashboard.age': '年龄',
+    'dashboard.evacuation_ability': '自主疏散能力',
+    'dashboard.accessibility': '无障碍支持',
+    'dashboard.address': '地址',
+    'dashboard.companion': '紧急伙伴',
+    'dashboard.edit_profile': '编辑个人资料',
+    
+    // Registration
+    'registration.title': '用户注册',
+    'registration.subtitle': '请输入您的个人信息以获得定制的地震应对方案',
+    'registration.name': '姓名',
+    'registration.age': '年龄',
+    'registration.gender': '性别',
+    'registration.address': '地址',
+    'registration.language': '语言',
+    'registration.accessibility_support': '无障碍支持和自主疏散能力',
+    'registration.companion': '紧急伙伴（可选）',
+    'registration.save': '保存',
+    
+    // Emergency
+    'emergency.title': '请告诉我们您当前的情况',
+    'emergency.earthquake_detected': '检测到地震',
+    'emergency.location_question': '您目前在哪里？',
+    'emergency.mobility_question': '您现在能够移动吗？',
+    'emergency.generate_guide': '生成自定义指南',
+    
+    // Common
+    'common.loading': '加载中...',
+    'common.error': '发生错误',
+    'common.save': '保存',
+    'common.cancel': '取消',
+    'common.next': '下一步',
+    'common.back': '返回',
+    'common.close': '关闭',
+    
+    // Location options
+    'emergency.location.home': '家中（客厅/卧室）',
+    'emergency.location.office': '办公室/学校',
+    'emergency.location.outdoor': '街道/户外',
+    'emergency.location.transport': '地铁/公交车',
+    
+    // Mobility options
+    'emergency.mobility.yes': '是的，我可以移动',
+    'emergency.mobility.no': '不，移动困难'
   }
 };
 
@@ -132,7 +276,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     // Load language preference from localStorage
     const saved = localStorage.getItem('preferred-language') as Language;
-    if (saved && (saved === 'korean' || saved === 'english')) {
+    if (saved && (saved === 'korean' || saved === 'english' || saved === 'vietnamese' || saved === 'chinese')) {
       setLanguage(saved);
     }
   }, []);

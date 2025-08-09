@@ -1,4 +1,4 @@
-import { Switch, Route, useLocation } from "wouter";
+import { Switch, Route, useLocation, Link } from "wouter";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
@@ -13,7 +13,7 @@ import PersonalizedGuide from "@/pages/PersonalizedGuide";
 import ShelterMap from "@/pages/ShelterMap";
 import SOSButton from "@/components/SOSButton";
 import { AccessibilityProvider } from "@/components/AccessibilityProvider";
-import { LanguageProvider, useLanguage } from "@/contexts/LanguageContext";
+import { LanguageProvider, useLanguage, type Language } from "@/contexts/LanguageContext";
 import { useUserProfile } from "@/hooks/useUserProfile";
 import { useEmergencyNotification } from "@/hooks/useEmergencyNotification";
 
@@ -38,9 +38,7 @@ function AppContent() {
     }
   }, [userProfile, location, setLocation]);
 
-  const handleLanguageChange = (newLanguage: 'korean' | 'english') => {
-    setLanguage(newLanguage);
-  };
+
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -64,14 +62,23 @@ function AppContent() {
             </div>
             
             <div className="flex items-center space-x-4">
+              {/* Home Icon */}
+              <Link href="/">
+                <Button variant="ghost" size="sm" className="text-gray-600 hover:text-gray-900">
+                  <i className="fas fa-home text-lg" aria-hidden="true"></i>
+                </Button>
+              </Link>
+              
               {/* Language Selector */}
               <select 
                 className="text-sm border border-gray-300 rounded-md px-2 py-1"
                 value={language}
-                onChange={(e) => handleLanguageChange(e.target.value as 'korean' | 'english')}
+                onChange={(e) => setLanguage(e.target.value as Language)}
               >
                 <option value="korean">한국어</option>
                 <option value="english">English</option>
+                <option value="vietnamese">Tiếng Việt</option>
+                <option value="chinese">中文</option>
               </select>
               
               {/* Navigation Toggle */}
