@@ -49,29 +49,38 @@ export default function ShelterMapInteractive() {
       return;
     }
 
-    // Leaflet CSS 추가
-    const link = document.createElement('link');
-    link.rel = 'stylesheet';
-    link.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
-    document.head.appendChild(link);
+    // Leaflet CSS가 이미 로드되었는지 확인
+    const existingCSS = document.querySelector('link[href*="leaflet.css"]');
+    if (!existingCSS) {
+      const link = document.createElement('link');
+      link.rel = 'stylesheet';
+      link.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
+      document.head.appendChild(link);
+    }
 
-    // Leaflet JS 추가
-    const script = document.createElement('script');
-    script.src = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
-    script.onload = () => {
-      console.log('Leaflet loaded successfully');
+    // Leaflet JS가 이미 로드되었는지 확인
+    const existingScript = document.querySelector('script[src*="leaflet.js"]');
+    if (!existingScript) {
+      const script = document.createElement('script');
+      script.src = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
+      script.onload = () => {
+        console.log('Leaflet loaded successfully');
+        setTmapReady(true);
+      };
+      script.onerror = () => {
+        console.error('Failed to load Leaflet');
+      };
+      document.head.appendChild(script);
+      
+      return () => {
+        if (script.parentNode) {
+          script.parentNode.removeChild(script);
+        }
+      };
+    } else {
+      // 이미 스크립트가 있으면 바로 ready로 설정
       setTmapReady(true);
-    };
-    script.onerror = () => {
-      console.error('Failed to load Leaflet');
-    };
-    document.head.appendChild(script);
-
-    return () => {
-      if (script.parentNode) {
-        script.parentNode.removeChild(script);
-      }
-    };
+    }
   }, []);
 
   // 지도 초기화

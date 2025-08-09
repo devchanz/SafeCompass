@@ -37,12 +37,10 @@ export default function LanguageSelection() {
     localStorage.clear();
     localStorage.setItem('selectedLanguage', langCode);
     
-    // Navigate to registration after language selection
+    // Navigate to registration after language selection (removed window.location.href)
     setTimeout(() => {
       console.log('Navigating to registration...');
       setLocation('/registration');
-      // Force page refresh to ensure state is updated
-      window.location.href = '/registration';
     }, 800);
   };
 

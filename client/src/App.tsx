@@ -8,6 +8,7 @@ import { useEffect, useState } from "react";
 import NotFound from "@/pages/not-found";
 import Dashboard from "@/pages/Dashboard";
 import Registration from "@/pages/Registration";
+import ProfileModify from "@/pages/ProfileModify";
 import EmergencyAlert from "@/pages/EmergencyAlert";
 import PersonalizedGuide from "@/pages/PersonalizedGuide";
 import ShelterMap from "@/pages/ShelterMapInteractive";
@@ -203,6 +204,7 @@ function AppContent() {
           <Route path="/language" component={LanguageSelection} />
           <Route path="/" component={Dashboard} />
           <Route path="/registration" component={Registration} />
+          <Route path="/modify" component={ProfileModify} />
           <Route path="/emergency" component={EmergencyAlert} />
           <Route path="/guide" component={PersonalizedGuide} />
           <Route path="/shelters" component={ShelterMap} />
