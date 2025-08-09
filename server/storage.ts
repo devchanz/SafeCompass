@@ -69,7 +69,8 @@ export class MemStorage implements IStorage {
       ...insertUser,
       id,
       gender: insertUser.gender || null,
-      accessibility: insertUser.accessibility || null,
+      accessibility: Array.isArray(insertUser.accessibility) ? insertUser.accessibility as string[] : [],
+      language: insertUser.language || 'ko',
       createdAt: new Date()
     };
     this.users.set(id, user);
@@ -84,7 +85,7 @@ export class MemStorage implements IStorage {
       ...existingUser, 
       ...updates,
       gender: updates.gender !== undefined ? updates.gender || null : existingUser.gender,
-      accessibility: updates.accessibility !== undefined ? updates.accessibility : existingUser.accessibility
+      accessibility: updates.accessibility !== undefined ? (Array.isArray(updates.accessibility) ? updates.accessibility as string[] : []) : existingUser.accessibility
     };
     this.users.set(id, updatedUser);
     return updatedUser;
@@ -158,11 +159,11 @@ export class DatabaseStorage implements IStorage {
       console.log('Creating user with data:', insertUser);
       const userData = {
         ...insertUser,
-        accessibility: Array.isArray(insertUser.accessibility) ? insertUser.accessibility : null,
+        accessibility: Array.isArray(insertUser.accessibility) ? insertUser.accessibility as string[] : [],
         gender: insertUser.gender || null,
       };
       console.log('Processed user data:', userData);
-      const result = await this.db.insert(users).values(userData).returning();
+      const result = await this.db.insert(users).values([userData]).returning();
       console.log('User creation result:', result);
       return result[0];
     } catch (error) {
@@ -174,7 +175,7 @@ export class DatabaseStorage implements IStorage {
   async updateUser(id: string, updateData: Partial<InsertUser>): Promise<User | undefined> {
     const cleanedData = {
       ...updateData,
-      accessibility: Array.isArray(updateData.accessibility) ? updateData.accessibility : null,
+      accessibility: Array.isArray(updateData.accessibility) ? updateData.accessibility as string[] : [],
       gender: updateData.gender || null,
     };
     const result = await this.db.update(users).set(cleanedData).where(eq(users.id, id)).returning();
@@ -194,10 +195,14 @@ export class DatabaseStorage implements IStorage {
     const eventData = {
       ...event,
       location: event.location || null,
-      situation: event.situation || null,
+      situation: event.situation ? {
+        locationContext: event.situation.locationContext,
+        canMove: event.situation.canMove,
+        additionalInfo: typeof event.situation.additionalInfo === 'string' ? event.situation.additionalInfo : undefined
+      } : null,
       personalizedGuide: event.personalizedGuide || null,
     };
-    const result = await this.db.insert(emergencyEvents).values(eventData).returning();
+    const result = await this.db.insert(emergencyEvents).values([eventData]).returning();
     return result[0];
   }
 
