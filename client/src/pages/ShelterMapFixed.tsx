@@ -357,7 +357,7 @@ export default function ShelterMapFixed() {
       <div className="max-w-7xl mx-auto">
         <div className="mb-6">
           <h1 className="text-2xl font-bold text-gray-900 mb-2">
-            🏢 {getText('shelter_map')} (수정된 버전)
+            🏢 {getText('shelter_map')}
           </h1>
           <p className="text-gray-600">
             대피소 위치와 실시간 경로를 확인하세요
@@ -412,7 +412,7 @@ export default function ShelterMapFixed() {
                   </div>
                   <div className="flex items-center gap-2">
                     <div className="w-4 h-1 bg-blue-600"></div>
-                    <span>T-Map 실제 경로</span>
+                    <span>보행자 대피 경로</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <div className="w-4 h-1 bg-red-600" style={{ background: 'repeating-linear-gradient(to right, #dc2626 0, #dc2626 4px, transparent 4px, transparent 8px)' }}></div>

@@ -244,6 +244,7 @@ function AppContent() {
           <Route path="/shelters" component={ShelterMapFixed} />
           <Route path="/shelter-map" component={ShelterMapFixed} />
           <Route path="/shelter-map-fixed" component={ShelterMapFixed} />
+          <Route path="/test" component={AccessibilityTest} />
           <Route path="/accessibility-test" component={AccessibilityTest} />
           <Route component={NotFound} />
         </Switch>

@@ -7,8 +7,12 @@ import { useHapticService } from "@/services/hapticService";
 
 export default function AccessibilityTest() {
   const [testResults, setTestResults] = useState<string[]>([]);
-  const { speak, isSupported: ttsSupported } = useSpeechService();
-  const { vibrate, isSupported: hapticSupported } = useHapticService();
+  const { speak } = useSpeechService();
+  const { vibrate } = useHapticService();
+  
+  // 브라우저 지원 확인
+  const ttsSupported = typeof window !== 'undefined' && 'speechSynthesis' in window;
+  const hapticSupported = typeof window !== 'undefined' && 'vibrate' in navigator;
 
   const addResult = (result: string) => {
     setTestResults(prev => [...prev, `${new Date().toLocaleTimeString()}: ${result}`]);
@@ -58,8 +62,7 @@ export default function AccessibilityTest() {
       if (permission === 'granted') {
         new Notification('안전나침반 테스트', {
           body: '푸시 알림 기능이 정상적으로 작동합니다',
-          icon: '/favicon.ico',
-          vibrate: [200, 100, 200]
+          icon: '/favicon.ico'
         });
         addResult("✅ 푸시 알림 전송 완료");
       } else {
@@ -72,7 +75,7 @@ export default function AccessibilityTest() {
 
   const generateQRCode = () => {
     const currentUrl = window.location.origin;
-    const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(currentUrl + '/accessibility-test')}`;
+    const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(currentUrl + '/test')}`;
     
     const newWindow = window.open('', '_blank');
     if (newWindow) {
