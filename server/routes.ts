@@ -276,7 +276,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.log('🗺️ T-Map 도보 경로 계산 시작:', { startX, startY, endX, endY });
 
       try {
-        const tmapResponse = await fetch('https://apis.openapi.sk.com/tmap/routes/pedestrian?version=1&format=json', {
+        const tmapResponse = await fetch('https://apis.openapi.sk.com/tmap/routes/pedestrian?version=1', {
           method: 'POST',
           headers: {
             'Accept': 'application/json',
@@ -284,15 +284,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
             'appKey': tmapApiKey
           },
           body: JSON.stringify({
-            startX: startX.toString(),
-            startY: startY.toString(),
-            endX: endX.toString(),
-            endY: endY.toString(),
+            startX: parseFloat(startX.toString()),
+            startY: parseFloat(startY.toString()),
+            endX: parseFloat(endX.toString()),
+            endY: parseFloat(endY.toString()),
+            startName: encodeURIComponent("출발지"),
+            endName: encodeURIComponent("대피소"),
             reqCoordType: "WGS84GEO",
-            resCoordType: "WGS84GEO",
-            startName: "출발지",
-            endName: "목적지",
-            searchOption: "0"
+            resCoordType: "WGS84GEO"
           })
         });
 
