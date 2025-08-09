@@ -77,18 +77,7 @@ function AppContent() {
 
 
 
-  // Only force language selection if no language is selected
-  const storedLanguage = localStorage.getItem('selectedLanguage');
-  if (!storedLanguage && location !== '/language') {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emergency mx-auto"></div>
-          <p className="mt-2 text-gray-600">언어 선택 페이지로 이동 중...</p>
-        </div>
-      </div>
-    );
-  }
+
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -120,17 +109,7 @@ function AppContent() {
                 </Button>
               </Link>
               
-              {/* Language Selector */}
-              <select 
-                className="text-sm border border-gray-300 rounded-md px-2 py-1"
-                value={language}
-                onChange={(e) => setLanguage(e.target.value as Language)}
-              >
-                <option value="ko">한국어</option>
-                <option value="en">English</option>
-                <option value="vi">Tiếng Việt</option>
-                <option value="zh">中文</option>
-              </select>
+
               
               {/* Navigation Toggle */}
               {userProfile && (

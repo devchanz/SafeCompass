@@ -150,7 +150,7 @@ export default function Registration() {
                 <Input
                   id="name"
                   {...form.register("name")}
-                  placeholder="홍길동"
+                  placeholder={t('registration.name_placeholder')}
                   required
                 />
                 {form.formState.errors.name && (
@@ -164,7 +164,7 @@ export default function Registration() {
                   id="age"
                   type="number"
                   {...form.register("age", { valueAsNumber: true })}
-                  placeholder="35"
+                  placeholder={t('registration.age_placeholder')}
                   min="1"
                   max="120"
                   required
@@ -175,25 +175,25 @@ export default function Registration() {
               </div>
               
               <div>
-                <Label htmlFor="gender">성별</Label>
+                <Label htmlFor="gender">{t('registration.gender')}</Label>
                 <Select onValueChange={(value) => form.setValue("gender", value)}>
                   <SelectTrigger>
-                    <SelectValue placeholder="선택해주세요" />
+                    <SelectValue placeholder={t('registration.gender_placeholder')} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="male">남성</SelectItem>
-                    <SelectItem value="female">여성</SelectItem>
-                    <SelectItem value="other">기타</SelectItem>
+                    <SelectItem value="male">{t('registration.gender_male')}</SelectItem>
+                    <SelectItem value="female">{t('registration.gender_female')}</SelectItem>
+                    <SelectItem value="other">{t('registration.gender_other')}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
               
               <div>
-                <Label htmlFor="address">주소 <span className="text-emergency">*</span></Label>
+                <Label htmlFor="address">{t('registration.address')} <span className="text-emergency">*</span></Label>
                 <Input
                   id="address"
                   {...form.register("address")}
-                  placeholder="서울시 강남구 역삼동"
+                  placeholder={t('registration.address_placeholder')}
                   required
                 />
                 {form.formState.errors.address && (
@@ -209,12 +209,12 @@ export default function Registration() {
           <CardContent className="pt-6">
             <h3 className="text-lg font-semibold mb-6 flex items-center">
               <i className="fas fa-universal-access text-safety mr-2" aria-hidden="true"></i>
-              접근성 지원 및 자력대피 능력
+              {t('registration.accessibility_support')}
             </h3>
             
             {/* Accessibility Support Section */}
             <div className="mb-8">
-              <Label className="text-base font-medium mb-4 block">접근성 지원 필요사항</Label>
+              <Label className="text-base font-medium mb-4 block">{t('registration.accessibility')}</Label>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <Button
                   type="button"
@@ -231,8 +231,8 @@ export default function Registration() {
                     <i className="fas fa-user-check text-2xl text-gray-600" aria-hidden="true"></i>
                   </div>
                   <div className="text-center">
-                    <p className={`text-sm font-semibold ${selectedAccessibility.length === 0 ? 'text-gray-800' : 'text-gray-700'}`}>일반</p>
-                    <p className="text-xs text-gray-600">특별한 지원 불필요</p>
+                    <p className={`text-sm font-semibold ${selectedAccessibility.length === 0 ? 'text-gray-800' : 'text-gray-700'}`}>{t('registration.accessibility_normal')}</p>
+                    <p className="text-xs text-gray-600">{t('registration.accessibility_normal_desc')}</p>
                   </div>
                 </Button>
                 
@@ -402,6 +402,27 @@ export default function Registration() {
           </CardContent>
         </Card>
 
+        {/* Language Selection */}
+        <Card className="emergency-card">
+          <CardContent className="pt-6">
+            <h3 className="text-lg font-semibold mb-4 flex items-center">
+              <i className="fas fa-globe text-emergency mr-2" aria-hidden="true"></i>
+              {t('registration.language')}
+            </h3>
+            <Select onValueChange={(value) => form.setValue("language", value)} defaultValue={form.watch("language")}>
+              <SelectTrigger>
+                <SelectValue placeholder={t('registration.language_placeholder')} />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="ko">🇰🇷 한국어</SelectItem>
+                <SelectItem value="en">🇺🇸 English</SelectItem>
+                <SelectItem value="vi">🇻🇳 Tiếng Việt</SelectItem>
+                <SelectItem value="zh">🇨🇳 中文</SelectItem>
+              </SelectContent>
+            </Select>
+          </CardContent>
+        </Card>
+
         {/* Submit Button */}
         <div className="pt-6">
           <Button 
@@ -410,7 +431,7 @@ export default function Registration() {
             disabled={form.formState.isSubmitting}
           >
             <i className="fas fa-save mr-2" aria-hidden="true"></i>
-            {form.formState.isSubmitting ? "저장 중..." : "정보 저장하기"}
+            {form.formState.isSubmitting ? t('common.loading') + "..." : t('registration.save')}
           </Button>
         </div>
       </form>
