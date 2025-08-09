@@ -102,8 +102,13 @@ export default function Registration() {
       if (!existingProfile) {
         localStorage.setItem('hasRegistered', 'true');
         localStorage.setItem('currentUserId', userId || 'new-user');
+        // Add a delay to ensure localStorage is properly set
+        setTimeout(() => {
+          setLocation("/dashboard");
+        }, 200);
+      } else {
+        setLocation("/dashboard");
       }
-      setLocation("/dashboard");
     } catch (error) {
       toast({
         title: "오류가 발생했습니다",

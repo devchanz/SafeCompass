@@ -73,18 +73,21 @@ function AppContent() {
     if (hasSelectedLanguage) {
       // Check for first-time user vs returning user
       const hasUserData = localStorage.getItem('hasRegistered') === 'true';
+      const currentUserId = localStorage.getItem('currentUserId');
       
-      if (!hasUserData && !userProfile && location !== '/registration' && location !== '/language') {
-        // New user: go to registration
+      console.log('User flow check:', { hasUserData, userProfile: !!userProfile, currentUserId, location });
+      
+      if (!hasUserData && location !== '/registration' && location !== '/language') {
+        // New user: go to registration (don't check userProfile yet)
         console.log('New user detected, redirecting to registration');
         setLocation('/registration');
-      } else if (hasUserData && userProfile && location !== '/dashboard' && location !== '/emergency' && location !== '/guide' && location !== '/shelter-map') {
-        // Returning user: go to dashboard
-        console.log('Returning user detected, redirecting to dashboard');
+      } else if (hasUserData && currentUserId && location === '/registration') {
+        // Registered user shouldn't be on registration page
+        console.log('Registered user on registration page, redirecting to dashboard');
         setLocation('/dashboard');
       }
     }
-  }, [hasSelectedLanguage, userProfile, location, setLocation]);
+  }, [hasSelectedLanguage, location, setLocation]);
 
 
 

@@ -114,11 +114,9 @@ export default function LanguageSelection() {
                               filter: isFuture ? 'grayscale(1) brightness(0.7)' : 'none',
                             }}
                           >
-                            <FlagIcon 
-                              countryCode={lang.flagIcon} 
-                              size={32}
-                              className="drop-shadow-sm"
-                            />
+                            <span className="text-3xl" style={{ fontSize: '32px', lineHeight: 1 }}>
+                              {lang.flag}
+                            </span>
                           </div>
                           {/* Shine effect for active languages */}
                           {!isFuture && (
@@ -136,10 +134,9 @@ export default function LanguageSelection() {
                             <div className="flex items-center space-x-2">
                               {/* Selected state with flag */}
                               <div className="w-8 h-8 bg-gradient-to-br from-green-500 to-green-600 text-white rounded-full flex items-center justify-center shadow-lg overflow-hidden">
-                                <FlagIcon 
-                                  countryCode={lang.flagIcon} 
-                                  size={20}
-                                />
+                                <span className="text-lg" style={{ fontSize: '18px' }}>
+                                  {lang.flag}
+                                </span>
                               </div>
                               <div className="w-6 h-6 bg-emergency text-white rounded-full flex items-center justify-center animate-pulse">
                                 <i className="fas fa-check text-xs" aria-hidden="true"></i>
