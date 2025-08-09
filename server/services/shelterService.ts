@@ -15,7 +15,7 @@ export interface DisasterApiConfig {
   apiKey: string;
   baseUrl: string;
   endpoints: {
-    shelters: string;
+    shelters: string; // 통합대피소 API
   };
 }
 
@@ -31,21 +31,23 @@ export class ShelterService {
    */
   async getNearbyRealShelters(lat: number, lng: number, radius: number = 5): Promise<RealShelter[]> {
     try {
-      console.log(`🔍 대전 지역 대피소 검색 시작 - 사용자 위치: ${lat}, ${lng}`);
+      console.log(`🔍 통합대피소 API로 대전 지역 검색 시작 - 사용자 위치: ${lat}, ${lng}`);
       
-      // 여러 페이지를 조회하여 더 많은 대피소 데이터 수집
+      // 통합대피소 API에서 대전 지역 대피소 검색
       const allItems: any[] = [];
-      const maxPages = 500; // 전국 모든 대피소 데이터 완전 검색 (더 확장)
+      const maxPages = 750; // 72,749개 중에서 대전 지역 찾기
       
       for (let pageNo = 1; pageNo <= maxPages; pageNo++) {
         try {
           const url = new URL(this.config.endpoints.shelters, this.config.baseUrl);
           
-          // 행정안전부 지진 대피장소 API 파라미터
+          // 통합대피소 API 파라미터
           url.searchParams.set('serviceKey', this.config.apiKey);
           url.searchParams.set('pageNo', pageNo.toString());
           url.searchParams.set('numOfRows', '100'); // 페이지당 100개
-          url.searchParams.set('dataType', 'JSON');
+          url.searchParams.set('returnType', 'json');
+          
+          // 전국 모든 대피소 유형 검색 (대전 지역 찾기)
           
           console.log(`🔍 페이지 ${pageNo} API 호출`);
           
@@ -63,33 +65,29 @@ export class ShelterService {
           }
 
           const data = await response.json();
+          console.log(`📊 페이지 ${pageNo} 응답:`, JSON.stringify(data).substring(0, 200));
+          
           const items = data?.body || [];
           
           if (!Array.isArray(items) || items.length === 0) {
-            console.log(`페이지 ${pageNo}: 데이터 없음, 검색 종료`);
+            console.log(`페이지 ${pageNo}: 데이터 없음 - 응답 구조:`, Object.keys(data || {}));
+            if (pageNo === 1) {
+              console.log(`🔍 첫 페이지 실패: API 키 또는 요청 형식 확인 필요`);
+            }
             break;
           }
           
           console.log(`페이지 ${pageNo}: ${items.length}개 대피소 수집`);
           
-          // 대전 관련 모든 대피소 검색 - 다양한 표기법 확인
+          // 대전 관련 대피소 검색 - 통합대피소 API 필드명 사용
           const daejeonShelters = items.filter((item: any) => 
-            (item.CTPV_NM && (
-              item.CTPV_NM.includes('대전') || 
-              item.CTPV_NM.includes('Daejeon') ||
-              item.CTPV_NM === '44' // 대전광역시 코드
-            )) ||
-            (item.ADDR && (
-              item.ADDR.includes('대전') ||
-              item.ADDR.includes('Daejeon')
-            )) ||
-            (item.SGG_NM && item.SGG_NM.includes('대전'))
+            (item.RONA_DADDR && item.RONA_DADDR.includes('대전'))
           );
           
           if (daejeonShelters.length > 0) {
             console.log(`🏆 페이지 ${pageNo}에서 대전 관련 대피소 ${daejeonShelters.length}개 발견!`);
             daejeonShelters.forEach((shelter: any) => {
-              console.log(`  ★ ${shelter.SHLT_NM} (${shelter.ADDR}) - 시도: ${shelter.CTPV_NM} - 시군구: ${shelter.SGG_NM}`);
+              console.log(`  ★ ${shelter.REARE_NM} (${shelter.RONA_DADDR}) - 구분: ${shelter.SHLT_SE_NM}`);
             });
           }
           
@@ -146,7 +144,7 @@ export class ShelterService {
     
     const nearbyItems = items
       .map((item: any, index: number) => {
-        // 위경도 정보 추출 (실제 API 필드명: LAT, LOT)
+        // 통합대피소 API 필드명 사용 (LAT, LOT)
         const shelterLat = parseFloat(item.LAT || 0);
         const shelterLng = parseFloat(item.LOT || 0);
         
@@ -155,22 +153,18 @@ export class ShelterService {
             shelterLat < 33 || shelterLat > 39 ||   // 한국 위도 범위
             shelterLng < 124 || shelterLng > 132) { // 한국 경도 범위
           if (index < 5) { // 처음 5개만 로그 출력
-            console.log(`⚠️ 잘못된 좌표: ${item.SHLT_NM} - LAT: ${item.LAT}, LOT: ${item.LOT}`);
+            console.log(`⚠️ 잘못된 좌표: ${item.REARE_NM} - LAT: ${item.LAT}, LOT: ${item.LOT}`);
           }
           return null; // 잘못된 좌표는 제외
         }
 
         const distance = this.calculateDistance(userLat, userLng, shelterLat, shelterLng);
         
-        // 대전 관련 대피소 우선 로그 - 더 넓은 검색
-        if ((item.CTPV_NM && item.CTPV_NM.includes('대전')) || 
-            (item.ADDR && item.ADDR.includes('대전')) ||
-            (item.SGG_NM && item.SGG_NM.includes('대전'))) {
-          console.log(`🏆 대전 지역 대피소: ${item.SHLT_NM}: ${distance.toFixed(2)}km (${item.ADDR}) - 시도: ${item.CTPV_NM} - 시군구: ${item.SGG_NM}`);
-        } else if (item.CTPV_NM && (item.CTPV_NM.includes('충청남도') || item.CTPV_NM.includes('충청북도'))) {
-          console.log(`🎯 충청 지역 대피소: ${item.SHLT_NM}: ${distance.toFixed(2)}km (${item.ADDR})`);
+        // 대전 지역 대피소 로그 - 통합대피소 API 필드명 사용
+        if (item.RONA_DADDR && item.RONA_DADDR.includes('대전')) {
+          console.log(`🏆 대전 지역 대피소: ${item.REARE_NM}: ${distance.toFixed(2)}km (${item.RONA_DADDR}) - 구분: ${item.SHLT_SE_NM}`);
         } else if (distance <= 30) {
-          console.log(`📍 ${item.SHLT_NM}: ${distance.toFixed(2)}km (${item.ADDR})`);
+          console.log(`📍 ${item.REARE_NM}: ${distance.toFixed(2)}km (${item.RONA_DADDR})`);
         }
         
         return {
@@ -184,22 +178,14 @@ export class ShelterService {
       .filter(item => {
         if (item === null) return false;
         
-        // 대전 관련 대피소는 거리 무관하게 포함
-        if ((item.CTPV_NM && item.CTPV_NM.includes('대전')) || 
-            (item.ADDR && item.ADDR.includes('대전')) ||
-            (item.SGG_NM && item.SGG_NM.includes('대전'))) {
-          console.log(`✅ 대전 지역 대피소 포함: ${item.SHLT_NM} (${item.distance.toFixed(2)}km)`);
+        // 대전 지역 대피소는 거리 무관하게 포함 - 통합대피소 API 필드명
+        if (item.RONA_DADDR && item.RONA_DADDR.includes('대전')) {
+          console.log(`✅ 대전 지역 대피소 포함: ${item.REARE_NM} (${item.distance.toFixed(2)}km)`);
           return true;
         }
         
-        // 충청 지역 대피소도 포함
-        if (item.CTPV_NM && (item.CTPV_NM.includes('충청남도') || item.CTPV_NM.includes('충청북도'))) {
-          console.log(`✅ 충청 지역 대피소 포함: ${item.SHLT_NM} (${item.distance.toFixed(2)}km)`);
-          return true;
-        }
-        
-        // 다른 지역은 50km 이내만
-        return item.distance <= 50;
+        // 다른 지역은 30km 이내만
+        return item.distance <= 30;
       })
       .sort((a, b) => a.distance - b.distance)
       .slice(0, 20); // 최대 20개
@@ -210,18 +196,18 @@ export class ShelterService {
       console.log(`📊 거리 범위: ${nearbyItems[0]?.distance?.toFixed(2)}km ~ ${nearbyItems[nearbyItems.length-1]?.distance?.toFixed(2)}km`);
     }
 
-    // 결과를 앱 형식으로 변환
+    // 통합대피소 API 결과를 앱 형식으로 변환
     return nearbyItems.map((item) => ({
-      id: item.SENU || String(item.index),
-      name: item.SHLT_NM || '이름 없음',
-      type: this.classifyShelterType(item.SHLT_TYPE),
-      address: item.ADDR || '주소 없음',
+      id: item.MNG_SN || String(item.index),
+      name: item.REARE_NM || '이름 없음',
+      type: item.SHLT_SE_NM || '대피소',
+      address: item.RONA_DADDR || '주소 없음',
       lat: item.shelterLat,
       lng: item.shelterLng,
       distance: Math.round(item.distance),
       walkingTime: Math.round(item.distance * 12), // 5km/h 보행속도: 1km당 12분
-      capacity: item.ACTC_PSBLTY_TNOP || 0,
-      facilities: this.parseFacilities(item)
+      capacity: 0, // 통합대피소 API에는 수용인원 정보 없음
+      facilities: [`구분코드: ${item.SHLT_SE_CD}`]
     }));
   }
 
@@ -289,7 +275,7 @@ export function createShelterService(): ShelterService | null {
     apiKey,
     baseUrl: 'https://www.safetydata.go.kr',
     endpoints: {
-      shelters: '/V2/api/DSSP-IF-00706'
+      shelters: '/V2/api/DSSP-IF-10941' // 통합대피소 API
     }
   };
 
