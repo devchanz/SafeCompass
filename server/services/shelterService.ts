@@ -35,7 +35,7 @@ export class ShelterService {
       
       // 여러 페이지를 조회하여 더 많은 대피소 데이터 수집
       const allItems: any[] = [];
-      const maxPages = 30; // 대전 지역 대피소를 찾기 위해 더 많은 페이지 조회
+      const maxPages = 500; // 전국 모든 대피소 데이터 완전 검색 (더 확장)
       
       for (let pageNo = 1; pageNo <= maxPages; pageNo++) {
         try {
@@ -72,18 +72,34 @@ export class ShelterService {
           
           console.log(`페이지 ${pageNo}: ${items.length}개 대피소 수집`);
           
-          // 대전 광역시 대피소 우선 확인
+          // 대전 관련 모든 대피소 검색 - 다양한 표기법 확인
           const daejeonShelters = items.filter((item: any) => 
-            (item.CTPV_NM && item.CTPV_NM.includes('대전')) ||
-            (item.ADDR && item.ADDR.includes('대전')) ||
-            (item.CTPV_NM && item.CTPV_NM.includes('충청남도'))
+            (item.CTPV_NM && (
+              item.CTPV_NM.includes('대전') || 
+              item.CTPV_NM.includes('Daejeon') ||
+              item.CTPV_NM === '44' // 대전광역시 코드
+            )) ||
+            (item.ADDR && (
+              item.ADDR.includes('대전') ||
+              item.ADDR.includes('Daejeon')
+            )) ||
+            (item.SGG_NM && item.SGG_NM.includes('대전'))
           );
           
           if (daejeonShelters.length > 0) {
-            console.log(`🎯 페이지 ${pageNo}에서 대전/충청 지역 대피소 ${daejeonShelters.length}개 발견!`);
+            console.log(`🏆 페이지 ${pageNo}에서 대전 관련 대피소 ${daejeonShelters.length}개 발견!`);
             daejeonShelters.forEach((shelter: any) => {
-              console.log(`  - ${shelter.SHLT_NM} (${shelter.ADDR})`);
+              console.log(`  ★ ${shelter.SHLT_NM} (${shelter.ADDR}) - 시도: ${shelter.CTPV_NM} - 시군구: ${shelter.SGG_NM}`);
             });
+          }
+          
+          // 충청 지역 대피소도 별도 체크
+          const chungcheongShelters = items.filter((item: any) => 
+            (item.CTPV_NM && (item.CTPV_NM.includes('충청남도') || item.CTPV_NM.includes('충청북도')))
+          );
+          
+          if (chungcheongShelters.length > 0) {
+            console.log(`🎯 페이지 ${pageNo}에서 충청 지역 대피소 ${chungcheongShelters.length}개 발견`);
           }
           
           allItems.push(...items);
@@ -146,9 +162,13 @@ export class ShelterService {
 
         const distance = this.calculateDistance(userLat, userLng, shelterLat, shelterLng);
         
-        // 대전 광역시/충청남도 대피소 우선 검색
-        if ((item.CTPV_NM && (item.CTPV_NM.includes('대전') || item.CTPV_NM.includes('충청남도'))) || (item.ADDR && item.ADDR.includes('대전'))) {
-          console.log(`🎯 대전/충청남도 지역 대피소: ${item.SHLT_NM}: ${distance.toFixed(2)}km (${item.ADDR})`);
+        // 대전 관련 대피소 우선 로그 - 더 넓은 검색
+        if ((item.CTPV_NM && item.CTPV_NM.includes('대전')) || 
+            (item.ADDR && item.ADDR.includes('대전')) ||
+            (item.SGG_NM && item.SGG_NM.includes('대전'))) {
+          console.log(`🏆 대전 지역 대피소: ${item.SHLT_NM}: ${distance.toFixed(2)}km (${item.ADDR}) - 시도: ${item.CTPV_NM} - 시군구: ${item.SGG_NM}`);
+        } else if (item.CTPV_NM && (item.CTPV_NM.includes('충청남도') || item.CTPV_NM.includes('충청북도'))) {
+          console.log(`🎯 충청 지역 대피소: ${item.SHLT_NM}: ${distance.toFixed(2)}km (${item.ADDR})`);
         } else if (distance <= 30) {
           console.log(`📍 ${item.SHLT_NM}: ${distance.toFixed(2)}km (${item.ADDR})`);
         }
@@ -164,14 +184,22 @@ export class ShelterService {
       .filter(item => {
         if (item === null) return false;
         
-        // 대전 광역시/충청남도 대피소는 거리 무관하게 포함
-        if ((item.CTPV_NM && (item.CTPV_NM.includes('대전') || item.CTPV_NM.includes('충청남도'))) || (item.ADDR && item.ADDR.includes('대전'))) {
-          console.log(`✅ 대전/충청남도 지역 대피소 포함: ${item.SHLT_NM} (${item.distance.toFixed(2)}km)`);
+        // 대전 관련 대피소는 거리 무관하게 포함
+        if ((item.CTPV_NM && item.CTPV_NM.includes('대전')) || 
+            (item.ADDR && item.ADDR.includes('대전')) ||
+            (item.SGG_NM && item.SGG_NM.includes('대전'))) {
+          console.log(`✅ 대전 지역 대피소 포함: ${item.SHLT_NM} (${item.distance.toFixed(2)}km)`);
           return true;
         }
         
-        // 다른 지역은 100km 이내만
-        return item.distance <= 100;
+        // 충청 지역 대피소도 포함
+        if (item.CTPV_NM && (item.CTPV_NM.includes('충청남도') || item.CTPV_NM.includes('충청북도'))) {
+          console.log(`✅ 충청 지역 대피소 포함: ${item.SHLT_NM} (${item.distance.toFixed(2)}km)`);
+          return true;
+        }
+        
+        // 다른 지역은 50km 이내만
+        return item.distance <= 50;
       })
       .sort((a, b) => a.distance - b.distance)
       .slice(0, 20); // 최대 20개

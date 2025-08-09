@@ -93,57 +93,66 @@ export default function ShelterMapInteractive() {
   // 지도 초기화
   useEffect(() => {
     if (tmapReady && location && mapRef.current && !map) {
-      console.log('Initializing Leaflet map with location:', location);
+      console.log('🗺️ Leaflet 지도 초기화 시작:', location);
       
       try {
-        // 기존 지도가 있다면 완전히 제거
-        if ((mapRef.current as any)._leaflet_id) {
-          // 기존 지도 인스턴스가 있으면 제거
-          if (map) {
-            map.remove();
-          }
-          (mapRef.current as any)._leaflet_id = undefined;
+        // DOM 완전 초기화
+        if (mapRef.current) {
           mapRef.current.innerHTML = '';
+          // Leaflet ID 제거
+          delete (mapRef.current as any)._leaflet_id;
         }
 
-        // Leaflet 지도 생성
-        const newMap = window.L.map(mapRef.current, {
-          zoomControl: true,
-          scrollWheelZoom: true,
-          doubleClickZoom: true,
-          dragging: true
-        }).setView(
-          [location.coords.latitude, location.coords.longitude], 
-          13
-        );
-
-        // OpenStreetMap 타일 레이어 추가
-        window.L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-          attribution: '© OpenStreetMap contributors',
-          maxZoom: 18
-        }).addTo(newMap);
-
-        // 사용자 위치 마커 추가 (빨간색)
-        const userIcon = window.L.divIcon({
-          html: '<div style="background-color: #ff4444; width: 20px; height: 20px; border-radius: 50%; border: 3px solid white; box-shadow: 0 0 0 2px #ff4444;"></div>',
-          iconSize: [20, 20],
-          className: 'user-location-marker'
-        });
-
-        const userMarker = window.L.marker([location.coords.latitude, location.coords.longitude], {
-          icon: userIcon
-        }).addTo(newMap).bindPopup('현재 위치');
-
-        setMap(newMap);
-        setMarkers([userMarker]);
-        console.log('Leaflet map initialized successfully');
-        
-        // 지도 크기 조정
+        // 잠시 대기 후 지도 생성
         setTimeout(() => {
-          newMap.invalidateSize();
+          if (!mapRef.current) return;
+          
+          console.log('🗺️ Leaflet 지도 생성 중...');
+          
+          // Leaflet 지도 생성
+          const newMap = window.L.map(mapRef.current, {
+            zoomControl: true,
+            scrollWheelZoom: true,
+            doubleClickZoom: true,
+            dragging: true,
+            touchZoom: true
+          }).setView(
+            [location.coords.latitude, location.coords.longitude], 
+            13
+          );
+
+          // OpenStreetMap 타일 레이어 추가
+          window.L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors',
+            maxZoom: 18
+          }).addTo(newMap);
+
+          // 사용자 위치 마커 추가 (빨간색)
+          const userIcon = window.L.divIcon({
+            html: '<div style="background-color: #ff4444; width: 20px; height: 20px; border-radius: 50%; border: 3px solid white; box-shadow: 0 0 0 2px #ff4444;"></div>',
+            iconSize: [20, 20],
+            className: 'user-location-marker'
+          });
+
+          const userMarker = window.L.marker([location.coords.latitude, location.coords.longitude], {
+            icon: userIcon
+          }).addTo(newMap).bindPopup('현재 위치');
+
+          setMap(newMap);
+          setMarkers([userMarker]);
+          console.log('✅ Leaflet 지도 초기화 완료');
+          
+          // 지도 크기 조정
+          setTimeout(() => {
+            if (newMap) {
+              newMap.invalidateSize();
+              console.log('🗺️ 지도 크기 조정 완료');
+            }
+          }, 200);
         }, 100);
+        
       } catch (error) {
-        console.error('Failed to initialize map:', error);
+        console.error('❌ 지도 초기화 실패:', error);
       }
     }
   }, [tmapReady, location, map]);
@@ -483,7 +492,7 @@ export default function ShelterMapInteractive() {
                     <div className="flex items-center space-x-4">
                       <span className="text-sm font-medium text-emergency">
                         <i className="fas fa-walking mr-1" aria-hidden="true"></i>
-                        {shelter.distance}m
+                        {shelter.distance}km
                       </span>
                       <span className="text-sm text-gray-600">
                         <i className="fas fa-clock mr-1" aria-hidden="true"></i>
