@@ -88,21 +88,29 @@ export class ShelterService {
     }
 
     // 사용자 위치에서 가까운 순으로 정렬하고 반경 내 대피소만 필터링
+    console.log(`🔍 사용자 위치: ${userLat}, ${userLng}`);
+    console.log(`📦 처리할 대피소 데이터: ${items.length}개`);
+    
     const nearbyItems = items
       .map((item: any, index: number) => {
         // 위경도 정보 추출 (실제 API 필드명: LAT, LOT)
         const shelterLat = parseFloat(item.LAT || 0);
         const shelterLng = parseFloat(item.LOT || 0);
         
-        if (shelterLat === 0 || shelterLng === 0) {
-          console.log(`⚠️ 잘못된 좌표: ${item.SHLT_NM} - LAT: ${item.LAT}, LOT: ${item.LOT}`);
+        // 좌표 유효성 검증 - 한국 영토 범위 내
+        if (shelterLat === 0 || shelterLng === 0 || 
+            shelterLat < 33 || shelterLat > 39 ||   // 한국 위도 범위
+            shelterLng < 124 || shelterLng > 132) { // 한국 경도 범위
+          if (index < 5) { // 처음 5개만 로그 출력
+            console.log(`⚠️ 잘못된 좌표: ${item.SHLT_NM} - LAT: ${item.LAT}, LOT: ${item.LOT}`);
+          }
           return null; // 잘못된 좌표는 제외
         }
 
         const distance = this.calculateDistance(userLat, userLng, shelterLat, shelterLng);
         
-        if (distance <= 20) { // 20km 이내만 로그 출력
-          console.log(`📍 ${item.SHLT_NM}: ${distance.toFixed(2)}km`);
+        if (distance <= 50) { // 50km 이내만 로그 출력
+          console.log(`📍 ${item.SHLT_NM}: ${distance.toFixed(2)}km (${item.ADDR})`);
         }
         
         return {
@@ -113,11 +121,15 @@ export class ShelterService {
           index
         };
       })
-      .filter(item => item && item.distance <= 100) // 100km로 더 확대
+      .filter(item => item !== null) // null 제거
       .sort((a, b) => a.distance - b.distance)
-      .slice(0, 20); // 최대 20개
+      .slice(0, 20); // 최대 20개 (거리 필터링 전에 가까운 순으로 정렬)
       
-    console.log(`🎯 ${nearbyItems.length}개 대피소가 100km 내에서 발견됨`);
+    console.log(`🎯 총 ${nearbyItems.length}개 대피소 발견됨 (가장 가까운 20개)`);
+    
+    if (nearbyItems.length > 0) {
+      console.log(`📊 거리 범위: ${nearbyItems[0]?.distance?.toFixed(2)}km ~ ${nearbyItems[nearbyItems.length-1]?.distance?.toFixed(2)}km`);
+    }
 
     return nearbyItems.map((item: any): RealShelter => {
       const walkingTime = Math.round(item.distance * 12); // 평균 5km/h = 12분/km

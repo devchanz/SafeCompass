@@ -187,32 +187,32 @@ export default function Dashboard() {
           <div className="space-y-3">
             <div className="flex justify-between items-center">
               <span className="text-gray-600">{t('dashboard.name')}:</span>
-              <span className="font-medium">{userProfile.name}</span>
+              <span className="font-medium">{userProfile?.name}</span>
             </div>
             <div className="flex justify-between items-center">
               <span className="text-gray-600">{t('dashboard.age')}:</span>
-              <span className="font-medium">{userProfile.age}{t('dashboard.age_suffix')}</span>
+              <span className="font-medium">{userProfile?.age}{t('dashboard.age_suffix')}</span>
             </div>
             <div className="flex justify-between items-center">
               <span className="text-gray-600">{t('dashboard.evacuation_ability')}:</span>
               <span className={`font-medium ${
-                userProfile.mobility === 'independent' ? 'text-safety' :
-                userProfile.mobility === 'assisted' ? 'text-warning' : 'text-emergency'
+                userProfile?.mobility === 'independent' ? 'text-safety' :
+                userProfile?.mobility === 'assisted' ? 'text-warning' : 'text-emergency'
               }`}>
-                {userProfile.mobility === 'independent' ? t('dashboard.mobility_independent') :
-                 userProfile.mobility === 'assisted' ? t('dashboard.mobility_assisted') : t('dashboard.mobility_unable')}
+                {userProfile?.mobility === 'independent' ? t('dashboard.mobility_independent') :
+                 userProfile?.mobility === 'assisted' ? t('dashboard.mobility_assisted') : t('dashboard.mobility_unable')}
               </span>
             </div>
             <div className="flex justify-between items-center">
               <span className="text-gray-600">{t('dashboard.accessibility')}:</span>
               <div className="flex space-x-2">
-                {userProfile.accessibility?.includes('visual') && (
+                {userProfile?.accessibility?.includes('visual') && (
                   <span className="px-2 py-1 bg-safety text-white text-xs rounded">{t('dashboard.visual_support')}</span>
                 )}
-                {userProfile.accessibility?.includes('hearing') && (
+                {userProfile?.accessibility?.includes('hearing') && (
                   <span className="px-2 py-1 bg-warning text-white text-xs rounded">{t('dashboard.hearing_support')}</span>
                 )}
-                {(!userProfile.accessibility || userProfile.accessibility.length === 0) && (
+                {(!userProfile?.accessibility || userProfile?.accessibility?.length === 0) && (
                   <span className="px-2 py-1 bg-gray-300 text-gray-700 text-xs rounded">{t('dashboard.basic_support')}</span>
                 )}
               </div>

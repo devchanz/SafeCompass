@@ -96,15 +96,21 @@ export default function ShelterMapInteractive() {
       console.log('Initializing Leaflet map with location:', location);
       
       try {
+        // 기존 지도가 있다면 제거
+        if (mapRef.current._leaflet_id) {
+          mapRef.current._leaflet_id = null;
+        }
+
         // Leaflet 지도 생성
         const newMap = window.L.map(mapRef.current).setView(
           [location.coords.latitude, location.coords.longitude], 
-          15
+          13
         );
 
         // OpenStreetMap 타일 레이어 추가
         window.L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-          attribution: '© OpenStreetMap contributors'
+          attribution: '© OpenStreetMap contributors',
+          maxZoom: 18
         }).addTo(newMap);
 
         // 사용자 위치 마커 추가 (빨간색)
@@ -121,6 +127,11 @@ export default function ShelterMapInteractive() {
         setMap(newMap);
         setMarkers([userMarker]);
         console.log('Leaflet map initialized successfully');
+        
+        // 지도 크기 조정
+        setTimeout(() => {
+          newMap.invalidateSize();
+        }, 100);
       } catch (error) {
         console.error('Failed to initialize map:', error);
       }
