@@ -136,29 +136,45 @@ export class DatabaseStorage implements IStorage {
     if (!process.env.DATABASE_URL) {
       throw new Error('DATABASE_URL environment variable is required');
     }
+    console.log('Initializing DatabaseStorage with DATABASE_URL');
     const sql = neon(process.env.DATABASE_URL);
     this.db = drizzle(sql);
   }
 
   async getUser(id: string): Promise<User | undefined> {
-    const result = await this.db.select().from(users).where(eq(users.id, id)).limit(1);
-    return result[0];
+    try {
+      console.log(`Getting user with id: ${id}`);
+      const result = await this.db.select().from(users).where(eq(users.id, id)).limit(1);
+      console.log(`User query result:`, result);
+      return result[0];
+    } catch (error) {
+      console.error(`Error getting user ${id}:`, error);
+      throw error;
+    }
   }
 
   async createUser(insertUser: InsertUser): Promise<User> {
-    const userData = {
-      ...insertUser,
-      accessibility: insertUser.accessibility || null,
-      gender: insertUser.gender || null,
-    };
-    const result = await this.db.insert(users).values(userData).returning();
-    return result[0];
+    try {
+      console.log('Creating user with data:', insertUser);
+      const userData = {
+        ...insertUser,
+        accessibility: Array.isArray(insertUser.accessibility) ? insertUser.accessibility : null,
+        gender: insertUser.gender || null,
+      };
+      console.log('Processed user data:', userData);
+      const result = await this.db.insert(users).values(userData).returning();
+      console.log('User creation result:', result);
+      return result[0];
+    } catch (error) {
+      console.error('Error creating user:', error);
+      throw error;
+    }
   }
 
   async updateUser(id: string, updateData: Partial<InsertUser>): Promise<User | undefined> {
     const cleanedData = {
       ...updateData,
-      accessibility: updateData.accessibility || null,
+      accessibility: Array.isArray(updateData.accessibility) ? updateData.accessibility : null,
       gender: updateData.gender || null,
     };
     const result = await this.db.update(users).set(cleanedData).where(eq(users.id, id)).returning();
@@ -192,4 +208,19 @@ export class DatabaseStorage implements IStorage {
 
 // Switch between MemStorage and DatabaseStorage
 // Use DatabaseStorage for production, MemStorage for development/testing
-export const storage = process.env.DATABASE_URL ? new DatabaseStorage() : new MemStorage();
+let storage: IStorage;
+
+try {
+  if (process.env.DATABASE_URL) {
+    console.log('Using DatabaseStorage with Supabase');
+    storage = new DatabaseStorage();
+  } else {
+    console.log('Using MemStorage (no DATABASE_URL found)');
+    storage = new MemStorage();
+  }
+} catch (error) {
+  console.error('Failed to initialize DatabaseStorage, falling back to MemStorage:', error);
+  storage = new MemStorage();
+}
+
+export { storage };
