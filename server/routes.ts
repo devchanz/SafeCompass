@@ -273,35 +273,85 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(500).json({ error: "T-Map API 키가 설정되지 않았습니다" });
       }
 
-      // Call T-Map Directions API
-      const response = await fetch('https://apis.openapi.sk.com/tmap/routes/pedestrian?version=1&format=json&callback=result', {
-        method: 'POST',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
-          'appKey': tmapApiKey
-        },
-        body: JSON.stringify({
-          startX: startX.toString(),
-          startY: startY.toString(),
-          endX: endX.toString(),
-          endY: endY.toString(),
-          reqCoordType: 'WGS84GEO',
-          resCoordType: 'EPSG3857',
-          startName: '출발지',
-          endName: '목적지'
-        })
-      });
+      console.log('🗺️ T-Map 도보 경로 계산 시작:', { startX, startY, endX, endY });
 
-      if (!response.ok) {
-        throw new Error(`T-Map API error: ${response.status}`);
+      try {
+        const tmapResponse = await fetch('https://apis.openapi.sk.com/tmap/routes/pedestrian?version=1&format=json', {
+          method: 'POST',
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            'appKey': tmapApiKey
+          },
+          body: JSON.stringify({
+            startX: startX.toString(),
+            startY: startY.toString(),
+            endX: endX.toString(),
+            endY: endY.toString(),
+            reqCoordType: "WGS84GEO",
+            resCoordType: "WGS84GEO",
+            searchOption: "0", // 최적 경로
+            trafficInfo: "N"
+          })
+        });
+
+        if (!tmapResponse.ok) {
+          console.error('T-Map API 응답 오류:', tmapResponse.status);
+          return res.status(tmapResponse.status).json({ 
+            error: `T-Map API 오류: ${tmapResponse.status}` 
+          });
+        }
+
+        const tmapData = await tmapResponse.json();
+        
+        if (!tmapData.features || tmapData.features.length === 0) {
+          return res.status(404).json({ error: "경로를 찾을 수 없습니다" });
+        }
+
+        // T-Map 응답에서 경로 정보 파싱
+        const coordinates: [number, number][] = [];
+        let totalDistance = 0;
+        let totalTime = 0;
+
+        tmapData.features.forEach((feature: any) => {
+          if (feature.geometry.type === 'LineString') {
+            const coords = feature.geometry.coordinates;
+            coords.forEach((coord: number[]) => {
+              coordinates.push([coord[1], coord[0]]); // [lat, lng] 순서로 변환
+            });
+          }
+
+          // 거리와 시간 정보 추출
+          if (feature.properties) {
+            if (feature.properties.totalDistance) {
+              totalDistance = feature.properties.totalDistance;
+            }
+            if (feature.properties.totalTime) {
+              totalTime = feature.properties.totalTime;
+            }
+          }
+        });
+
+        console.log(`✅ T-Map 도보 경로 파싱 완료: ${coordinates.length}개 좌표, ${totalDistance}m, ${totalTime}초`);
+
+        res.json({
+          totalDistance,
+          totalTime,
+          coordinates
+        });
+
+      } catch (error) {
+        console.error('❌ T-Map API 호출 오류:', error);
+        res.status(500).json({ 
+          error: "T-Map API 호출 실패",
+          details: (error as Error).message 
+        });
       }
-
-      const routeData = await response.json();
-      res.json(routeData);
     } catch (error) {
-      console.error("T-Map route calculation failed:", error);
-      res.status(500).json({ error: "경로 계산 중 오류가 발생했습니다" });
+      console.error('❌ T-Map 라우트 전체 오류:', error);
+      res.status(500).json({ 
+        error: "경로 계산 중 오류가 발생했습니다"
+      });
     }
   });
 

@@ -302,13 +302,22 @@ export default function ShelterMapFixed() {
         
         console.log(`✅ 경로 표시 완료: ${distanceKm}km, ${timeMinutes}분`);
         
-        // 팝업에 실제 경로 정보 업데이트
+        // T-Map 실제 경로 정보로 대피소 정보 업데이트
+        setSelectedShelter({
+          ...shelter,
+          distance: parseFloat(distanceKm),
+          walkingTime: timeMinutes
+        });
+        
+        // 팝업에 실제 경로 정보 표시
         if (userMarkerRef.current) {
           userMarkerRef.current.bindPopup(`
-            <div class="p-2">
-              <strong>현재 위치</strong><br/>
-              <small>📍 ${shelter.name}까지<br/>
-              🚶 ${distanceKm}km (${timeMinutes}분)</small>
+            <div class="p-3">
+              <strong class="text-blue-600">현재 위치</strong><br/>
+              <div class="mt-2 pt-2 border-t">
+                <p class="text-sm font-medium">📍 ${shelter.name}까지</p>
+                <p class="text-xs text-green-600">🚶 실제 도보: ${distanceKm}km (${timeMinutes}분)</p>
+              </div>
             </div>
           `);
         }

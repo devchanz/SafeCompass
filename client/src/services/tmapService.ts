@@ -43,12 +43,12 @@ export class TMapService {
 
       console.log('🗺️ T-Map API 도보 경로 요청:', requestBody);
 
-      const response = await fetch(`${this.baseUrl}/routes/pedestrian?version=1&format=json`, {
+      // 서버를 통해 T-Map API 호출 (CORS 해결)
+      const response = await fetch('/api/tmap/route', {
         method: 'POST',
         headers: {
           'Accept': 'application/json',
-          'Content-Type': 'application/json',
-          'appKey': this.apiKey
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify(requestBody)
       });

@@ -142,7 +142,7 @@ export class ShelterService {
       })
       .filter(item => item !== null && item.distance <= 50) // 50km 반경
       .sort((a, b) => a.distance - b.distance)
-      .slice(0, 50);
+      .slice(0, 5);
 
     const shelters: RealShelter[] = nearbyItems.map((item: any) => {
       const walkingTime = Math.ceil((item.distance / 5) * 60); // 5km/h 보행속도
