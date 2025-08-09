@@ -5,16 +5,28 @@ import { type User, type InsertUser, type InsertCompanion, type Companion } from
 export function useUserProfile() {
   const queryClient = useQueryClient();
 
-  // For demo purposes, we'll use a single user ID
-  const userId = "demo-user-1";
+  // Get current user ID from localStorage or use demo ID
+  const getCurrentUserId = () => {
+    const hasRegistered = localStorage.getItem('hasRegistered') === 'true';
+    const currentUserId = localStorage.getItem('currentUserId');
+    
+    // If not registered or no user ID, don't load any profile
+    if (!hasRegistered || !currentUserId) {
+      return null;
+    }
+    
+    return currentUserId;
+  };
+
+  const userId = getCurrentUserId();
 
   const query = useQuery({
     queryKey: ["/api/users", userId],
     queryFn: async () => {
       // Check if language has been selected first
       const hasSelectedLanguage = localStorage.getItem('selectedLanguage') !== null;
-      if (!hasSelectedLanguage) {
-        return null; // Don't load user profile until language is selected
+      if (!hasSelectedLanguage || !userId) {
+        return null; // Don't load user profile until language is selected and user exists
       }
       
       try {
@@ -28,7 +40,7 @@ export function useUserProfile() {
         throw error;
       }
     },
-    enabled: localStorage.getItem('selectedLanguage') !== null, // Only enable when language is selected
+    enabled: localStorage.getItem('selectedLanguage') !== null && userId !== null, // Only enable when language is selected and user exists
   });
 
   const createProfile = useMutation({

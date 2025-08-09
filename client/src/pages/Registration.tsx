@@ -29,20 +29,24 @@ export default function Registration() {
   const { toast } = useToast();
   const { language, t } = useLanguage();
   const { data: existingProfile, createProfile, updateProfile, createCompanion } = useUserProfile();
+  
+  // Check if this is editing mode (existing registered user) vs new registration
+  const isEditMode = localStorage.getItem('hasRegistered') === 'true' && existingProfile;
+  
   const [selectedAccessibility, setSelectedAccessibility] = useState<string[]>(
-    existingProfile?.accessibility || []
+    isEditMode ? (existingProfile?.accessibility || []) : []
   );
 
   const form = useForm<RegistrationData>({
     resolver: zodResolver(registrationSchema),
     defaultValues: {
-      name: existingProfile?.name || "",
-      age: existingProfile?.age || 0,
-      gender: existingProfile?.gender || "",
-      address: existingProfile?.address || "",
-      language: existingProfile?.language || language,
-      accessibility: existingProfile?.accessibility || [],
-      mobility: existingProfile?.mobility || "independent",
+      name: isEditMode ? (existingProfile?.name || "") : "",
+      age: isEditMode ? (existingProfile?.age || 0) : 0,
+      gender: isEditMode ? (existingProfile?.gender || "") : "",
+      address: isEditMode ? (existingProfile?.address || "") : "",
+      language: language, // Always use current language selection
+      accessibility: isEditMode ? (existingProfile?.accessibility || []) : [],
+      mobility: isEditMode ? (existingProfile?.mobility || "independent") : "independent",
       partner: {
         name: "",
         phone: "",
@@ -65,21 +69,21 @@ export default function Registration() {
 
       let userId = existingProfile?.id;
 
-      if (existingProfile) {
+      if (isEditMode && existingProfile) {
         await updateProfile.mutateAsync({
           id: existingProfile.id,
           ...profileData,
         });
         toast({
-          title: "정보가 수정되었습니다",
-          description: "사용자 정보가 성공적으로 업데이트되었습니다.",
+          title: t('registration.update_success'),
+          description: t('registration.update_success_desc'),
         });
       } else {
         const newUser = await createProfile.mutateAsync(profileData);
         userId = newUser.id;
         toast({
-          title: "등록이 완료되었습니다",
-          description: "맞춤형 안전 가이드를 이용하실 수 있습니다.",
+          title: t('registration.success'),
+          description: t('registration.success_desc'),
         });
       }
 
@@ -99,7 +103,7 @@ export default function Registration() {
       }
 
       // Mark user as registered for proper flow control
-      if (!existingProfile) {
+      if (!isEditMode) {
         localStorage.setItem('hasRegistered', 'true');
         localStorage.setItem('currentUserId', userId || 'new-user');
         // Add a delay to ensure localStorage is properly set
@@ -138,7 +142,7 @@ export default function Registration() {
           <div className="w-3 h-3 bg-gray-300 rounded-full"></div>
         </div>
         <h2 className="text-2xl font-bold text-center text-gray-900">
-          {existingProfile ? t('registration.edit_title') : t('registration.title')}
+          {isEditMode ? t('registration.edit_title') : t('registration.title')}
         </h2>
         <p className="text-center text-gray-600 mt-2">
           {t('registration.subtitle')}
