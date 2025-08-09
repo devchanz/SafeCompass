@@ -34,12 +34,19 @@ export default function ShelterMapInteractive() {
   const [markers, setMarkers] = useState<any[]>([]);
   const mapRef = useRef<HTMLDivElement>(null);
   
-  const { data: shelters, isLoading } = useQuery({
-    queryKey: ["/api/shelters"],
+  const { data: shelters, isLoading, error: shelterError } = useQuery({
+    queryKey: ["/api/shelters", location?.coords?.latitude, location?.coords?.longitude],
     queryFn: async () => {
-      const response = await apiRequest("GET", "/api/shelters");
+      if (!location || !location.coords) {
+        throw new Error("위치 정보가 필요합니다");
+      }
+      const response = await apiRequest("GET", `/api/shelters?lat=${location.coords.latitude}&lng=${location.coords.longitude}`);
+      if (!response.ok) {
+        throw new Error(`대피소 정보 조회 실패: ${response.status}`);
+      }
       return response.json() as Promise<Shelter[]>;
     },
+    enabled: !!location?.coords,
   });
 
   // Leaflet 지도 라이브러리 로드

@@ -95,10 +95,15 @@ export class ShelterService {
         const shelterLng = parseFloat(item.LOT || 0);
         
         if (shelterLat === 0 || shelterLng === 0) {
+          console.log(`⚠️ 잘못된 좌표: ${item.SHLT_NM} - LAT: ${item.LAT}, LOT: ${item.LOT}`);
           return null; // 잘못된 좌표는 제외
         }
 
         const distance = this.calculateDistance(userLat, userLng, shelterLat, shelterLng);
+        
+        if (distance <= 20) { // 20km 이내만 로그 출력
+          console.log(`📍 ${item.SHLT_NM}: ${distance.toFixed(2)}km`);
+        }
         
         return {
           ...item,
@@ -108,9 +113,11 @@ export class ShelterService {
           index
         };
       })
-      .filter(item => item && item.distance <= 50) // 50km 이내로 확대 (전국 대피소 고려)
+      .filter(item => item && item.distance <= 100) // 100km로 더 확대
       .sort((a, b) => a.distance - b.distance)
       .slice(0, 20); // 최대 20개
+      
+    console.log(`🎯 ${nearbyItems.length}개 대피소가 100km 내에서 발견됨`);
 
     return nearbyItems.map((item: any): RealShelter => {
       const walkingTime = Math.round(item.distance * 12); // 평균 5km/h = 12분/km
@@ -199,15 +206,22 @@ export class ShelterService {
 
 // 실제 API 연동을 위한 설정 예시
 export function createShelterService(): ShelterService | null {
+  const apiKey = process.env.DISASTER_API_KEY;
+  
+  if (!apiKey) {
+    console.warn('⚠️ DISASTER_API_KEY 환경변수가 설정되지 않았습니다.');
+    return null;
+  }
+
   // 실제 재난안전대응데이터 플랫폼 API 설정
   const config: DisasterApiConfig = {
-    apiKey: 'E66AUK0213KP6N6W', // 제공받은 API 키
+    apiKey: apiKey,
     baseUrl: 'https://www.safetydata.go.kr',
     endpoints: {
       shelters: '/V2/api/DSSP-IF-00706' // 행정안전부_지진_대피장소 API
     }
   };
 
-  console.log('✅ 실제 재난안전 API 서비스 생성됨');
+  console.log('✅ 실제 재난안전 API 서비스 생성됨 (환경변수 사용)');
   return new ShelterService(config);
 }
