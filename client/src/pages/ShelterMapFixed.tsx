@@ -160,8 +160,17 @@ export default function ShelterMapFixed() {
 
   // 대피소 데이터 조회
   const { data: shelters = [], isLoading, error } = useQuery<Shelter[]>({
-    queryKey: ['/api/shelters', userLocation?.lat, userLocation?.lng],
+    queryKey: [`/api/shelters/${userLocation?.lat}/${userLocation?.lng}`],
     enabled: !!userLocation,
+  });
+
+  // 디버깅용 로그
+  console.log('🔍 Debug Info:', {
+    userLocation,
+    isLoading,
+    error: error?.message,
+    sheltersLength: shelters?.length,
+    shelters: shelters?.slice(0, 3) // 처음 3개만 출력
   });
 
   // 지도 초기화
@@ -421,7 +430,7 @@ export default function ShelterMapFixed() {
                 ) : error ? (
                   <Alert>
                     <AlertDescription>
-네트워크 오류가 발생했습니다
+                      네트워크 오류가 발생했습니다: {error?.message || '알 수 없는 오류'}
                     </AlertDescription>
                   </Alert>
                 ) : (shelters as Shelter[]).length === 0 ? (

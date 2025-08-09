@@ -190,9 +190,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Shelter information - 실제 API 연동 대응
-  app.get("/api/shelters", async (req, res) => {
+  app.get("/api/shelters/:lat/:lng", async (req, res) => {
     try {
-      const { lat, lng } = req.query;
+      const { lat, lng } = req.params;
       
       if (!lat || !lng) {
         return res.status(400).json({
@@ -201,8 +201,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
 
-      const userLat = parseFloat(lat as string);
-      const userLng = parseFloat(lng as string);
+      const userLat = parseFloat(lat);
+      const userLng = parseFloat(lng);
       
       // 실제 API 연동 시도
       const { ShelterService } = await import('./services/shelterService');
