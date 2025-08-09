@@ -3,22 +3,23 @@ import { useLocation } from "wouter";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useLanguage, Language } from "@/contexts/LanguageContext";
+import { FlagIcon } from "@/components/FlagIcon";
 
 const languages = [
-  { code: 'ko' as Language, name: '한국어', flag: '🇰🇷', displayCode: 'KR' },
-  { code: 'en' as Language, name: 'English', flag: '🇺🇸', displayCode: 'EN' },
-  { code: 'vi' as Language, name: 'Tiếng Việt', flag: '🇻🇳', displayCode: 'VI' },
-  { code: 'zh' as Language, name: '中文', flag: '🇨🇳', displayCode: 'ZH' },
+  { code: 'ko' as Language, name: '한국어', flag: '🇰🇷', displayCode: 'KR', flagIcon: 'KR' },
+  { code: 'en' as Language, name: 'English', flag: '🇺🇸', displayCode: 'EN', flagIcon: 'US' },
+  { code: 'vi' as Language, name: 'Tiếng Việt', flag: '🇻🇳', displayCode: 'VI', flagIcon: 'VN' },
+  { code: 'zh' as Language, name: '中文', flag: '🇨🇳', displayCode: 'ZH', flagIcon: 'CN' },
 ];
 
 // Extended languages for future implementation
 const futureLanguages = [
-  { code: 'ja' as const, name: '日本語', flag: '🇯🇵', displayCode: 'JA' },
-  { code: 'th' as const, name: 'ไทย', flag: '🇹🇭', displayCode: 'TH' },
-  { code: 'ru' as const, name: 'Русский', flag: '🇷🇺', displayCode: 'RU' },
-  { code: 'es' as const, name: 'Español', flag: '🇪🇸', displayCode: 'ES' },
-  { code: 'fr' as const, name: 'Français', flag: '🇫🇷', displayCode: 'FR' },
-  { code: 'de' as const, name: 'Deutsch', flag: '🇩🇪', displayCode: 'DE' },
+  { code: 'ja' as const, name: '日本語', flag: '🇯🇵', displayCode: 'JA', flagIcon: 'JP' },
+  { code: 'th' as const, name: 'ไทย', flag: '🇹🇭', displayCode: 'TH', flagIcon: 'TH' },
+  { code: 'ru' as const, name: 'Русский', flag: '🇷🇺', displayCode: 'RU', flagIcon: 'RU' },
+  { code: 'es' as const, name: 'Español', flag: '🇪🇸', displayCode: 'ES', flagIcon: 'ES' },
+  { code: 'fr' as const, name: 'Français', flag: '🇫🇷', displayCode: 'FR', flagIcon: 'FR' },
+  { code: 'de' as const, name: 'Deutsch', flag: '🇩🇪', displayCode: 'DE', flagIcon: 'DE' },
 ];
 
 export default function LanguageSelection() {
@@ -107,15 +108,18 @@ export default function LanguageSelection() {
                           {!isFuture && (
                             <div className="absolute inset-0 bg-gradient-to-br from-blue-50 to-gray-50 opacity-60"></div>
                           )}
-                          <span 
-                            className="text-3xl relative z-10 transform transition-all duration-200 hover:scale-110" 
+                          <div 
+                            className="relative z-10 transform transition-all duration-200 hover:scale-110" 
                             style={{ 
                               filter: isFuture ? 'grayscale(1) brightness(0.7)' : 'none',
-                              textShadow: !isFuture ? '0 2px 4px rgba(0,0,0,0.1)' : 'none'
                             }}
                           >
-                            {lang.flag}
-                          </span>
+                            <FlagIcon 
+                              countryCode={lang.flagIcon} 
+                              size={32}
+                              className="drop-shadow-sm"
+                            />
+                          </div>
                           {/* Shine effect for active languages */}
                           {!isFuture && (
                             <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-0 hover:opacity-20 transform -skew-x-12 -translate-x-full hover:translate-x-full transition-all duration-700"></div>
@@ -131,8 +135,11 @@ export default function LanguageSelection() {
                           {selectedLanguage === lang.code ? (
                             <div className="flex items-center space-x-2">
                               {/* Selected state with flag */}
-                              <div className="w-8 h-8 bg-gradient-to-br from-green-500 to-green-600 text-white rounded-full flex items-center justify-center shadow-lg">
-                                <span className="text-lg">{lang.flag}</span>
+                              <div className="w-8 h-8 bg-gradient-to-br from-green-500 to-green-600 text-white rounded-full flex items-center justify-center shadow-lg overflow-hidden">
+                                <FlagIcon 
+                                  countryCode={lang.flagIcon} 
+                                  size={20}
+                                />
                               </div>
                               <div className="w-6 h-6 bg-emergency text-white rounded-full flex items-center justify-center animate-pulse">
                                 <i className="fas fa-check text-xs" aria-hidden="true"></i>

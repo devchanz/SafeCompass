@@ -4,6 +4,7 @@ export type Language = 'ko' | 'en' | 'vi' | 'zh';
 
 interface LanguageContextType {
   currentLanguage: Language;
+  language: Language; // Add alias for backward compatibility
   setLanguage: (lang: Language) => void;
   t: (key: string) => string;
 }
@@ -541,7 +542,7 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   };
 
   return (
-    <LanguageContext.Provider value={{ currentLanguage, setLanguage, t }}>
+    <LanguageContext.Provider value={{ currentLanguage, language: currentLanguage, setLanguage, t }}>
       {children}
     </LanguageContext.Provider>
   );

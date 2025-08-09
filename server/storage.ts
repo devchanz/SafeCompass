@@ -30,33 +30,41 @@ export class MemStorage implements IStorage {
     this.companions = new Map();
     this.emergencyEvents = new Map();
     
-    // Add demo user for testing
+    // Only add demo data in development mode and if explicitly enabled
     this.seedDemoData();
   }
 
   private seedDemoData() {
-    const demoUser: User = {
-      id: 'demo-user-1',
-      name: '김민수',
-      age: 34,
-      gender: '남성',
-      address: '서울특별시 강남구 역삼동 123-45',
-      language: 'korean',
-      accessibility: ['visual'],
-      mobility: 'independent',
-      createdAt: new Date()
-    };
+    // Check if we're in development and demo data is requested
+    const enableDemoData = process.env.NODE_ENV === 'development' || process.env.ENABLE_DEMO_DATA === 'true';
     
-    const demoCompanion: Companion = {
-      id: 'demo-companion-1',
-      userId: 'demo-user-1',
-      name: '김영희',
-      phone: '010-1234-5678',
-      relationship: 'family'
-    };
+    if (enableDemoData) {
+      const demoUser: User = {
+        id: 'demo-user-1',
+        name: '김민수',
+        age: 34,
+        gender: '남성',
+        address: '서울특별시 강남구 역삼동 123-45',
+        language: 'korean',
+        accessibility: ['visual'],
+        mobility: 'independent',
+        createdAt: new Date()
+      };
+      
+      const demoCompanion: Companion = {
+        id: 'demo-companion-1',
+        userId: 'demo-user-1',
+        name: '김영희',
+        phone: '010-1234-5678',
+        relationship: 'family'
+      };
 
-    this.users.set(demoUser.id, demoUser);
-    this.companions.set(demoCompanion.id, demoCompanion);
+      this.users.set(demoUser.id, demoUser);
+      this.companions.set(demoCompanion.id, demoCompanion);
+      console.log('Demo data loaded for development');
+    } else {
+      console.log('Starting with clean storage - no demo data');
+    }
   }
 
   async getUser(id: string): Promise<User | undefined> {

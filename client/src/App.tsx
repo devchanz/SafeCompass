@@ -68,10 +68,21 @@ function AppContent() {
     }
   }, [isEmergencyActive, hasUnreadAlert, location, setLocation]);
 
-  // Redirect to registration if language selected but no user profile exists
+  // Smart user flow based on user state
   useEffect(() => {
-    if (hasSelectedLanguage && !userProfile && location !== '/registration' && location !== '/language') {
-      setLocation('/registration');
+    if (hasSelectedLanguage) {
+      // Check for first-time user vs returning user
+      const hasUserData = localStorage.getItem('hasRegistered') === 'true';
+      
+      if (!hasUserData && !userProfile && location !== '/registration' && location !== '/language') {
+        // New user: go to registration
+        console.log('New user detected, redirecting to registration');
+        setLocation('/registration');
+      } else if (hasUserData && userProfile && location !== '/dashboard' && location !== '/emergency' && location !== '/guide' && location !== '/shelter-map') {
+        // Returning user: go to dashboard
+        console.log('Returning user detected, redirecting to dashboard');
+        setLocation('/dashboard');
+      }
     }
   }, [hasSelectedLanguage, userProfile, location, setLocation]);
 

@@ -170,14 +170,30 @@ export default function Dashboard() {
               <i className="fas fa-exclamation-triangle mr-2" aria-hidden="true"></i>
               {t('dashboard.earthquake_simulation')}
             </Button>
-            <Button 
-              onClick={() => window.open('/clear-cache.html', '_blank')}
-              variant="outline"
-              className="border-blue-300 text-blue-700 hover:bg-blue-50"
-            >
-              <i className="fas fa-broom mr-2" aria-hidden="true"></i>
-              🧹 캐시 정리 도구 (개발용)
-            </Button>
+            <div className="grid grid-cols-2 gap-2">
+              <Button 
+                onClick={() => window.open('/clear-cache.html', '_blank')}
+                variant="outline"
+                size="sm"
+                className="border-blue-300 text-blue-700 hover:bg-blue-50"
+              >
+                <i className="fas fa-broom mr-1" aria-hidden="true"></i>
+                캐시 정리
+              </Button>
+              <Button 
+                onClick={() => {
+                  localStorage.clear();
+                  sessionStorage.clear();
+                  window.location.href = '/language';
+                }}
+                variant="outline" 
+                size="sm"
+                className="border-green-300 text-green-700 hover:bg-green-50"
+              >
+                <i className="fas fa-user-plus mr-1" aria-hidden="true"></i>
+                새 사용자
+              </Button>
+            </div>
           </div>
         </CardContent>
       </Card>

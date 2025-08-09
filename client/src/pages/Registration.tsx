@@ -98,7 +98,12 @@ export default function Registration() {
         }
       }
 
-      setLocation("/");
+      // Mark user as registered for proper flow control
+      if (!existingProfile) {
+        localStorage.setItem('hasRegistered', 'true');
+        localStorage.setItem('currentUserId', userId || 'new-user');
+      }
+      setLocation("/dashboard");
     } catch (error) {
       toast({
         title: "오류가 발생했습니다",
