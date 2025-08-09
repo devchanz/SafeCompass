@@ -12,6 +12,13 @@ Preferred communication style: Simple, everyday language.
 - Fixed balanced border design (both sides now have proper borders)
 - Language selection flows to Registration page with selected language preserved in database
 - Multi-language support implemented in Registration page with t() translation function
+- Dashboard completely multilingualized (Korean, English, Vietnamese, Chinese)
+- Fixed duplicate language selection UI issue by cleaning up LanguageContext structure
+- Added comprehensive cache clearing tools for development:
+  - Browser cache clearing script (force-refresh.js)
+  - Dedicated cache clearing page (/clear-cache.html) 
+  - Cross-platform shell scripts (clear-cache.sh, clear-cache.bat)
+  - Cache clearing button integrated into Dashboard demo section
 
 # System Architecture
 

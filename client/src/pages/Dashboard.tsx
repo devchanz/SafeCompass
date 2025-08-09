@@ -162,13 +162,23 @@ export default function Dashboard() {
             <i className="fas fa-flask mr-2" aria-hidden="true"></i>
             <strong>{t('dashboard.demo_mode')}:</strong> {t('dashboard.demo_description')}
           </p>
-          <Button 
-            onClick={simulateEarthquake}
-            className="bg-warning hover:bg-orange-600"
-          >
-            <i className="fas fa-exclamation-triangle mr-2" aria-hidden="true"></i>
-            {t('dashboard.earthquake_simulation')}
-          </Button>
+          <div className="grid gap-2">
+            <Button 
+              onClick={simulateEarthquake}
+              className="bg-warning hover:bg-orange-600"
+            >
+              <i className="fas fa-exclamation-triangle mr-2" aria-hidden="true"></i>
+              {t('dashboard.earthquake_simulation')}
+            </Button>
+            <Button 
+              onClick={() => window.open('/clear-cache.html', '_blank')}
+              variant="outline"
+              className="border-blue-300 text-blue-700 hover:bg-blue-50"
+            >
+              <i className="fas fa-broom mr-2" aria-hidden="true"></i>
+              🧹 캐시 정리 도구 (개발용)
+            </Button>
+          </div>
         </CardContent>
       </Card>
     </div>

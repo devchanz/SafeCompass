@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>캐시 정리 도구 - 안전나침반</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #e74c3c;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .step {
+            margin: 20px 0;
+            padding: 15px;
+            background: #ecf0f1;
+            border-radius: 5px;
+            border-left: 4px solid #3498db;
+        }
+        .step h3 {
+            margin: 0 0 10px 0;
+            color: #2c3e50;
+        }
+        button {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+            margin: 10px 0;
+            transition: background 0.3s;
+        }
+        button:hover {
+            background: #c0392b;
+        }
+        .success {
+            background: #d5edd8;
+            border-left-color: #27ae60;
+            color: #27ae60;
+        }
+        .warning {
+            background: #fdf2e9;
+            border-left-color: #e67e22;
+            color: #e67e22;
+        }
+        .log {
+            background: #2c3e50;
+            color: #ecf0f1;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            max-height: 200px;
+            overflow-y: auto;
+            margin: 20px 0;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧹 캐시 정리 도구</h1>
+        
+        <div class="step">
+            <h3>🔧 개발자를 위한 캐시 정리</h3>
+            <p>코드 변경사항이 반영되지 않을 때 사용하세요.</p>
+        </div>
+
+        <button onclick="clearAllCaches()">🗑️ 모든 캐시 삭제 및 새로고침</button>
+        <button onclick="clearStorageOnly()">📦 저장소만 삭제 (새로고침 안함)</button>
+        <button onclick="forceReloadApp()">🔄 앱으로 강제 이동</button>
+
+        <div id="log" class="log" style="display: none;"></div>
+
+        <div class="step warning">
+            <h3>⚠️ 주의사항</h3>
+            <ul>
+                <li>로그인 정보가 삭제됩니다</li>
+                <li>저장된 언어 설정이 초기화됩니다</li>
+                <li>임시 저장된 폼 데이터가 사라집니다</li>
+            </ul>
+        </div>
+
+        <div class="step">
+            <h3>📋 수동 정리 방법</h3>
+            <p><strong>Chrome/Edge:</strong></p>
+            <ol>
+                <li>F12 → 개발자 도구 열기</li>
+                <li>새로고침 버튼 우클릭</li>
+                <li>"캐시 비우기 및 하드 새로고침" 선택</li>
+            </ol>
+            
+            <p><strong>또는:</strong></p>
+            <ol>
+                <li>Ctrl + Shift + Delete</li>
+                <li>"쿠키 및 기타 사이트 데이터" 체크</li>
+                <li>"캐시된 이미지 및 파일" 체크</li>
+                <li>삭제 실행</li>
+            </ol>
+        </div>
+    </div>
+
+    <script>
+        const log = document.getElementById('log');
+        
+        function logMessage(message, type = 'info') {
+            log.style.display = 'block';
+            const timestamp = new Date().toLocaleTimeString();
+            const emoji = type === 'success' ? '✅' : type === 'error' ? '❌' : 'ℹ️';
+            log.textContent += `[${timestamp}] ${emoji} ${message}\n`;
+            log.scrollTop = log.scrollHeight;
+        }
+
+        async function clearAllCaches() {
+            logMessage('캐시 정리 시작...');
+            
+            // Service Worker 캐시
+            if ('caches' in window) {
+                try {
+                    const cacheNames = await caches.keys();
+                    logMessage(`발견된 캐시: ${cacheNames.length}개`);
+                    await Promise.all(cacheNames.map(name => caches.delete(name)));
+                    logMessage('Service Worker 캐시 삭제 완료', 'success');
+                } catch (e) {
+                    logMessage(`캐시 삭제 오류: ${e.message}`, 'error');
+                }
+            }
+            
+            // Local Storage
+            try {
+                const localKeys = Object.keys(localStorage);
+                logMessage(`LocalStorage 키: ${localKeys.length}개`);
+                localStorage.clear();
+                logMessage('LocalStorage 삭제 완료', 'success');
+            } catch (e) {
+                logMessage(`LocalStorage 오류: ${e.message}`, 'error');
+            }
+            
+            // Session Storage
+            try {
+                const sessionKeys = Object.keys(sessionStorage);
+                logMessage(`SessionStorage 키: ${sessionKeys.length}개`);
+                sessionStorage.clear();
+                logMessage('SessionStorage 삭제 완료', 'success');
+            } catch (e) {
+                logMessage(`SessionStorage 오류: ${e.message}`, 'error');
+            }
+            
+            // 쿠키
+            const cookies = document.cookie.split(";");
+            cookies.forEach(cookie => {
+                const eqPos = cookie.indexOf("=");
+                const name = eqPos > -1 ? cookie.substr(0, eqPos).trim() : cookie.trim();
+                document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/";
+            });
+            logMessage(`쿠키 ${cookies.length}개 삭제 완료`, 'success');
+            
+            // IndexedDB
+            if ('indexedDB' in window) {
+                try {
+                    const databases = await indexedDB.databases();
+                    databases.forEach(db => {
+                        indexedDB.deleteDatabase(db.name);
+                        logMessage(`IndexedDB "${db.name}" 삭제`);
+                    });
+                } catch (e) {
+                    logMessage(`IndexedDB 오류: ${e.message}`, 'error');
+                }
+            }
+            
+            logMessage('3초 후 앱으로 이동합니다...');
+            setTimeout(() => {
+                window.location.href = '/?cache_bust=' + Date.now();
+            }, 3000);
+        }
+
+        function clearStorageOnly() {
+            logMessage('저장소만 정리 중...');
+            localStorage.clear();
+            sessionStorage.clear();
+            
+            document.cookie.split(";").forEach(cookie => {
+                const eqPos = cookie.indexOf("=");
+                const name = eqPos > -1 ? cookie.substr(0, eqPos).trim() : cookie.trim();
+                document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/";
+            });
+            
+            logMessage('저장소 정리 완료', 'success');
+        }
+
+        function forceReloadApp() {
+            logMessage('앱으로 강제 이동...');
+            window.location.href = '/?force_reload=' + Date.now();
+        }
+    </script>
+</body>
+</html>
