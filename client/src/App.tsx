@@ -10,7 +10,7 @@ import Dashboard from "@/pages/Dashboard";
 import Registration from "@/pages/Registration";
 import EmergencyAlert from "@/pages/EmergencyAlert";
 import PersonalizedGuide from "@/pages/PersonalizedGuide";
-import ShelterMap from "@/pages/ShelterMap";
+import ShelterMap from "@/pages/ShelterMapSimple";
 import LanguageSelection from "@/pages/LanguageSelection";
 import SOSButton from "@/components/SOSButton";
 import { AccessibilityProvider } from "@/components/AccessibilityProvider";

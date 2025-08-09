@@ -1,8 +1,10 @@
+import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useGeolocation } from "@/hooks/useGeolocation";
 import { apiRequest } from "@/services/api";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface Shelter {
   id: string;
@@ -17,6 +19,9 @@ interface Shelter {
 
 export default function ShelterMap() {
   const { location, error: geoError } = useGeolocation();
+  const { t } = useLanguage();
+  const [map, setMap] = useState<any>(null);
+  const [tmapReady, setTmapReady] = useState(false);
   
   const { data: shelters, isLoading } = useQuery({
     queryKey: ["/api/shelters"],
@@ -26,10 +31,139 @@ export default function ShelterMap() {
     },
   });
 
-  const handleGetDirections = (shelter: Shelter) => {
-    // In a real implementation, this would integrate with T-Map API
-    const destination = encodeURIComponent(`${shelter.name} ${shelter.address}`);
-    window.open(`https://maps.google.com/maps?daddr=${destination}`, '_blank');
+  // Load T-Map API script
+  useEffect(() => {
+    if (window.Tmapv2) {
+      setTmapReady(true);
+      return;
+    }
+
+    const script = document.createElement('script');
+    script.src = 'https://apis.openapi.sk.com/tmap/jsv2?version=1&appKey=' + import.meta.env.VITE_TMAP_API_KEY;
+    script.onload = () => {
+      setTmapReady(true);
+    };
+    document.head.appendChild(script);
+
+    return () => {
+      if (script.parentNode) {
+        script.parentNode.removeChild(script);
+      }
+    };
+  }, []);
+
+  // Initialize T-Map
+  useEffect(() => {
+    if (tmapReady && location && !map) {
+      const mapDiv = document.getElementById('tmap');
+      if (mapDiv) {
+        const newMap = new window.Tmapv2.Map(mapDiv, {
+          center: new window.Tmapv2.LatLng(location.latitude, location.longitude),
+          width: '100%',
+          height: '400px',
+          zoom: 14,
+        });
+
+        // Add user location marker
+        const userMarker = new window.Tmapv2.Marker({
+          position: new window.Tmapv2.LatLng(location.latitude, location.longitude),
+          icon: 'https://tmapapi.tmapmobility.com/upload/tmap/marker/pin_r_m_a.png',
+          iconSize: new window.Tmapv2.Size(24, 38),
+          title: t('shelter.your_location'),
+          map: newMap
+        });
+
+        setMap(newMap);
+      }
+    }
+  }, [tmapReady, location, map, t]);
+
+  // Add shelter markers when shelters data is loaded
+  useEffect(() => {
+    if (map && shelters) {
+      shelters.forEach((shelter, index) => {
+        const marker = new window.Tmapv2.Marker({
+          position: new window.Tmapv2.LatLng(shelter.lat, shelter.lng),
+          icon: getShelterMarkerIcon(shelter.type),
+          iconSize: new window.Tmapv2.Size(32, 32),
+          title: shelter.name,
+          map: map
+        });
+
+        // Add click event to marker
+        marker.addListener('click', () => {
+          handleGetDirections(shelter);
+        });
+      });
+    }
+  }, [map, shelters]);
+
+  const getShelterMarkerIcon = (type: string) => {
+    switch (type) {
+      case "실내 대피소":
+        return 'https://tmapapi.tmapmobility.com/upload/tmap/marker/pin_b_m_1.png';
+      case "옥외 대피소":
+        return 'https://tmapapi.tmapmobility.com/upload/tmap/marker/pin_g_m_1.png';
+      case "구호소":
+        return 'https://tmapapi.tmapmobility.com/upload/tmap/marker/pin_r_m_1.png';
+      default:
+        return 'https://tmapapi.tmapmobility.com/upload/tmap/marker/pin_b_m_a.png';
+    }
+  };
+
+  const handleGetDirections = async (shelter: Shelter) => {
+    if (!location || !map) return;
+
+    try {
+      // Clear existing route
+      map.removeLayer('route');
+
+      // Request route from T-Map API
+      const response = await fetch(`/api/tmap/route`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          startX: location.longitude,
+          startY: location.latitude,
+          endX: shelter.lng,
+          endY: shelter.lat,
+        }),
+      });
+
+      const routeData = await response.json();
+      
+      if (routeData.features) {
+        const drawInfoArr = [];
+        
+        routeData.features.forEach((feature: any) => {
+          const geometry = feature.geometry;
+          
+          if (geometry.type === 'LineString') {
+            geometry.coordinates.forEach((coord: number[]) => {
+              drawInfoArr.push(new window.Tmapv2.LatLng(coord[1], coord[0]));
+            });
+          }
+        });
+
+        // Draw route on map
+        const polyline = new window.Tmapv2.Polyline({
+          path: drawInfoArr,
+          strokeColor: '#FF0000',
+          strokeWeight: 6,
+          map: map
+        });
+
+        // Set layer name for future removal
+        polyline.setOptions({ layerId: 'route' });
+      }
+    } catch (error) {
+      console.error('Route calculation failed:', error);
+      // Fallback to external map app
+      const destination = encodeURIComponent(`${shelter.name} ${shelter.address}`);
+      window.open(`https://maps.google.com/maps?daddr=${destination}`, '_blank');
+    }
   };
 
   const getShelterIcon = (type: string) => {
@@ -64,7 +198,7 @@ export default function ShelterMap() {
         <Card className="emergency-card">
           <CardContent className="text-center py-8">
             <i className="fas fa-spinner fa-spin text-4xl text-emergency mb-4" aria-hidden="true"></i>
-            <p>대피소 정보를 불러오는 중...</p>
+            <p>{t('shelter.loading_shelters')}</p>
           </CardContent>
         </Card>
       </div>

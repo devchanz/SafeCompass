@@ -217,6 +217,52 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // T-Map route calculation endpoint
+  app.post("/api/tmap/route", async (req, res) => {
+    try {
+      const { startX, startY, endX, endY } = req.body;
+      
+      if (!startX || !startY || !endX || !endY) {
+        return res.status(400).json({ error: "출발지와 목적지 좌표가 필요합니다" });
+      }
+
+      const tmapApiKey = process.env.TMAP_API_KEY;
+      if (!tmapApiKey) {
+        return res.status(500).json({ error: "T-Map API 키가 설정되지 않았습니다" });
+      }
+
+      // Call T-Map Directions API
+      const response = await fetch('https://apis.openapi.sk.com/tmap/routes/pedestrian?version=1&format=json&callback=result', {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+          'appKey': tmapApiKey
+        },
+        body: JSON.stringify({
+          startX: startX.toString(),
+          startY: startY.toString(),
+          endX: endX.toString(),
+          endY: endY.toString(),
+          reqCoordType: 'WGS84GEO',
+          resCoordType: 'EPSG3857',
+          startName: '출발지',
+          endName: '목적지'
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error(`T-Map API error: ${response.status}`);
+      }
+
+      const routeData = await response.json();
+      res.json(routeData);
+    } catch (error) {
+      console.error("T-Map route calculation failed:", error);
+      res.status(500).json({ error: "경로 계산 중 오류가 발생했습니다" });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }
