@@ -205,8 +205,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const userLng = parseFloat(lng as string);
       
       // 실제 API 연동 시도
-      const { createShelterService } = await import('./services/shelterService');
-      const shelterService = createShelterService();
+      const { ShelterService } = await import('./services/shelterService');
+      const shelterService = new ShelterService();
       
       if (shelterService) {
         console.log(`🌍 실제 API로 대피소 검색: 위치(${userLat}, ${userLng})`);

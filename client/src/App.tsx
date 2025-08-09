@@ -11,7 +11,7 @@ import Registration from "@/pages/Registration";
 import ProfileModify from "@/pages/ProfileModify";
 import EmergencyAlert from "@/pages/EmergencyAlert";
 import PersonalizedGuide from "@/pages/PersonalizedGuide";
-import ShelterMap from "@/pages/ShelterMapInteractive";
+import ShelterMapFixed from "@/pages/ShelterMapFixed";
 import LanguageSelection from "@/pages/LanguageSelection";
 import SOSButton from "@/components/SOSButton";
 import { AccessibilityProvider } from "@/components/AccessibilityProvider";
@@ -221,7 +221,9 @@ function AppContent() {
           <Route path="/modify" component={ProfileModify} />
           <Route path="/emergency" component={EmergencyAlert} />
           <Route path="/guide" component={PersonalizedGuide} />
-          <Route path="/shelters" component={ShelterMap} />
+          <Route path="/shelters" component={ShelterMapFixed} />
+          <Route path="/shelter-map" component={ShelterMapFixed} />
+          <Route path="/shelter-map-fixed" component={ShelterMapFixed} />
           <Route component={NotFound} />
         </Switch>
       </main>
