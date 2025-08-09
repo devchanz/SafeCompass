@@ -11,6 +11,12 @@ export function useUserProfile() {
   const query = useQuery({
     queryKey: ["/api/users", userId],
     queryFn: async () => {
+      // Check if language has been selected first
+      const hasSelectedLanguage = localStorage.getItem('selectedLanguage') !== null;
+      if (!hasSelectedLanguage) {
+        return null; // Don't load user profile until language is selected
+      }
+      
       try {
         const response = await apiRequest("GET", `/api/users/${userId}`);
         return response.json() as Promise<User>;
@@ -22,6 +28,7 @@ export function useUserProfile() {
         throw error;
       }
     },
+    enabled: localStorage.getItem('selectedLanguage') !== null, // Only enable when language is selected
   });
 
   const createProfile = useMutation({
