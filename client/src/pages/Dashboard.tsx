@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { useUserProfile } from "@/hooks/useUserProfile";
 import { useEmergency } from "@/hooks/useEmergency";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useEffect } from "react";
 
 export default function Dashboard() {
   const { data: userProfile } = useUserProfile();
@@ -11,9 +12,15 @@ export default function Dashboard() {
   const { t } = useLanguage();
   const [, setLocation] = useLocation();
 
-  // 프로필이 없으면 등록 페이지로 리다이렉트
+  // 프로필이 없으면 등록 페이지로 리다이렉트 (useEffect로 무한 루프 방지)
+  useEffect(() => {
+    if (userProfile === undefined) return; // 로딩 중일 때는 기다림
+    if (!userProfile) {
+      setLocation('/registration');
+    }
+  }, [userProfile, setLocation]);
+
   if (!userProfile) {
-    setLocation('/registration');
     return null;
   }
 
