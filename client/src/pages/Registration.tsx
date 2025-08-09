@@ -229,7 +229,7 @@ export default function Registration() {
                     <i className="fas fa-user-check text-2xl text-gray-600" aria-hidden="true"></i>
                   </div>
                   <div className="text-center">
-                    <p className="text-sm font-semibold">일반</p>
+                    <p className={`text-sm font-semibold ${selectedAccessibility.length === 0 ? 'text-gray-800' : 'text-gray-700'}`}>일반</p>
                     <p className="text-xs text-gray-600">특별한 지원 불필요</p>
                   </div>
                 </Button>
@@ -249,7 +249,7 @@ export default function Registration() {
                     <i className="fas fa-low-vision text-2xl text-blue-600" aria-hidden="true"></i>
                   </div>
                   <div className="text-center">
-                    <p className="text-sm font-semibold">시각 지원</p>
+                    <p className={`text-sm font-semibold ${selectedAccessibility.includes('visual') ? 'text-blue-800' : 'text-gray-700'}`}>시각 지원</p>
                     <p className="text-xs text-gray-600">음성 안내, 큰 글씨</p>
                   </div>
                 </Button>
@@ -269,7 +269,7 @@ export default function Registration() {
                     <i className="fas fa-assistive-listening-systems text-2xl text-yellow-600" aria-hidden="true"></i>
                   </div>
                   <div className="text-center">
-                    <p className="text-sm font-semibold">청각 지원</p>
+                    <p className={`text-sm font-semibold ${selectedAccessibility.includes('hearing') ? 'text-yellow-800' : 'text-gray-700'}`}>청각 지원</p>
                     <p className="text-xs text-gray-600">진동, 시각적 신호</p>
                   </div>
                 </Button>
@@ -279,50 +279,47 @@ export default function Registration() {
             {/* Self-Evacuation Capability Section */}
             <div>
               <Label className="text-base font-medium mb-4 block">자력대피 가능 여부</Label>
-              <RadioGroup
-                defaultValue={form.getValues("mobility")}
-                onValueChange={(value) => form.setValue("mobility", value)}
-                className="space-y-4"
-              >
-                <div className="flex items-center space-x-4 p-4 border-2 border-gray-200 rounded-lg hover:border-green-200 transition-colors">
-                  <RadioGroupItem value="independent" id="independent" className="text-green-600" />
-                  <div className="flex items-center space-x-3 flex-1">
-                    <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
-                      <i className="fas fa-running text-green-600" aria-hidden="true"></i>
-                    </div>
-                    <div>
-                      <Label htmlFor="independent" className="text-sm font-semibold cursor-pointer">자력대피 가능</Label>
-                      <p className="text-xs text-gray-600">혼자서도 안전한 장소로 신속히 이동할 수 있습니다</p>
-                    </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <Button
+                  type="button"
+                  variant={form.watch("mobility") === "independent" ? "default" : "outline"}
+                  className={`p-6 h-auto flex-col space-y-3 border-2 transition-all duration-200 ${
+                    form.watch("mobility") === "independent"
+                      ? 'bg-green-50 border-green-300 shadow-md'
+                      : 'border-gray-200 hover:border-green-200'
+                  }`}
+                  onClick={() => form.setValue("mobility", "independent")}
+                  aria-label="자력대피 가능 - 혼자서도 안전한 장소로 신속히 이동할 수 있습니다"
+                >
+                  <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
+                    <i className="fas fa-running text-2xl text-green-600" aria-hidden="true"></i>
                   </div>
-                </div>
+                  <div className="text-center">
+                    <p className={`text-sm font-semibold ${form.watch("mobility") === "independent" ? 'text-green-800' : 'text-gray-700'}`}>자력대피 가능</p>
+                    <p className="text-xs text-gray-600">혼자서도 신속히 이동</p>
+                  </div>
+                </Button>
                 
-                <div className="flex items-center space-x-4 p-4 border-2 border-gray-200 rounded-lg hover:border-orange-200 transition-colors">
-                  <RadioGroupItem value="assisted" id="assisted" className="text-orange-500" />
-                  <div className="flex items-center space-x-3 flex-1">
-                    <div className="w-8 h-8 bg-orange-100 rounded-full flex items-center justify-center">
-                      <i className="fas fa-hands-helping text-orange-500" aria-hidden="true"></i>
-                    </div>
-                    <div>
-                      <Label htmlFor="assisted" className="text-sm font-semibold cursor-pointer">부분 도움 필요</Label>
-                      <p className="text-xs text-gray-600">다른 사람의 도움이 있으면 대피할 수 있습니다</p>
-                    </div>
+                <Button
+                  type="button"
+                  variant={form.watch("mobility") === "assisted" ? "default" : "outline"}
+                  className={`p-6 h-auto flex-col space-y-3 border-2 transition-all duration-200 ${
+                    form.watch("mobility") === "assisted"
+                      ? 'bg-orange-50 border-orange-300 shadow-md'
+                      : 'border-gray-200 hover:border-orange-200'
+                  }`}
+                  onClick={() => form.setValue("mobility", "assisted")}
+                  aria-label="도움 필요 - 다른 사람의 도움이 있어야 안전하게 대피할 수 있습니다"
+                >
+                  <div className="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center">
+                    <i className="fas fa-hands-helping text-2xl text-orange-500" aria-hidden="true"></i>
                   </div>
-                </div>
-                
-                <div className="flex items-center space-x-4 p-4 border-2 border-gray-200 rounded-lg hover:border-red-200 transition-colors">
-                  <RadioGroupItem value="unable" id="unable" className="text-red-500" />
-                  <div className="flex items-center space-x-3 flex-1">
-                    <div className="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center">
-                      <i className="fas fa-wheelchair text-red-500" aria-hidden="true"></i>
-                    </div>
-                    <div>
-                      <Label htmlFor="unable" className="text-sm font-semibold cursor-pointer">자력대피 불가능</Label>
-                      <p className="text-xs text-gray-600">신체적 제약으로 즉시 구조 지원이 필요합니다</p>
-                    </div>
+                  <div className="text-center">
+                    <p className={`text-sm font-semibold ${form.watch("mobility") === "assisted" ? 'text-orange-800' : 'text-gray-700'}`}>도움 필요</p>
+                    <p className="text-xs text-gray-600">타인의 도움 필요</p>
                   </div>
-                </div>
-              </RadioGroup>
+                </Button>
+              </div>
             </div>
           </CardContent>
         </Card>

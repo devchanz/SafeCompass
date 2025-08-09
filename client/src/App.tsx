@@ -31,6 +31,16 @@ function AppContent() {
     }
   }, [isEmergencyActive, hasUnreadAlert, location, setLocation]);
 
+  // Auto-switch language based on user profile
+  useEffect(() => {
+    if (userProfile?.language && userProfile.language !== language) {
+      const userLang = userProfile.language;
+      if (['ko', 'en', 'vi', 'zh'].includes(userLang)) {
+        setLanguage(userLang as Language);
+      }
+    }
+  }, [userProfile, language, setLanguage]);
+
   // Redirect to registration if no user profile exists and not already on registration page
   useEffect(() => {
     if (!userProfile && location !== '/registration') {
