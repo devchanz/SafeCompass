@@ -6,6 +6,13 @@
 
 Preferred communication style: Simple, everyday language.
 
+## Recent Changes (2025-08-09)
+- Language selection UI completely redesigned with flag icons on left, expandable interface for 10 languages (4 active, 6 coming soon)
+- Footer text changed from "지진 재난 대응 AI 가이던스 플랫폼" to "맞춤형 재난 대응 솔루션"
+- Fixed balanced border design (both sides now have proper borders)
+- Language selection flows to Registration page with selected language preserved in database
+- Multi-language support implemented in Registration page with t() translation function
+
 # System Architecture
 
 ## Frontend Architecture

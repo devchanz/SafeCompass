@@ -28,16 +28,21 @@ export default function LanguageSelection() {
   const [showAllLanguages, setShowAllLanguages] = useState(false);
 
   const handleLanguageSelect = (langCode: Language) => {
+    console.log('Language selected:', langCode);
     setSelectedLanguage(langCode);
     setLanguage(langCode);
     
-    // Store in localStorage to remember user's choice
+    // Clear all localStorage first, then set the selected language
+    localStorage.clear();
     localStorage.setItem('selectedLanguage', langCode);
     
     // Navigate to registration after language selection
     setTimeout(() => {
+      console.log('Navigating to registration...');
       setLocation('/registration');
-    }, 500);
+      // Force page refresh to ensure state is updated
+      window.location.href = '/registration';
+    }, 800);
   };
 
   const displayLanguages = showAllLanguages ? [...languages, ...futureLanguages] : languages;
@@ -87,9 +92,9 @@ export default function LanguageSelection() {
                       onClick={() => !isFuture && handleLanguageSelect(lang.code as Language)}
                     >
                       <div className="flex items-center space-x-4 w-full">
-                        <div className="flex items-center justify-center w-12 h-12 bg-gradient-to-br from-gray-100 to-gray-200 rounded-lg border-2 border-gray-300">
-                          <span className="text-lg font-bold text-gray-700">
-                            {lang.displayCode}
+                        <div className="flex items-center justify-center w-12 h-12 bg-gradient-to-br from-gray-50 to-gray-100 rounded-lg border-2 border-gray-300">
+                          <span className="text-2xl" style={{ filter: isFuture ? 'grayscale(1)' : 'none' }}>
+                            {lang.flag}
                           </span>
                         </div>
                         <div className="flex-1">
@@ -99,8 +104,8 @@ export default function LanguageSelection() {
                           )}
                         </div>
                         <div className="flex items-center space-x-2">
-                          <span className="text-2xl" style={{ filter: isFuture ? 'grayscale(1)' : 'none' }}>
-                            {lang.flag}
+                          <span className="text-sm font-bold text-gray-600">
+                            {lang.displayCode}
                           </span>
                           {selectedLanguage === lang.code && (
                             <div className="w-6 h-6 bg-emergency text-white rounded-full flex items-center justify-center">

@@ -31,9 +31,13 @@ function AppContent() {
   // Check if language is selected, if not redirect to language selection
   useEffect(() => {
     const storedLanguage = localStorage.getItem('selectedLanguage');
+    console.log('Stored language:', storedLanguage, 'Current location:', location);
+    
     if (!storedLanguage && location !== '/language') {
+      console.log('No stored language, redirecting to /language');
       setLocation('/language');
     } else if (storedLanguage) {
+      console.log('Found stored language:', storedLanguage);
       setHasSelectedLanguage(true);
       setLanguage(storedLanguage as Language);
     }
@@ -73,8 +77,9 @@ function AppContent() {
 
 
 
-  // Force language selection page for demo
-  if (location !== '/language') {
+  // Only force language selection if no language is selected
+  const storedLanguage = localStorage.getItem('selectedLanguage');
+  if (!storedLanguage && location !== '/language') {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
