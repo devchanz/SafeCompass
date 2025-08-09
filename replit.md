@@ -7,6 +7,13 @@
 Preferred communication style: Simple, everyday language.
 
 ## Recent Changes (2025-08-09)
+- **T-Map API 문제 해결 시도 및 접근성 기능 구현**:
+  - T-Map API 매개변수를 다양하게 수정했으나 여전히 400 오류 발생
+  - 직선 경로만 표시되며 실제 보행 경로 계산 불가 상태
+  - 대안으로 Google Maps Directions API 전환 고려 필요
+  - AccessibilityTest 컴포넌트 구현으로 TTS, 진동, 위치, 알림 기능 테스트 가능
+  - QR 코드 생성 기능으로 모바일 환경 접근성 테스트 지원
+  - /accessibility-test 경로 추가로 독립적인 접근성 테스트 환경 제공
 - **React Context Error Resolution (Critical Fix)**:
   - Completely rebuilt LanguageContext.tsx to resolve "Cannot read properties of null (reading 'useState')" error
   - Fixed React hooks import issues and component structure

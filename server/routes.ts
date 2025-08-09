@@ -290,8 +290,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
             endY: endY.toString(),
             reqCoordType: "WGS84GEO",
             resCoordType: "WGS84GEO",
-            searchOption: "0", // 최적 경로
-            trafficInfo: "N"
+            startName: "출발지",
+            endName: "목적지",
+            searchOption: "0"
           })
         });
 

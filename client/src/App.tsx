@@ -18,6 +18,7 @@ import { AccessibilityProvider } from "@/components/AccessibilityProvider";
 import { LanguageProvider, useLanguage, Language } from "@/contexts/LanguageContext";
 import { useUserProfile } from "@/hooks/useUserProfile";
 import { useEmergencyNotification } from "@/hooks/useEmergencyNotification";
+import AccessibilityTest from "@/components/AccessibilityTest";
 
 function AppContent() {
   const { language, setLanguage } = useLanguage();
@@ -183,7 +184,10 @@ function AppContent() {
                   }}
                 >
                   <i className="fas fa-tachometer-alt mr-2" aria-hidden="true"></i>
-                  {t('nav.dashboard')}
+                  {language === 'ko' ? '대시보드' : 
+                     language === 'en' ? 'Dashboard' : 
+                     language === 'vi' ? 'Bảng điều khiển' : 
+                     '仪表板'}
                 </Button>
                 
                 <Button
@@ -195,7 +199,10 @@ function AppContent() {
                   }}
                 >
                   <i className="fas fa-map-marker-alt mr-2" aria-hidden="true"></i>
-                  {t('nav.shelter')}
+                  {language === 'ko' ? '대피소 지도' : 
+                     language === 'en' ? 'Shelter Map' : 
+                     language === 'vi' ? 'Bản đồ nơi trú ẩn' : 
+                     '避难所地图'}
                 </Button>
                 
                 {isEmergencyActive && (
@@ -209,7 +216,10 @@ function AppContent() {
                     }}
                   >
                     <i className="fas fa-exclamation-triangle mr-2" aria-hidden="true"></i>
-                    {t('nav.emergency')}
+                    {language === 'ko' ? '긴급 상황' : 
+                       language === 'en' ? 'Emergency' : 
+                       language === 'vi' ? 'Khẩn cấp' : 
+                       '紧急情况'}
                     {hasUnreadAlert && (
                       <span className="ml-1 w-2 h-2 bg-white rounded-full animate-ping"></span>
                     )}
@@ -234,6 +244,7 @@ function AppContent() {
           <Route path="/shelters" component={ShelterMapFixed} />
           <Route path="/shelter-map" component={ShelterMapFixed} />
           <Route path="/shelter-map-fixed" component={ShelterMapFixed} />
+          <Route path="/accessibility-test" component={AccessibilityTest} />
           <Route component={NotFound} />
         </Switch>
       </main>
