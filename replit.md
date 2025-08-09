@@ -14,13 +14,18 @@ Preferred communication style: Simple, everyday language.
 - Multi-language support implemented in Registration page with t() translation function
 - Dashboard completely multilingualized (Korean, English, Vietnamese, Chinese)
 - Fixed duplicate language selection UI issue by cleaning up LanguageContext structure
-- Added comprehensive cache clearing tools for development:
-  - Browser cache clearing script (force-refresh.js)
-  - Dedicated cache clearing page (/clear-cache.html) 
-  - Cross-platform shell scripts (clear-cache.sh, clear-cache.bat)
-  - Cache clearing button integrated into Dashboard demo section
+- **Cache Management & Code Cleanup**:
+  - Removed legacy unused files: ShelterMap.tsx, ShelterMapSimple.tsx
+  - Created comprehensive cache management utilities (cacheUtils.ts)
+  - Added dedicated cache clearing page (/clear-cache.html) with full browser cache control
+  - Integrated cache clearing buttons in Dashboard demo section
+  - Fixed navigation issues caused by stale cache/cookie data
+- **Security & API Improvements**:
+  - Moved hardcoded API key to secure environment variable (DISASTER_API_KEY)
+  - Fixed TypeScript location type errors in ShelterMapInteractive
+  - Expanded shelter search radius to 100km for better coverage
 - **T-Map Interactive Map Implementation**: 
-  - Created ShelterMapInteractive.tsx with full T-Map SDK integration
+  - Created ShelterMapInteractive.tsx with full Leaflet integration (replaced T-Map due to key limitations)
   - Real-time GPS location tracking with user position marker
   - Interactive shelter markers with click-to-select functionality
   - Visual route calculation and polyline display from user to selected shelter
@@ -30,7 +35,7 @@ Preferred communication style: Simple, everyday language.
   - Enhanced UI with map status indicators and shelter information cards
 - **Real Disaster Response Platform API Integration**:
   - Connected to 행정안전부_지진_대피장소 API (DSSP-IF-00706)
-  - API Key: E66AUK0213KP6N6W for accessing 1,369+ real shelter locations
+  - Secure API key management through environment variables
   - Created comprehensive ShelterService with distance calculation and filtering
   - Replaced dummy Seoul Gangnam data with authentic nationwide shelter data
   - Automatic shelter type classification (공터→옥외, 건물→실내, etc.)

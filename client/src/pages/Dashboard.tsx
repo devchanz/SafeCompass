@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { useUserProfile } from "@/hooks/useUserProfile";
 import { useEmergency } from "@/hooks/useEmergency";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { clearBrowserCache, forcePageReload, resetUserSession, debugStorageState } from "@/utils/cacheUtils";
 
 export default function Dashboard() {
   const { data: userProfile } = useUserProfile();
