@@ -27,7 +27,158 @@ type RegistrationData = z.infer<typeof registrationSchema>;
 export default function Registration() {
   const [, setLocation] = useLocation();
   const { toast } = useToast();
-  const { language, t } = useLanguage();
+  const { language } = useLanguage();
+
+  // 하드코딩된 다국어 텍스트
+  const getText = (key: string) => {
+    const texts: Record<string, Record<string, string>> = {
+      ko: {
+        title: '개인정보 등록',
+        subtitle: '맞춤형 안전 가이드를 위한 기본 정보',
+        name: '이름',
+        name_placeholder: '성명을 입력하세요',
+        age: '나이',
+        gender: '성별',
+        gender_placeholder: '성별을 선택하세요',
+        male: '남성',
+        female: '여성',
+        other: '기타',
+        address: '주소',
+        address_placeholder: '주소를 입력하세요',
+        language: '언어',
+        accessibility_support: '접근성 지원',
+        accessibility: '접근성',
+        accessibility_normal: '일반',
+        accessibility_normal_desc: '특별한 지원이 필요하지 않음',
+        accessibility_visual: '시각 지원',
+        accessibility_visual_desc: '시각 장애인을 위한 음성 안내',
+        accessibility_hearing: '청각 지원', 
+        accessibility_hearing_desc: '청각 장애인을 위한 진동/시각 알림',
+        mobility: '이동성',
+        independent: '독립적 이동',
+        assistance: '도움 필요',
+        wheelchair: '휠체어 사용자',
+        companion: '동행자',
+        companion_subtitle: '비상 시 연락할 동행자 정보 (선택사항)',
+        companion_name: '동행자 이름',
+        companion_phone: '동행자 연락처',
+        companion_relationship: '관계',
+        submit: '등록하기',
+        update: '수정하기',
+        registration_success: '등록이 완료되었습니다',
+        update_success: '프로필이 수정되었습니다'
+      },
+      en: {
+        title: 'Personal Information Registration',
+        subtitle: 'Basic information for personalized safety guide',
+        name: 'Name',
+        name_placeholder: 'Enter your name',
+        age: 'Age',
+        gender: 'Gender',
+        gender_placeholder: 'Select gender',
+        male: 'Male',
+        female: 'Female',
+        other: 'Other',
+        address: 'Address',
+        address_placeholder: 'Enter your address',
+        language: 'Language',
+        accessibility_support: 'Accessibility Support',
+        accessibility: 'Accessibility',
+        accessibility_normal: 'Normal',
+        accessibility_normal_desc: 'No special support needed',
+        accessibility_visual: 'Visual Support',
+        accessibility_visual_desc: 'Voice guidance for visually impaired',
+        accessibility_hearing: 'Hearing Support',
+        accessibility_hearing_desc: 'Vibration/visual alerts for hearing impaired',
+        mobility: 'Mobility',
+        independent: 'Independent movement',
+        assistance: 'Assistance needed',
+        wheelchair: 'Wheelchair user',
+        companion: 'Companion',
+        companion_subtitle: 'Emergency contact information (optional)',
+        companion_name: 'Companion Name',
+        companion_phone: 'Companion Phone',
+        companion_relationship: 'Relationship',
+        submit: 'Register',
+        update: 'Update',
+        registration_success: 'Registration completed successfully',
+        update_success: 'Profile updated successfully'
+      },
+      vi: {
+        title: 'Đăng ký thông tin cá nhân',
+        subtitle: 'Thông tin cơ bản cho hướng dẫn an toàn cá nhân hóa',
+        name: 'Tên',
+        name_placeholder: 'Nhập tên của bạn',
+        age: 'Tuổi',
+        gender: 'Giới tính',
+        gender_placeholder: 'Chọn giới tính',
+        male: 'Nam',
+        female: 'Nữ',
+        other: 'Khác',
+        address: 'Địa chỉ',
+        address_placeholder: 'Nhập địa chỉ của bạn',
+        language: 'Ngôn ngữ',
+        accessibility_support: 'Hỗ trợ khả năng tiếp cận',
+        accessibility: 'Khả năng tiếp cận',
+        accessibility_normal: 'Bình thường',
+        accessibility_normal_desc: 'Không cần hỗ trợ đặc biệt',
+        accessibility_visual: 'Hỗ trợ thị giác',
+        accessibility_visual_desc: 'Hướng dẫn giọng nói cho người khiếm thị',
+        accessibility_hearing: 'Hỗ trợ thính giác',
+        accessibility_hearing_desc: 'Cảnh báo rung/hình ảnh cho người khiếm thính',
+        mobility: 'Tính di động',
+        independent: 'Di chuyển độc lập',
+        assistance: 'Cần hỗ trợ',
+        wheelchair: 'Người dùng xe lăn',
+        companion: 'Người đồng hành',
+        companion_subtitle: 'Thông tin liên hệ khẩn cấp (tùy chọn)',
+        companion_name: 'Tên người đồng hành',
+        companion_phone: 'Điện thoại người đồng hành',
+        companion_relationship: 'Mối quan hệ',
+        submit: 'Đăng ký',
+        update: 'Cập nhật',
+        registration_success: 'Đăng ký thành công',
+        update_success: 'Cập nhật hồ sơ thành công'
+      },
+      zh: {
+        title: '个人信息注册',
+        subtitle: '个性化安全指南的基本信息',
+        name: '姓名',
+        name_placeholder: '请输入您的姓名',
+        age: '年龄',
+        gender: '性别',
+        gender_placeholder: '请选择性别',
+        male: '男',
+        female: '女',
+        other: '其他',
+        address: '地址',
+        address_placeholder: '请输入您的地址',
+        language: '语言',
+        accessibility_support: '无障碍支持',
+        accessibility: '无障碍',
+        accessibility_normal: '正常',
+        accessibility_normal_desc: '不需要特殊支持',
+        accessibility_visual: '视觉支持',
+        accessibility_visual_desc: '为视障人士提供语音指导',
+        accessibility_hearing: '听觉支持',
+        accessibility_hearing_desc: '为听障人士提供振动/视觉提醒',
+        mobility: '行动能力',
+        independent: '独立行动',
+        assistance: '需要帮助',
+        wheelchair: '轮椅使用者',
+        companion: '同伴',
+        companion_subtitle: '紧急联系信息（可选）',
+        companion_name: '同伴姓名',
+        companion_phone: '同伴电话',
+        companion_relationship: '关系',
+        submit: '注册',
+        update: '更新',
+        registration_success: '注册成功完成',
+        update_success: '个人资料更新成功'
+      }
+    };
+    return texts[language]?.[key] || texts['ko'][key] || key;
+  };
   const { data: existingProfile, createProfile, updateProfile, createCompanion } = useUserProfile();
   
   // Check if this is editing mode (existing registered user) vs new registration
@@ -76,15 +227,15 @@ export default function Registration() {
           ...profileData,
         });
         toast({
-          title: t('registration.update_success'),
-          description: t('registration.update_success_desc'),
+          title: getText('update_success'),
+          description: getText('update_success'),
         });
       } else {
         const newUser = await createProfile.mutateAsync(profileData);
         userId = newUser.id;
         toast({
-          title: t('registration.success'),
-          description: t('registration.success_desc'),
+          title: getText('registration_success'),
+          description: getText('registration_success'),
         });
       }
 
@@ -116,8 +267,8 @@ export default function Registration() {
       }
     } catch (error) {
       toast({
-        title: t('registration.error'),
-        description: t('registration.error_desc'),
+        title: "오류",
+        description: "등록 중 오류가 발생했습니다",
         variant: "destructive",
       });
     }
@@ -143,10 +294,10 @@ export default function Registration() {
           <div className="w-3 h-3 bg-gray-300 rounded-full"></div>
         </div>
         <h2 className="text-2xl font-bold text-center text-gray-900">
-          {isEditMode ? t('registration.edit_title') : t('registration.title')}
+          {isEditMode ? getText('update') : getText('title')}
         </h2>
         <p className="text-center text-gray-600 mt-2">
-          {t('registration.subtitle')}
+          {getText('subtitle')}
         </p>
       </div>
 
@@ -156,16 +307,16 @@ export default function Registration() {
           <CardContent className="pt-6">
             <h3 className="text-lg font-semibold mb-4 flex items-center">
               <i className="fas fa-user text-emergency mr-2" aria-hidden="true"></i>
-              {t('registration.basic_info')}
+기본 정보
             </h3>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <Label htmlFor="name">{t('registration.name')} <span className="text-emergency">*</span></Label>
+                <Label htmlFor="name">{getText('name')} <span className="text-emergency">*</span></Label>
                 <Input
                   id="name"
                   {...form.register("name")}
-                  placeholder={t('registration.name_placeholder')}
+                  placeholder={getText('name_placeholder')}
                   required
                 />
                 {form.formState.errors.name && (
@@ -174,12 +325,12 @@ export default function Registration() {
               </div>
               
               <div>
-                <Label htmlFor="age">{t('registration.age')} <span className="text-emergency">*</span></Label>
+                <Label htmlFor="age">{getText('age')} <span className="text-emergency">*</span></Label>
                 <Input
                   id="age"
                   type="number"
                   {...form.register("age", { valueAsNumber: true })}
-                  placeholder={t('registration.age_placeholder')}
+                  placeholder="0"
                   min="1"
                   max="120"
                   required
@@ -190,25 +341,25 @@ export default function Registration() {
               </div>
               
               <div>
-                <Label htmlFor="gender">{t('registration.gender')}</Label>
+                <Label htmlFor="gender">{getText('gender')}</Label>
                 <Select onValueChange={(value) => form.setValue("gender", value)}>
                   <SelectTrigger>
-                    <SelectValue placeholder={t('registration.gender_placeholder')} />
+                    <SelectValue placeholder={getText('gender_placeholder')} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="male">{t('registration.gender_male')}</SelectItem>
-                    <SelectItem value="female">{t('registration.gender_female')}</SelectItem>
-                    <SelectItem value="other">{t('registration.gender_other')}</SelectItem>
+                    <SelectItem value="male">{getText('male')}</SelectItem>
+                    <SelectItem value="female">{getText('female')}</SelectItem>
+                    <SelectItem value="other">{getText('other')}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
               
               <div>
-                <Label htmlFor="address">{t('registration.address')} <span className="text-emergency">*</span></Label>
+                <Label htmlFor="address">{getText('address')} <span className="text-emergency">*</span></Label>
                 <Input
                   id="address"
                   {...form.register("address")}
-                  placeholder={t('registration.address_placeholder')}
+                  placeholder={getText('address_placeholder')}
                   required
                 />
                 {form.formState.errors.address && (
@@ -224,12 +375,12 @@ export default function Registration() {
           <CardContent className="pt-6">
             <h3 className="text-lg font-semibold mb-6 flex items-center">
               <i className="fas fa-universal-access text-safety mr-2" aria-hidden="true"></i>
-              {t('registration.accessibility_support')}
+{getText('accessibility_support')}
             </h3>
             
             {/* Accessibility Support Section */}
             <div className="mb-8">
-              <Label className="text-base font-medium mb-4 block">{t('registration.accessibility')}</Label>
+              <Label className="text-base font-medium mb-4 block">{getText('accessibility')}</Label>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <Button
                   type="button"
@@ -246,8 +397,8 @@ export default function Registration() {
                     <i className="fas fa-user-check text-2xl text-gray-600" aria-hidden="true"></i>
                   </div>
                   <div className="text-center">
-                    <p className={`text-sm font-semibold ${selectedAccessibility.length === 0 ? 'text-gray-800' : 'text-gray-700'}`}>{t('registration.accessibility_normal')}</p>
-                    <p className="text-xs text-gray-600">{t('registration.accessibility_normal_desc')}</p>
+                    <p className={`text-sm font-semibold ${selectedAccessibility.length === 0 ? 'text-gray-800' : 'text-gray-700'}`}>{getText('accessibility_normal')}</p>
+                    <p className="text-xs text-gray-600">{getText('accessibility_normal_desc')}</p>
                   </div>
                 </Button>
                 
@@ -266,8 +417,8 @@ export default function Registration() {
                     <i className="fas fa-low-vision text-2xl text-blue-600" aria-hidden="true"></i>
                   </div>
                   <div className="text-center">
-                    <p className={`text-sm font-semibold ${selectedAccessibility.includes('visual') ? 'text-blue-800' : 'text-gray-700'}`}>{t('registration.accessibility_visual')}</p>
-                    <p className="text-xs text-gray-600">{t('registration.accessibility_visual_desc')}</p>
+                    <p className={`text-sm font-semibold ${selectedAccessibility.includes('visual') ? 'text-blue-800' : 'text-gray-700'}`}>{getText('accessibility_visual')}</p>
+                    <p className="text-xs text-gray-600">{getText('accessibility_visual_desc')}</p>
                   </div>
                 </Button>
                 
@@ -286,8 +437,8 @@ export default function Registration() {
                     <i className="fas fa-assistive-listening-systems text-2xl text-yellow-600" aria-hidden="true"></i>
                   </div>
                   <div className="text-center">
-                    <p className={`text-sm font-semibold ${selectedAccessibility.includes('hearing') ? 'text-yellow-800' : 'text-gray-700'}`}>{t('registration.accessibility_hearing')}</p>
-                    <p className="text-xs text-gray-600">{t('registration.accessibility_hearing_desc')}</p>
+                    <p className={`text-sm font-semibold ${selectedAccessibility.includes('hearing') ? 'text-yellow-800' : 'text-gray-700'}`}>{getText('accessibility_hearing')}</p>
+                    <p className="text-xs text-gray-600">{getText('accessibility_hearing_desc')}</p>
                   </div>
                 </Button>
               </div>
@@ -295,7 +446,7 @@ export default function Registration() {
 
             {/* Self-Evacuation Capability Section */}
             <div>
-              <Label className="text-base font-medium mb-4 block">{t('registration.mobility')}</Label>
+              <Label className="text-base font-medium mb-4 block">{getText('mobility')}</Label>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <Button
                   type="button"
@@ -312,8 +463,8 @@ export default function Registration() {
                     <i className="fas fa-running text-2xl text-green-600" aria-hidden="true"></i>
                   </div>
                   <div className="text-center">
-                    <p className={`text-sm font-semibold ${form.watch("mobility") === "independent" ? 'text-green-800' : 'text-gray-700'}`}>{t('registration.mobility_independent')}</p>
-                    <p className="text-xs text-gray-600">{t('registration.mobility_independent_desc')}</p>
+                    <p className={`text-sm font-semibold ${form.watch("mobility") === "independent" ? 'text-green-800' : 'text-gray-700'}`}>{getText('independent')}</p>
+                    <p className="text-xs text-gray-600">혼자서도 안전하게 이동 가능</p>
                   </div>
                 </Button>
                 
@@ -332,8 +483,8 @@ export default function Registration() {
                     <i className="fas fa-hands-helping text-2xl text-orange-500" aria-hidden="true"></i>
                   </div>
                   <div className="text-center">
-                    <p className={`text-sm font-semibold ${form.watch("mobility") === "assisted" ? 'text-orange-800' : 'text-gray-700'}`}>{t('registration.mobility_assisted')}</p>
-                    <p className="text-xs text-gray-600">{t('registration.mobility_assisted_desc')}</p>
+                    <p className={`text-sm font-semibold ${form.watch("mobility") === "assisted" ? 'text-orange-800' : 'text-gray-700'}`}>{getText('assistance')}</p>
+                    <p className="text-xs text-gray-600">다른 사람의 도움이 필요</p>
                   </div>
                 </Button>
               </div>
@@ -346,56 +497,56 @@ export default function Registration() {
           <CardContent className="pt-6">
             <h3 className="text-lg font-semibold mb-4 flex items-center">
               <i className="fas fa-user-friends text-emergency mr-2" aria-hidden="true"></i>
-              {t('registration.companion')}
+{getText('companion')}
             </h3>
             <p className="text-sm text-gray-600 mb-4">
-              {t('registration.companion_subtitle')}
+{getText('companion_subtitle')}
             </p>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <Label htmlFor="partnerName">{t('registration.companion_name')}</Label>
+                <Label htmlFor="partnerName">{getText('companion_name')}</Label>
                 <Input
                   id="partnerName"
                   {...form.register("partner.name")}
-                  placeholder={t('registration.companion_name_placeholder')}
+                  placeholder="동행자 이름 입력"
                   aria-describedby="partnerName-desc"
                 />
                 <p id="partnerName-desc" className="text-xs text-gray-500 mt-1">
-                  {t('registration.companion_name_desc')}
+                  비상시 연락할 사람
                 </p>
               </div>
               
               <div>
-                <Label htmlFor="partnerPhone">{t('registration.companion_phone')}</Label>
+                <Label htmlFor="partnerPhone">{getText('companion_phone')}</Label>
                 <Input
                   id="partnerPhone"
                   type="tel"
                   {...form.register("partner.phone")}
-                  placeholder={t('registration.companion_phone_placeholder')}
+                  placeholder="010-0000-0000"
                   aria-describedby="partnerPhone-desc"
                 />
                 <p id="partnerPhone-desc" className="text-xs text-gray-500 mt-1">
-                  {t('registration.companion_phone_desc')}
+                  비상시 연락받을 번호
                 </p>
               </div>
               
               <div className="md:col-span-2">
-                <Label htmlFor="partnerRelationship">{t('registration.companion_relationship')}</Label>
+                <Label htmlFor="partnerRelationship">{getText('companion_relationship')}</Label>
                 <Select onValueChange={(value) => form.setValue("partner.relationship", value)}>
                   <SelectTrigger aria-describedby="relationship-desc">
-                    <SelectValue placeholder={t('registration.companion_relationship_placeholder')} />
+                    <SelectValue placeholder="관계를 선택하세요" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="family">{t('registration.companion_family')}</SelectItem>
-                    <SelectItem value="friend">{t('registration.companion_friend')}</SelectItem>
-                    <SelectItem value="neighbor">{t('registration.companion_neighbor')}</SelectItem>
-                    <SelectItem value="colleague">{t('registration.companion_colleague')}</SelectItem>
-                    <SelectItem value="caregiver">{t('registration.companion_caregiver')}</SelectItem>
+                    <SelectItem value="family">가족</SelectItem>
+                    <SelectItem value="friend">친구</SelectItem>
+                    <SelectItem value="neighbor">이웃</SelectItem>
+                    <SelectItem value="colleague">동료</SelectItem>
+                    <SelectItem value="caregiver">보호자</SelectItem>
                   </SelectContent>
                 </Select>
                 <p id="relationship-desc" className="text-xs text-gray-500 mt-1">
-                  {t('registration.companion_relationship_desc')}
+                  동행자와의 관계
                 </p>
               </div>
             </div>
@@ -404,11 +555,11 @@ export default function Registration() {
               <div className="flex items-start space-x-2">
                 <i className="fas fa-info-circle text-blue-600 mt-0.5" aria-hidden="true"></i>
                 <div className="text-sm">
-                  <p className="font-medium text-blue-800 mb-1">{t('registration.companion_role_title')}</p>
+                  <p className="font-medium text-blue-800 mb-1">동행자의 역할</p>
                   <ul className="text-blue-700 space-y-1 text-xs">
-                    <li>• {t('registration.companion_role_1')}</li>
-                    <li>• {t('registration.companion_role_2')}</li>
-                    <li>• {t('registration.companion_role_3')}</li>
+                    <li>• 비상시 안전 확인 및 연락</li>
+                    <li>• 대피 과정에서 도움 제공</li>
+                    <li>• 가족/친구에게 상황 전달</li>
                   </ul>
                 </div>
               </div>
@@ -421,11 +572,11 @@ export default function Registration() {
           <CardContent className="pt-6">
             <h3 className="text-lg font-semibold mb-4 flex items-center">
               <i className="fas fa-globe text-emergency mr-2" aria-hidden="true"></i>
-              {t('registration.language')}
+{getText('language')}
             </h3>
             <Select onValueChange={(value) => form.setValue("language", value)} defaultValue={form.watch("language")}>
               <SelectTrigger>
-                <SelectValue placeholder={t('registration.language_placeholder')} />
+                <SelectValue placeholder="언어를 선택하세요" />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="ko">🇰🇷 한국어</SelectItem>
@@ -445,7 +596,7 @@ export default function Registration() {
             disabled={form.formState.isSubmitting}
           >
             <i className="fas fa-save mr-2" aria-hidden="true"></i>
-            {form.formState.isSubmitting ? t('common.loading') + "..." : t('registration.save')}
+{form.formState.isSubmitting ? "저장 중..." : (isEditMode ? getText('update') : getText('submit'))}
           </Button>
         </div>
       </form>

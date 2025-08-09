@@ -24,7 +24,38 @@ const futureLanguages = [
 
 export default function LanguageSelection() {
   const [, setLocation] = useLocation();
-  const { setLanguage, t } = useLanguage();
+  const { setLanguage, language } = useLanguage();
+
+  // 하드코딩된 다국어 텍스트
+  const getText = (key: string) => {
+    const texts: Record<string, Record<string, string>> = {
+      ko: {
+        choose_language: '사용하실 언어를 선택해주세요',
+        subtitle: '맞춤형 재난 대응 솔루션',
+        continue_with: '계속하기',
+        coming_soon: '곧 지원 예정'
+      },
+      en: {
+        choose_language: 'Please select your preferred language',
+        subtitle: 'Personalized Disaster Response Solution',
+        continue_with: 'Continue with',
+        coming_soon: 'Coming Soon'
+      },
+      vi: {
+        choose_language: 'Vui lòng chọn ngôn ngữ ưa thích',
+        subtitle: 'Giải pháp ứng phó thảm họa cá nhân hóa',
+        continue_with: 'Tiếp tục với',
+        coming_soon: 'Sắp ra mắt'
+      },
+      zh: {
+        choose_language: '请选择您的首选语言',
+        subtitle: '个性化灾难应对解决方案',
+        continue_with: '继续使用',
+        coming_soon: '即将推出'
+      }
+    };
+    return texts[language]?.[key] || texts['ko'][key] || key;
+  };
   const [selectedLanguage, setSelectedLanguage] = useState<Language | null>(null);
   const [showAllLanguages, setShowAllLanguages] = useState(false);
 
@@ -74,10 +105,10 @@ export default function LanguageSelection() {
             <div className="space-y-5">
               <div className="text-center">
                 <h2 className="text-lg font-semibold mb-2">
-{t('language.title')}
+{getText('choose_language')}
                 </h2>
                 <p className="text-sm text-gray-500">
-                  {t('language.select')}
+                  {getText('subtitle')}
                 </p>
               </div>
               
@@ -124,7 +155,7 @@ export default function LanguageSelection() {
                         <div className="flex-1">
                           <p className="font-semibold text-gray-900">{lang.name}</p>
                           {isFuture && (
-                            <p className="text-xs text-gray-400 mt-1">{t('language.coming_soon')}</p>
+                            <p className="text-xs text-gray-400 mt-1">{getText('coming_soon')}</p>
                           )}
                         </div>
                         <div className="flex items-center space-x-2">
@@ -160,7 +191,7 @@ export default function LanguageSelection() {
                   onClick={() => setShowAllLanguages(true)}
                 >
                   <i className="fas fa-plus mr-2" aria-hidden="true"></i>
-{t('language.show_more')} ({futureLanguages.length}{t('language.preparing')})
+더 많은 언어 보기 ({futureLanguages.length}개 준비 중)
                 </Button>
               )}
             </div>
@@ -168,7 +199,7 @@ export default function LanguageSelection() {
             {/* Footer */}
             <div className="mt-8 text-center border-t border-gray-100 pt-6">
               <p className="text-sm font-medium text-emergency mb-1">
-                {t('footer.tagline')}
+                맞춤형 재난 대응 솔루션
               </p>
               <p className="text-xs text-gray-500">
                 Personalized Disaster Response Solution
