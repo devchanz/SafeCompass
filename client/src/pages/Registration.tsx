@@ -108,10 +108,10 @@ export default function Registration() {
         localStorage.setItem('currentUserId', userId || 'new-user');
         // Add a delay to ensure localStorage is properly set
         setTimeout(() => {
-          setLocation("/dashboard");
+          setLocation("/");
         }, 200);
       } else {
-        setLocation("/dashboard");
+        setLocation("/");
       }
     } catch (error) {
       toast({

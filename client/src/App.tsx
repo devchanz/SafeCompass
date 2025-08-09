@@ -84,7 +84,7 @@ function AppContent() {
       } else if (hasUserData && currentUserId && location === '/registration') {
         // Registered user shouldn't be on registration page
         console.log('Registered user on registration page, redirecting to dashboard');
-        setLocation('/dashboard');
+        setLocation('/');
       }
     }
   }, [hasSelectedLanguage, location, setLocation]);
