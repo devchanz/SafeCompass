@@ -11,6 +11,7 @@ import Registration from "@/pages/Registration";
 import EmergencyAlert from "@/pages/EmergencyAlert";
 import PersonalizedGuide from "@/pages/PersonalizedGuide";
 import ShelterMap from "@/pages/ShelterMap";
+import LanguageSelection from "@/pages/LanguageSelection";
 import SOSButton from "@/components/SOSButton";
 import { AccessibilityProvider } from "@/components/AccessibilityProvider";
 import { LanguageProvider, useLanguage, Language } from "@/contexts/LanguageContext";
@@ -41,19 +42,49 @@ function AppContent() {
     }
   }, [userProfile, language, setLanguage]);
 
-  // Redirect to registration if no user profile exists and not already on registration page
+  // Check if language has been selected
+  const [hasSelectedLanguage, setHasSelectedLanguage] = useState(() => {
+    return localStorage.getItem('selectedLanguage') !== null;
+  });
+
+  // Listen for language selection changes
   useEffect(() => {
-    if (!userProfile && location !== '/registration') {
+    const handleStorageChange = () => {
+      setHasSelectedLanguage(localStorage.getItem('selectedLanguage') !== null);
+    };
+    
+    window.addEventListener('storage', handleStorageChange);
+    
+    // Also check on every render in case localStorage was updated in the same window
+    const hasLanguage = localStorage.getItem('selectedLanguage') !== null;
+    if (hasLanguage !== hasSelectedLanguage) {
+      setHasSelectedLanguage(hasLanguage);
+    }
+    
+    return () => window.removeEventListener('storage', handleStorageChange);
+  }, [hasSelectedLanguage]);
+
+  // Redirect to language selection if no language has been selected
+  useEffect(() => {
+    if (!hasSelectedLanguage && location !== '/language') {
+      setLocation('/language');
+    }
+  }, [hasSelectedLanguage, location, setLocation]);
+
+  // Redirect to registration if language selected but no user profile exists
+  useEffect(() => {
+    if (hasSelectedLanguage && !userProfile && location !== '/registration' && location !== '/language') {
       setLocation('/registration');
     }
-  }, [userProfile, location, setLocation]);
+  }, [hasSelectedLanguage, userProfile, location, setLocation]);
 
 
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-white shadow-sm border-b-2 border-emergency">
+      {/* Header - Hide on language selection page */}
+      {location !== '/language' && (
+        <header className="bg-white shadow-sm border-b-2 border-emergency">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-4">
             <div className="flex items-center space-x-3">
@@ -85,10 +116,10 @@ function AppContent() {
                 value={language}
                 onChange={(e) => setLanguage(e.target.value as Language)}
               >
-                <option value="korean">한국어</option>
-                <option value="english">English</option>
-                <option value="vietnamese">Tiếng Việt</option>
-                <option value="chinese">中文</option>
+                <option value="ko">한국어</option>
+                <option value="en">English</option>
+                <option value="vi">Tiếng Việt</option>
+                <option value="zh">中文</option>
               </select>
               
               {/* Navigation Toggle */}
@@ -172,11 +203,13 @@ function AppContent() {
             </nav>
           )}
         </div>
-      </header>
+        </header>
+      )}
 
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <main className={location === '/language' ? '' : 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6'}>
         <Switch>
+          <Route path="/language" component={LanguageSelection} />
           <Route path="/" component={Dashboard} />
           <Route path="/registration" component={Registration} />
           <Route path="/emergency" component={EmergencyAlert} />

@@ -1,6 +1,6 @@
 import { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 
-export type Language = 'korean' | 'english' | 'vietnamese' | 'chinese';
+export type Language = 'ko' | 'en' | 'vi' | 'zh';
 
 interface LanguageContextType {
   language: Language;
@@ -9,7 +9,7 @@ interface LanguageContextType {
 }
 
 const translations: Record<Language, Record<string, string>> = {
-  korean: {
+  ko: {
     // Navigation
     'nav.dashboard': '대시보드',
     'nav.registration': '사용자 등록',
@@ -71,7 +71,7 @@ const translations: Record<Language, Record<string, string>> = {
     'emergency.mobility.yes': '네, 움직일 수 있습니다',
     'emergency.mobility.no': '아니요, 움직이기 어렵습니다'
   },
-  english: {
+  en: {
     // Navigation
     'nav.dashboard': 'Dashboard',
     'nav.registration': 'Registration',
@@ -133,7 +133,7 @@ const translations: Record<Language, Record<string, string>> = {
     'emergency.mobility.yes': 'Yes, I can move',
     'emergency.mobility.no': 'No, it\'s difficult to move'
   },
-  vietnamese: {
+  vi: {
     // Navigation
     'nav.dashboard': 'Bảng điều khiển',
     'nav.registration': 'Đăng ký',
@@ -195,7 +195,7 @@ const translations: Record<Language, Record<string, string>> = {
     'emergency.mobility.yes': 'Có, tôi có thể di chuyển',
     'emergency.mobility.no': 'Không, khó di chuyển'
   },
-  chinese: {
+  zh: {
     // Navigation
     'nav.dashboard': '仪表板',
     'nav.registration': '注册',
@@ -262,7 +262,11 @@ const translations: Record<Language, Record<string, string>> = {
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
 export function LanguageProvider({ children }: { children: ReactNode }) {
-  const [language, setLanguage] = useState<Language>('korean');
+  const [language, setLanguage] = useState<Language>(() => {
+    // Check if language was previously selected
+    const savedLanguage = localStorage.getItem('selectedLanguage') as Language;
+    return savedLanguage || 'ko';
+  });
 
   const t = (key: string): string => {
     return translations[language]?.[key] || key;
@@ -270,7 +274,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     // Save language preference to localStorage
-    localStorage.setItem('preferred-language', language);
+    localStorage.setItem('selectedLanguage', language);
   }, [language]);
 
   useEffect(() => {
