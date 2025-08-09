@@ -2,12 +2,13 @@ import { useState } from "react";
 import { useLocation } from "wouter";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
 import { useUserProfile } from "@/hooks/useUserProfile";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -138,60 +139,82 @@ export default function ProfileModify() {
   }
 
   return (
-    <div className="max-w-2xl mx-auto space-y-6">
-      <div className="text-center">
-        <h1 className="text-3xl font-bold text-emergency flex items-center justify-center">
-          <i className="fas fa-user-edit mr-3" aria-hidden="true"></i>
-          프로필 수정
+    <div className="max-w-4xl mx-auto space-y-8">
+      {/* Header */}
+      <div className="text-center space-y-2">
+        <div className="relative w-20 h-20 mx-auto mb-6">
+          <div className="absolute inset-0 bg-gradient-to-br from-red-500 via-red-600 to-red-700 rounded-full shadow-xl">
+            <div className="absolute inset-1 bg-gradient-to-br from-red-400 to-red-600 rounded-full">
+              <div className="absolute inset-1 bg-white rounded-full flex items-center justify-center">
+                <i className="fas fa-user-edit text-red-600 text-3xl" aria-hidden="true"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+        <h1 className="text-4xl font-bold text-emergency">
+          {t('registration.edit_title')}
         </h1>
-        <p className="text-gray-600 mt-2">개인정보를 수정하여 맞춤형 가이드를 업데이트하세요</p>
+        <p className="text-gray-600 text-lg max-w-2xl mx-auto">
+          {t('registration.subtitle')}
+        </p>
       </div>
 
-      <Card className="emergency-card">
-        <CardContent className="pt-6">
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-            {/* 기본 정보 */}
-            <div className="space-y-4">
-              <h3 className="text-lg font-semibold text-emergency flex items-center">
-                <i className="fas fa-user mr-2" aria-hidden="true"></i>
-                기본 정보
-              </h3>
+      {/* Main Form Card */}
+      <Card className="bg-white rounded-2xl shadow-xl border-2 border-gray-100">
+        <CardContent className="p-8">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+            {/* 기본 정보 섹션 */}
+            <div className="space-y-6">
+              <div className="flex items-center space-x-3 pb-3 border-b border-gray-200">
+                <div className="w-10 h-10 bg-emergency/10 rounded-full flex items-center justify-center">
+                  <i className="fas fa-user text-emergency text-lg" aria-hidden="true"></i>
+                </div>
+                <h3 className="text-xl font-bold text-emergency">
+                  {t('registration.basic_info')}
+                </h3>
+              </div>
               
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="name">이름</Label>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <Label htmlFor="name" className="text-sm font-semibold text-gray-700">
+                    {t('registration.name')}
+                  </Label>
                   <Input
                     id="name"
                     {...form.register("name")}
-                    className="mt-1"
-                    placeholder="이름을 입력하세요"
+                    className="h-12 text-base border-2 border-gray-200 focus:border-emergency"
+                    placeholder={t('registration.name')}
                   />
                   {form.formState.errors.name && (
-                    <p className="text-red-500 text-sm mt-1">{form.formState.errors.name.message}</p>
+                    <p className="text-red-500 text-sm">{form.formState.errors.name.message}</p>
                   )}
                 </div>
 
-                <div>
-                  <Label htmlFor="age">나이</Label>
+                <div className="space-y-2">
+                  <Label htmlFor="age" className="text-sm font-semibold text-gray-700">
+                    {t('registration.age')}
+                  </Label>
                   <Input
                     id="age"
                     type="number"
                     {...form.register("age", { valueAsNumber: true })}
-                    className="mt-1"
-                    placeholder="나이를 입력하세요"
+                    className="h-12 text-base border-2 border-gray-200 focus:border-emergency"
+                    placeholder={t('registration.age')}
                   />
                   {form.formState.errors.age && (
-                    <p className="text-red-500 text-sm mt-1">{form.formState.errors.age.message}</p>
+                    <p className="text-red-500 text-sm">{form.formState.errors.age.message}</p>
                   )}
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="gender">성별</Label>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <Label htmlFor="gender" className="text-sm font-semibold text-gray-700">
+                    {t('registration.gender')}
+                  </Label>
                   <Select onValueChange={(value) => form.setValue("gender", value)} defaultValue={form.getValues("gender")}>
-                    <SelectTrigger className="mt-1">
-                      <SelectValue placeholder="성별을 선택하세요" />
+                    <SelectTrigger className="h-12 text-base border-2 border-gray-200 focus:border-emergency">
+                      <SelectValue placeholder={t('registration.gender')} />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="male">남성</SelectItem>
@@ -200,148 +223,247 @@ export default function ProfileModify() {
                     </SelectContent>
                   </Select>
                   {form.formState.errors.gender && (
-                    <p className="text-red-500 text-sm mt-1">{form.formState.errors.gender.message}</p>
+                    <p className="text-red-500 text-sm">{form.formState.errors.gender.message}</p>
                   )}
                 </div>
 
-                <div>
-                  <Label htmlFor="address">주소</Label>
+                <div className="space-y-2">
+                  <Label htmlFor="address" className="text-sm font-semibold text-gray-700">
+                    {t('registration.address')}
+                  </Label>
                   <Input
                     id="address"
                     {...form.register("address")}
-                    className="mt-1"
-                    placeholder="주소를 입력하세요"
+                    className="h-12 text-base border-2 border-gray-200 focus:border-emergency"
+                    placeholder={t('registration.address')}
                   />
                   {form.formState.errors.address && (
-                    <p className="text-red-500 text-sm mt-1">{form.formState.errors.address.message}</p>
+                    <p className="text-red-500 text-sm">{form.formState.errors.address.message}</p>
                   )}
                 </div>
               </div>
             </div>
 
-            {/* 접근성 및 자력대피 능력 */}
-            <div className="space-y-4">
-              <h3 className="text-lg font-semibold text-emergency flex items-center">
-                <i className="fas fa-wheelchair mr-2" aria-hidden="true"></i>
-                접근성 지원 및 자력대피 능력
-              </h3>
+            {/* 접근성 및 자력대피 능력 섹션 */}
+            <div className="space-y-6">
+              <div className="flex items-center space-x-3 pb-3 border-b border-gray-200">
+                <div className="w-10 h-10 bg-safety/10 rounded-full flex items-center justify-center">
+                  <i className="fas fa-universal-access text-safety text-lg" aria-hidden="true"></i>
+                </div>
+                <h3 className="text-xl font-bold text-emergency">
+                  {t('registration.accessibility_support')}
+                </h3>
+              </div>
               
-              <div>
-                <Label>자력대피 능력</Label>
-                <RadioGroup 
-                  defaultValue={form.getValues("mobility")}
-                  onValueChange={(value) => form.setValue("mobility", value)}
-                  className="mt-2"
-                >
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="independent" id="independent" />
-                    <Label htmlFor="independent">자력대피 가능</Label>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="assisted" id="assisted" />
-                    <Label htmlFor="assisted">부분 도움 필요</Label>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="unable" id="unable" />
-                    <Label htmlFor="unable">자력대피 불가능</Label>
-                  </div>
-                </RadioGroup>
+              {/* 접근성 지원 선택 */}
+              <div className="space-y-4">
+                <Label className="text-base font-semibold text-gray-700">
+                  {t('registration.accessibility')}
+                </Label>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                  <Button
+                    type="button"
+                    variant={selectedAccessibility.length === 0 ? "default" : "outline"}
+                    className={`p-6 h-auto flex-col space-y-3 border-2 transition-all duration-200 ${
+                      selectedAccessibility.length === 0 
+                        ? 'bg-gray-100 border-gray-300 shadow-md' 
+                        : 'border-gray-200 hover:border-gray-300'
+                    }`}
+                    onClick={() => setSelectedAccessibility([])}
+                  >
+                    <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center">
+                      <i className="fas fa-user-check text-2xl text-gray-600" aria-hidden="true"></i>
+                    </div>
+                    <div className="text-center">
+                      <p className={`text-sm font-semibold ${selectedAccessibility.length === 0 ? 'text-gray-800' : 'text-gray-700'}`}>
+                        일반 사용자
+                      </p>
+                      <p className="text-xs text-gray-600">특별한 지원 불필요</p>
+                    </div>
+                  </Button>
+                  
+                  <Button
+                    type="button"
+                    variant={selectedAccessibility.includes('visual') ? "default" : "outline"}
+                    className={`p-6 h-auto flex-col space-y-3 border-2 transition-all duration-200 ${
+                      selectedAccessibility.includes('visual') 
+                        ? 'bg-blue-50 border-blue-300 shadow-md' 
+                        : 'border-gray-200 hover:border-blue-200'
+                    }`}
+                    onClick={() => handleAccessibilityChange('visual')}
+                  >
+                    <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+                      <i className="fas fa-low-vision text-2xl text-blue-600" aria-hidden="true"></i>
+                    </div>
+                    <div className="text-center">
+                      <p className={`text-sm font-semibold ${selectedAccessibility.includes('visual') ? 'text-blue-800' : 'text-gray-700'}`}>
+                        시각 지원
+                      </p>
+                      <p className="text-xs text-gray-600">음성 안내, 큰 글씨</p>
+                    </div>
+                  </Button>
+                  
+                  <Button
+                    type="button"
+                    variant={selectedAccessibility.includes('hearing') ? "default" : "outline"}
+                    className={`p-6 h-auto flex-col space-y-3 border-2 transition-all duration-200 ${
+                      selectedAccessibility.includes('hearing') 
+                        ? 'bg-yellow-50 border-yellow-300 shadow-md' 
+                        : 'border-gray-200 hover:border-yellow-200'
+                    }`}
+                    onClick={() => handleAccessibilityChange('hearing')}
+                  >
+                    <div className="w-12 h-12 bg-yellow-100 rounded-full flex items-center justify-center">
+                      <i className="fas fa-assistive-listening-systems text-2xl text-yellow-600" aria-hidden="true"></i>
+                    </div>
+                    <div className="text-center">
+                      <p className={`text-sm font-semibold ${selectedAccessibility.includes('hearing') ? 'text-yellow-800' : 'text-gray-700'}`}>
+                        청각 지원
+                      </p>
+                      <p className="text-xs text-gray-600">진동 알림, 시각 신호</p>
+                    </div>
+                  </Button>
+                </div>
               </div>
 
-              <div>
-                <Label>접근성 지원 (다중 선택 가능)</Label>
-                <div className="mt-2 space-y-2">
-                  {["visual", "hearing", "basic"].map((accessType) => (
-                    <label key={accessType} className="flex items-center space-x-2 cursor-pointer">
-                      <input
-                        type="checkbox"
-                        checked={selectedAccessibility.includes(accessType)}
-                        onChange={() => handleAccessibilityChange(accessType)}
-                        className="rounded"
-                      />
-                      <span>
-                        {accessType === "visual" && "시각적 지원 (큰 글씨, 음성 안내)"}
-                        {accessType === "hearing" && "청각적 지원 (진동 알림, 시각 신호)"}
-                        {accessType === "basic" && "기본적 지원"}
-                      </span>
-                    </label>
-                  ))}
+              {/* 자력대피 능력 선택 */}
+              <div className="space-y-4">
+                <Label className="text-base font-semibold text-gray-700">
+                  {t('registration.mobility')}
+                </Label>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <Button
+                    type="button"
+                    variant={form.watch("mobility") === "independent" ? "default" : "outline"}
+                    className={`p-6 h-auto flex-col space-y-3 border-2 transition-all duration-200 ${
+                      form.watch("mobility") === "independent"
+                        ? 'bg-green-50 border-green-300 shadow-md'
+                        : 'border-gray-200 hover:border-green-200'
+                    }`}
+                    onClick={() => form.setValue("mobility", "independent")}
+                  >
+                    <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
+                      <i className="fas fa-running text-2xl text-green-600" aria-hidden="true"></i>
+                    </div>
+                    <div className="text-center">
+                      <p className={`text-sm font-semibold ${form.watch("mobility") === "independent" ? 'text-green-800' : 'text-gray-700'}`}>
+                        자력대피 가능
+                      </p>
+                      <p className="text-xs text-gray-600">혼자 대피할 수 있음</p>
+                    </div>
+                  </Button>
+                  
+                  <Button
+                    type="button"
+                    variant={form.watch("mobility") === "unable" ? "default" : "outline"}
+                    className={`p-6 h-auto flex-col space-y-3 border-2 transition-all duration-200 ${
+                      form.watch("mobility") === "unable"
+                        ? 'bg-red-50 border-red-300 shadow-md'
+                        : 'border-gray-200 hover:border-red-200'
+                    }`}
+                    onClick={() => form.setValue("mobility", "unable")}
+                  >
+                    <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center">
+                      <i className="fas fa-wheelchair text-2xl text-red-600" aria-hidden="true"></i>
+                    </div>
+                    <div className="text-center">
+                      <p className={`text-sm font-semibold ${form.watch("mobility") === "unable" ? 'text-red-800' : 'text-gray-700'}`}>
+                        도움 필요
+                      </p>
+                      <p className="text-xs text-gray-600">대피 시 도움이 필요함</p>
+                    </div>
+                  </Button>
                 </div>
               </div>
             </div>
 
-            {/* 동행 파트너 */}
-            <div className="space-y-4">
-              <h3 className="text-lg font-semibold text-emergency flex items-center">
-                <i className="fas fa-user-friends mr-2" aria-hidden="true"></i>
-                동행 파트너 (선택사항)
-              </h3>
-              <p className="text-sm text-gray-600">
-                긴급 상황 시 연락할 동행 파트너 정보를 입력하세요.
+            {/* 동행 파트너 섹션 */}
+            <div className="space-y-6">
+              <div className="flex items-center space-x-3 pb-3 border-b border-gray-200">
+                <div className="w-10 h-10 bg-warning/10 rounded-full flex items-center justify-center">
+                  <i className="fas fa-user-friends text-warning text-lg" aria-hidden="true"></i>
+                </div>
+                <h3 className="text-xl font-bold text-emergency">
+                  {t('registration.companion')}
+                </h3>
+              </div>
+              
+              <p className="text-gray-600 bg-gray-50 p-4 rounded-lg border-l-4 border-warning">
+                <i className="fas fa-info-circle text-warning mr-2" aria-hidden="true"></i>
+                긴급 상황 시 연락할 동행 파트너 정보를 입력하세요. (선택사항)
               </p>
               
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div>
-                  <Label htmlFor="partner-name">이름</Label>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="space-y-2">
+                  <Label htmlFor="partner-name" className="text-sm font-semibold text-gray-700">
+                    파트너 이름
+                  </Label>
                   <Input
                     id="partner-name"
                     {...form.register("partner.name")}
-                    className="mt-1"
+                    className="h-12 text-base border-2 border-gray-200 focus:border-emergency"
                     placeholder="파트너 이름"
                   />
                 </div>
 
-                <div>
-                  <Label htmlFor="partner-phone">전화번호</Label>
+                <div className="space-y-2">
+                  <Label htmlFor="partner-phone" className="text-sm font-semibold text-gray-700">
+                    전화번호
+                  </Label>
                   <Input
                     id="partner-phone"
                     {...form.register("partner.phone")}
-                    className="mt-1"
+                    className="h-12 text-base border-2 border-gray-200 focus:border-emergency"
                     placeholder="010-1234-5678"
                   />
                 </div>
 
-                <div>
-                  <Label htmlFor="partner-relationship">관계</Label>
+                <div className="space-y-2">
+                  <Label htmlFor="partner-relationship" className="text-sm font-semibold text-gray-700">
+                    관계
+                  </Label>
                   <Input
                     id="partner-relationship"
                     {...form.register("partner.relationship")}
-                    className="mt-1"
+                    className="h-12 text-base border-2 border-gray-200 focus:border-emergency"
                     placeholder="가족, 친구, 동료 등"
-                    defaultValue=""
                   />
                 </div>
               </div>
             </div>
 
-            {/* 버튼 */}
-            <div className="flex space-x-4 pt-4">
-              <Button
-                type="button"
-                variant="outline"
-                className="flex-1"
-                onClick={() => setLocation("/")}
-              >
-                <i className="fas fa-arrow-left mr-2" aria-hidden="true"></i>
-                취소
-              </Button>
-              <Button
-                type="submit"
-                className="flex-1 bg-emergency hover:bg-emergency-dark"
-                disabled={updateProfile.isPending}
-              >
-                {updateProfile.isPending ? (
-                  <>
-                    <i className="fas fa-spinner fa-spin mr-2" aria-hidden="true"></i>
-                    수정 중...
-                  </>
-                ) : (
-                  <>
-                    <i className="fas fa-save mr-2" aria-hidden="true"></i>
-                    프로필 수정
-                  </>
-                )}
-              </Button>
+            {/* 제출 버튼 */}
+            <div className="pt-8 border-t border-gray-200">
+              <div className="flex flex-col sm:flex-row gap-4">
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="lg"
+                  className="flex-1 h-14 text-base border-2"
+                  onClick={() => setLocation("/")}
+                >
+                  <i className="fas fa-arrow-left mr-3" aria-hidden="true"></i>
+                  취소
+                </Button>
+                <Button
+                  type="submit"
+                  size="lg"
+                  className="flex-1 h-14 text-base bg-emergency hover:bg-emergency-dark shadow-lg"
+                  disabled={updateProfile.isPending}
+                >
+                  {updateProfile.isPending ? (
+                    <>
+                      <div className="w-5 h-5 mr-3 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                      수정 중...
+                    </>
+                  ) : (
+                    <>
+                      <i className="fas fa-save mr-3" aria-hidden="true"></i>
+                      {t('registration.save')}
+                    </>
+                  )}
+                </Button>
+              </div>
             </div>
           </form>
         </CardContent>
