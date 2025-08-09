@@ -464,7 +464,7 @@ export default function Registration() {
                   </div>
                   <div className="text-center">
                     <p className={`text-sm font-semibold ${form.watch("mobility") === "independent" ? 'text-green-800' : 'text-gray-700'}`}>{getText('independent')}</p>
-                    <p className="text-xs text-gray-600">혼자서도 안전하게 이동 가능</p>
+                    <p className="text-xs text-gray-600">{language === 'ko' ? '혼자서도 안전하게 이동 가능' : language === 'en' ? 'Can move safely alone' : language === 'vi' ? 'Có thể di chuyển an toàn một mình' : '可以安全地独自行动'}</p>
                   </div>
                 </Button>
                 
@@ -484,7 +484,7 @@ export default function Registration() {
                   </div>
                   <div className="text-center">
                     <p className={`text-sm font-semibold ${form.watch("mobility") === "assisted" ? 'text-orange-800' : 'text-gray-700'}`}>{getText('assistance')}</p>
-                    <p className="text-xs text-gray-600">다른 사람의 도움이 필요</p>
+                    <p className="text-xs text-gray-600">{language === 'ko' ? '다른 사람의 도움이 필요' : language === 'en' ? 'Need assistance from others' : language === 'vi' ? 'Cần sự hỗ trợ từ người khác' : '需要他人帮助'}</p>
                   </div>
                 </Button>
               </div>
@@ -509,11 +509,11 @@ export default function Registration() {
                 <Input
                   id="partnerName"
                   {...form.register("partner.name")}
-                  placeholder="동행자 이름 입력"
+                  placeholder={language === 'ko' ? '동행자 이름 입력' : language === 'en' ? 'Enter companion name' : language === 'vi' ? 'Nhập tên người đồng hành' : '输入同伴姓名'}
                   aria-describedby="partnerName-desc"
                 />
                 <p id="partnerName-desc" className="text-xs text-gray-500 mt-1">
-                  비상시 연락할 사람
+                  {language === 'ko' ? '비상시 연락할 사람' : language === 'en' ? 'Person to contact in emergency' : language === 'vi' ? 'Người liên hệ trong trường hợp khẩn cấp' : '紧急情况下的联系人'}
                 </p>
               </div>
               
@@ -523,11 +523,11 @@ export default function Registration() {
                   id="partnerPhone"
                   type="tel"
                   {...form.register("partner.phone")}
-                  placeholder="010-0000-0000"
+                  placeholder={language === 'ko' ? '010-0000-0000' : language === 'en' ? 'Phone number' : language === 'vi' ? 'Số điện thoại' : '电话号码'}
                   aria-describedby="partnerPhone-desc"
                 />
                 <p id="partnerPhone-desc" className="text-xs text-gray-500 mt-1">
-                  비상시 연락받을 번호
+                  {language === 'ko' ? '비상시 연락받을 번호' : language === 'en' ? 'Emergency contact number' : language === 'vi' ? 'Số liên hệ khẩn cấp' : '紧急联系电话'}
                 </p>
               </div>
               
@@ -535,18 +535,18 @@ export default function Registration() {
                 <Label htmlFor="partnerRelationship">{getText('companion_relationship')}</Label>
                 <Select onValueChange={(value) => form.setValue("partner.relationship", value)}>
                   <SelectTrigger aria-describedby="relationship-desc">
-                    <SelectValue placeholder="관계를 선택하세요" />
+                    <SelectValue placeholder={language === 'ko' ? '관계를 선택하세요' : language === 'en' ? 'Select relationship' : language === 'vi' ? 'Chọn mối quan hệ' : '选择关系'} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="family">가족</SelectItem>
-                    <SelectItem value="friend">친구</SelectItem>
-                    <SelectItem value="neighbor">이웃</SelectItem>
-                    <SelectItem value="colleague">동료</SelectItem>
-                    <SelectItem value="caregiver">보호자</SelectItem>
+                    <SelectItem value="family">{language === 'ko' ? '가족' : language === 'en' ? 'Family' : language === 'vi' ? 'Gia đình' : '家人'}</SelectItem>
+                    <SelectItem value="friend">{language === 'ko' ? '친구' : language === 'en' ? 'Friend' : language === 'vi' ? 'Bạn bè' : '朋友'}</SelectItem>
+                    <SelectItem value="neighbor">{language === 'ko' ? '이웃' : language === 'en' ? 'Neighbor' : language === 'vi' ? 'Hàng xóm' : '邻居'}</SelectItem>
+                    <SelectItem value="colleague">{language === 'ko' ? '동료' : language === 'en' ? 'Colleague' : language === 'vi' ? 'Đồng nghiệp' : '同事'}</SelectItem>
+                    <SelectItem value="caregiver">{language === 'ko' ? '보호자' : language === 'en' ? 'Caregiver' : language === 'vi' ? 'Người chăm sóc' : '护理员'}</SelectItem>
                   </SelectContent>
                 </Select>
                 <p id="relationship-desc" className="text-xs text-gray-500 mt-1">
-                  동행자와의 관계
+                  {language === 'ko' ? '동행자와의 관계' : language === 'en' ? 'Relationship with companion' : language === 'vi' ? 'Mối quan hệ với người đồng hành' : '与同伴的关系'}
                 </p>
               </div>
             </div>
@@ -555,11 +555,13 @@ export default function Registration() {
               <div className="flex items-start space-x-2">
                 <i className="fas fa-info-circle text-blue-600 mt-0.5" aria-hidden="true"></i>
                 <div className="text-sm">
-                  <p className="font-medium text-blue-800 mb-1">동행자의 역할</p>
+                  <p className="font-medium text-blue-800 mb-1">
+                    {language === 'ko' ? '동행자의 역할' : language === 'en' ? 'Companion\'s Role' : language === 'vi' ? 'Vai trò của người đồng hành' : '同伴的作用'}
+                  </p>
                   <ul className="text-blue-700 space-y-1 text-xs">
-                    <li>• 비상시 안전 확인 및 연락</li>
-                    <li>• 대피 과정에서 도움 제공</li>
-                    <li>• 가족/친구에게 상황 전달</li>
+                    <li>• {language === 'ko' ? '비상시 안전 확인 및 연락' : language === 'en' ? 'Safety check and contact in emergencies' : language === 'vi' ? 'Kiểm tra an toàn và liên lạc trong trường hợp khẩn cấp' : '紧急情况下的安全检查和联系'}</li>
+                    <li>• {language === 'ko' ? '대피 과정에서 도움 제공' : language === 'en' ? 'Assistance during evacuation' : language === 'vi' ? 'Hỗ trợ trong quá trình sơ tán' : '疏散过程中的协助'}</li>
+                    <li>• {language === 'ko' ? '가족/친구에게 상황 전달' : language === 'en' ? 'Update family/friends on situation' : language === 'vi' ? 'Thông báo tình hình cho gia đình/bạn bè' : '向家人/朋友通报情况'}</li>
                   </ul>
                 </div>
               </div>

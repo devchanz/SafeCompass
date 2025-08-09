@@ -20,7 +20,7 @@ import { useUserProfile } from "@/hooks/useUserProfile";
 import { useEmergencyNotification } from "@/hooks/useEmergencyNotification";
 
 function AppContent() {
-  const { language, setLanguage, t } = useLanguage();
+  const { language, setLanguage } = useLanguage();
   const { data: userProfile } = useUserProfile();
   const [location, setLocation] = useLocation();
   const { isEmergencyActive, hasUnreadAlert, markAlertAsRead } = useEmergencyNotification();
@@ -120,8 +120,18 @@ function AppContent() {
                 <i className="fas fa-compass text-lg" aria-hidden="true"></i>
               </div>
               <div>
-                <h1 className="text-xl font-bold text-emergency">{t('dashboard.title')}</h1>
-                <p className="text-sm text-gray-600">{t('dashboard.subtitle')}</p>
+                <h1 className="text-xl font-bold text-emergency">
+                  {language === 'ko' ? '안전나침반' : 
+                   language === 'en' ? 'Safe Compass' : 
+                   language === 'vi' ? 'La Bàn An Toàn' : 
+                   '安全指南针'}
+                </h1>
+                <p className="text-sm text-gray-600">
+                  {language === 'ko' ? '맞춤형 재난 대응 솔루션' : 
+                   language === 'en' ? 'Personalized Disaster Response Solution' : 
+                   language === 'vi' ? 'Giải pháp ứng phó thiên tai cá nhân hóa' : 
+                   '个性化灾难应对解决方案'}
+                </p>
               </div>
               {isEmergencyActive && hasUnreadAlert && (
                 <div className="ml-4 pulse-animation">

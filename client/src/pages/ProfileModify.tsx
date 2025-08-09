@@ -28,7 +28,58 @@ type ModifyData = z.infer<typeof modifySchema>;
 export default function ProfileModify() {
   const [, setLocation] = useLocation();
   const { toast } = useToast();
-  const { language, t } = useLanguage();
+  const { language } = useLanguage();
+
+  // 하드코딩된 다국어 텍스트
+  const getText = (key: string) => {
+    const texts: Record<string, Record<string, string>> = {
+      ko: {
+        title: '프로필 수정',
+        subtitle: '개인 정보 수정',
+        save: '수정 완료',
+        saving: '저장 중...',
+        cancel: '취소',
+        profile_updated: '프로필이 수정되었습니다',
+        error: '오류',
+        profile_not_found: '프로필 정보를 찾을 수 없습니다.',
+        update_failed: '프로필 업데이트에 실패했습니다.'
+      },
+      en: {
+        title: 'Edit Profile',
+        subtitle: 'Edit Personal Information',
+        save: 'Save Changes',
+        saving: 'Saving...',
+        cancel: 'Cancel',
+        profile_updated: 'Profile has been updated',
+        error: 'Error',
+        profile_not_found: 'Profile information not found.',
+        update_failed: 'Failed to update profile.'
+      },
+      vi: {
+        title: 'Chỉnh sửa hồ sơ',
+        subtitle: 'Chỉnh sửa thông tin cá nhân',
+        save: 'Lưu thay đổi',
+        saving: 'Đang lưu...',
+        cancel: 'Hủy',
+        profile_updated: 'Hồ sơ đã được cập nhật',
+        error: 'Lỗi',
+        profile_not_found: 'Không tìm thấy thông tin hồ sơ.',
+        update_failed: 'Cập nhật hồ sơ thất bại.'
+      },
+      zh: {
+        title: '编辑个人资料',
+        subtitle: '编辑个人信息',
+        save: '保存更改',
+        saving: '保存中...',
+        cancel: '取消',
+        profile_updated: '个人资料已更新',
+        error: '错误',
+        profile_not_found: '找不到个人资料信息。',
+        update_failed: '更新个人资料失败。'
+      }
+    };
+    return texts[language]?.[key] || texts['ko'][key] || key;
+  };
   const { data: existingProfile, updateProfile, createCompanion } = useUserProfile();
   
   const [selectedAccessibility, setSelectedAccessibility] = useState<string[]>(
@@ -56,8 +107,8 @@ export default function ProfileModify() {
   const onSubmit = async (data: ModifyData) => {
     if (!existingProfile) {
       toast({
-        title: "오류",
-        description: "프로필 정보를 찾을 수 없습니다.",
+        title: getText('error'),
+        description: getText('profile_not_found'),
         variant: "destructive",
       });
       return;

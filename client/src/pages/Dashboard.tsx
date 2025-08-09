@@ -271,7 +271,7 @@ export default function Dashboard() {
             </CardContent>
           </Card>
           
-          <Link href="/registration">
+          <Link href="/modify">
             <Card className="emergency-card hover:shadow-lg transition-shadow cursor-pointer">
               <CardContent className="text-center pt-6">
                 <i className="fas fa-cog text-2xl text-gray-600 mb-2" aria-hidden="true"></i>
