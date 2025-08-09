@@ -251,8 +251,8 @@ export default function Registration() {
                     <i className="fas fa-low-vision text-2xl text-blue-600" aria-hidden="true"></i>
                   </div>
                   <div className="text-center">
-                    <p className={`text-sm font-semibold ${selectedAccessibility.includes('visual') ? 'text-blue-800' : 'text-gray-700'}`}>시각 지원</p>
-                    <p className="text-xs text-gray-600">음성 안내, 큰 글씨</p>
+                    <p className={`text-sm font-semibold ${selectedAccessibility.includes('visual') ? 'text-blue-800' : 'text-gray-700'}`}>{t('registration.accessibility_visual')}</p>
+                    <p className="text-xs text-gray-600">{t('registration.accessibility_visual_desc')}</p>
                   </div>
                 </Button>
                 
@@ -271,8 +271,8 @@ export default function Registration() {
                     <i className="fas fa-assistive-listening-systems text-2xl text-yellow-600" aria-hidden="true"></i>
                   </div>
                   <div className="text-center">
-                    <p className={`text-sm font-semibold ${selectedAccessibility.includes('hearing') ? 'text-yellow-800' : 'text-gray-700'}`}>청각 지원</p>
-                    <p className="text-xs text-gray-600">진동, 시각적 신호</p>
+                    <p className={`text-sm font-semibold ${selectedAccessibility.includes('hearing') ? 'text-yellow-800' : 'text-gray-700'}`}>{t('registration.accessibility_hearing')}</p>
+                    <p className="text-xs text-gray-600">{t('registration.accessibility_hearing_desc')}</p>
                   </div>
                 </Button>
               </div>
@@ -280,7 +280,7 @@ export default function Registration() {
 
             {/* Self-Evacuation Capability Section */}
             <div>
-              <Label className="text-base font-medium mb-4 block">자력대피 가능 여부</Label>
+              <Label className="text-base font-medium mb-4 block">{t('registration.mobility')}</Label>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <Button
                   type="button"
@@ -297,8 +297,8 @@ export default function Registration() {
                     <i className="fas fa-running text-2xl text-green-600" aria-hidden="true"></i>
                   </div>
                   <div className="text-center">
-                    <p className={`text-sm font-semibold ${form.watch("mobility") === "independent" ? 'text-green-800' : 'text-gray-700'}`}>자력대피 가능</p>
-                    <p className="text-xs text-gray-600">혼자서도 신속히 이동</p>
+                    <p className={`text-sm font-semibold ${form.watch("mobility") === "independent" ? 'text-green-800' : 'text-gray-700'}`}>{t('registration.mobility_independent')}</p>
+                    <p className="text-xs text-gray-600">{t('registration.mobility_independent_desc')}</p>
                   </div>
                 </Button>
                 
@@ -317,8 +317,8 @@ export default function Registration() {
                     <i className="fas fa-hands-helping text-2xl text-orange-500" aria-hidden="true"></i>
                   </div>
                   <div className="text-center">
-                    <p className={`text-sm font-semibold ${form.watch("mobility") === "assisted" ? 'text-orange-800' : 'text-gray-700'}`}>도움 필요</p>
-                    <p className="text-xs text-gray-600">타인의 도움 필요</p>
+                    <p className={`text-sm font-semibold ${form.watch("mobility") === "assisted" ? 'text-orange-800' : 'text-gray-700'}`}>{t('registration.mobility_assisted')}</p>
+                    <p className="text-xs text-gray-600">{t('registration.mobility_assisted_desc')}</p>
                   </div>
                 </Button>
               </div>
@@ -331,57 +331,56 @@ export default function Registration() {
           <CardContent className="pt-6">
             <h3 className="text-lg font-semibold mb-4 flex items-center">
               <i className="fas fa-user-friends text-emergency mr-2" aria-hidden="true"></i>
-              동행 파트너 (선택사항)
+              {t('registration.companion')}
             </h3>
             <p className="text-sm text-gray-600 mb-4">
-              응급상황 시 연락받을 동행 파트너의 정보를 입력해주세요. 
-              이 정보는 SOS 신호 시 자동으로 전송됩니다.
+              {t('registration.companion_subtitle')}
             </p>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <Label htmlFor="partnerName">동행 파트너 이름</Label>
+                <Label htmlFor="partnerName">{t('registration.companion_name')}</Label>
                 <Input
                   id="partnerName"
                   {...form.register("partner.name")}
-                  placeholder="김철수"
+                  placeholder={t('registration.companion_name_placeholder')}
                   aria-describedby="partnerName-desc"
                 />
                 <p id="partnerName-desc" className="text-xs text-gray-500 mt-1">
-                  응급상황 시 연락받을 사람의 이름
+                  {t('registration.companion_name_desc')}
                 </p>
               </div>
               
               <div>
-                <Label htmlFor="partnerPhone">연락처</Label>
+                <Label htmlFor="partnerPhone">{t('registration.companion_phone')}</Label>
                 <Input
                   id="partnerPhone"
                   type="tel"
                   {...form.register("partner.phone")}
-                  placeholder="010-1234-5678"
+                  placeholder={t('registration.companion_phone_placeholder')}
                   aria-describedby="partnerPhone-desc"
                 />
                 <p id="partnerPhone-desc" className="text-xs text-gray-500 mt-1">
-                  SMS와 전화로 응급상황을 알릴 번호
+                  {t('registration.companion_phone_desc')}
                 </p>
               </div>
               
               <div className="md:col-span-2">
-                <Label htmlFor="partnerRelationship">관계</Label>
+                <Label htmlFor="partnerRelationship">{t('registration.companion_relationship')}</Label>
                 <Select onValueChange={(value) => form.setValue("partner.relationship", value)}>
                   <SelectTrigger aria-describedby="relationship-desc">
-                    <SelectValue placeholder="동행 파트너와의 관계를 선택해주세요" />
+                    <SelectValue placeholder={t('registration.companion_relationship_placeholder')} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="family">가족 (배우자, 부모, 자녀)</SelectItem>
-                    <SelectItem value="friend">친구</SelectItem>
-                    <SelectItem value="neighbor">이웃</SelectItem>
-                    <SelectItem value="colleague">직장 동료</SelectItem>
-                    <SelectItem value="caregiver">돌봄 제공자</SelectItem>
+                    <SelectItem value="family">{t('registration.companion_family')}</SelectItem>
+                    <SelectItem value="friend">{t('registration.companion_friend')}</SelectItem>
+                    <SelectItem value="neighbor">{t('registration.companion_neighbor')}</SelectItem>
+                    <SelectItem value="colleague">{t('registration.companion_colleague')}</SelectItem>
+                    <SelectItem value="caregiver">{t('registration.companion_caregiver')}</SelectItem>
                   </SelectContent>
                 </Select>
                 <p id="relationship-desc" className="text-xs text-gray-500 mt-1">
-                  응급상황 시 연락받을 사람과의 관계
+                  {t('registration.companion_relationship_desc')}
                 </p>
               </div>
             </div>
@@ -390,11 +389,11 @@ export default function Registration() {
               <div className="flex items-start space-x-2">
                 <i className="fas fa-info-circle text-blue-600 mt-0.5" aria-hidden="true"></i>
                 <div className="text-sm">
-                  <p className="font-medium text-blue-800 mb-1">동행 파트너 역할</p>
+                  <p className="font-medium text-blue-800 mb-1">{t('registration.companion_role_title')}</p>
                   <ul className="text-blue-700 space-y-1 text-xs">
-                    <li>• 응급상황 발생 시 SMS로 위치와 상황 정보 자동 전송</li>
-                    <li>• 대피가 어려운 경우 구조 지원 요청</li>
-                    <li>• 의료진에게 개인 정보 제공 (필요시)</li>
+                    <li>• {t('registration.companion_role_1')}</li>
+                    <li>• {t('registration.companion_role_2')}</li>
+                    <li>• {t('registration.companion_role_3')}</li>
                   </ul>
                 </div>
               </div>
