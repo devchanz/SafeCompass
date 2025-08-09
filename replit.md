@@ -28,6 +28,13 @@ Preferred communication style: Simple, everyday language.
   - Color-coded shelter types (blue=실내, green=옥외, purple=구호소)
   - Real shelter coordinate data integration from backend API
   - Enhanced UI with map status indicators and shelter information cards
+- **Real Disaster Response Platform API Integration**:
+  - Connected to 행정안전부_지진_대피장소 API (DSSP-IF-00706)
+  - API Key: E66AUK0213KP6N6W for accessing 1,369+ real shelter locations
+  - Created comprehensive ShelterService with distance calculation and filtering
+  - Replaced dummy Seoul Gangnam data with authentic nationwide shelter data
+  - Automatic shelter type classification (공터→옥외, 건물→실내, etc.)
+  - Distance-based sorting and capacity information from real government data
 
 # System Architecture
 
