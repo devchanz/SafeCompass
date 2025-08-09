@@ -10,10 +10,9 @@ export class TMapService {
   private baseUrl = 'https://apis.openapi.sk.com/tmap';
 
   constructor() {
-    this.apiKey = import.meta.env.VITE_TMAP_API_KEY || '';
-    if (!this.apiKey) {
-      console.warn('⚠️ T-Map API 키가 설정되지 않았습니다. 직선 경로를 사용합니다.');
-    }
+    // 클라이언트에서는 API 키가 필요 없음 (서버를 통해 호출)
+    this.apiKey = 'server-proxy';
+    console.log('✅ T-Map 서비스 초기화: 서버를 통해 API 호출');
   }
 
   /**
@@ -25,10 +24,7 @@ export class TMapService {
     endLat: number, 
     endLng: number
   ): Promise<TMapRoute | null> {
-    if (!this.apiKey) {
-      console.log('T-Map API 키가 없어 직선 경로를 반환합니다.');
-      return this.getStraightLineRoute(startLat, startLng, endLat, endLng);
-    }
+    // 서버를 통해 API 호출하므로 클라이언트에서 API 키 체크 불필요
 
     try {
       const requestBody = {

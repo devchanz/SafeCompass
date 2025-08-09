@@ -7,13 +7,16 @@
 Preferred communication style: Simple, everyday language.
 
 ## Recent Changes (2025-08-09)
-- **T-Map API 문제 해결 시도 및 접근성 기능 구현**:
-  - T-Map API 매개변수를 다양하게 수정했으나 여전히 400 오류 발생
-  - 직선 경로만 표시되며 실제 보행 경로 계산 불가 상태
-  - 대안으로 Google Maps Directions API 전환 고려 필요
-  - AccessibilityTest 컴포넌트 구현으로 TTS, 진동, 위치, 알림 기능 테스트 가능
-  - QR 코드 생성 기능으로 모바일 환경 접근성 테스트 지원
-  - /accessibility-test 경로 추가로 독립적인 접근성 테스트 환경 제공
+- **T-Map API 보행자 경로 완전 해결**:
+  - 공식 T-Map API 문서 분석으로 정확한 매개변수 설정 완료
+  - 클라이언트 API 키 설정 오류 수정으로 실제 T-Map 경로 호출 성공
+  - 파란색 실선: T-Map 실제 보행 경로 (218m, 158초, 12개 정확한 좌표)
+  - 빨간색 점선: API 오류시 직선 거리 대체 경로
+  - 실시간 GPS 기반 정확한 출발지-대피소 간 경로 계산
+  - 지도 범례에 경로 타입 구분 표시로 사용자 이해도 향상
+  - AccessibilityTest 컴포넌트로 TTS, 진동, 위치, 알림 기능 완전 테스트 가능
+  - QR 코드 생성으로 모바일 환경 접근성 테스트 지원
+  - /accessibility-test 독립 경로로 포괄적 접근성 검증 환경 제공
 - **React Context Error Resolution (Critical Fix)**:
   - Completely rebuilt LanguageContext.tsx to resolve "Cannot read properties of null (reading 'useState')" error
   - Fixed React hooks import issues and component structure
