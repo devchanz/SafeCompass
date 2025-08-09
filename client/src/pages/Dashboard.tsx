@@ -150,7 +150,10 @@ export default function Dashboard() {
           <Button 
             variant="ghost" 
             className="mt-4 w-full text-emergency hover:text-emergency-dark"
-            onClick={() => setLocation('/registration')}
+            onClick={() => {
+              console.log('Profile edit button clicked, navigating to /registration');
+              setLocation('/registration');
+            }}
           >
             <i className="fas fa-edit mr-1" aria-hidden="true"></i>
             {t('dashboard.edit_profile')}

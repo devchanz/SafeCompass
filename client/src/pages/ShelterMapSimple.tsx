@@ -31,14 +31,25 @@ export default function ShelterMap() {
   });
 
   const handleGetDirections = async (shelter: Shelter) => {
-    if (!location) {
-      alert(t('shelter.location_required'));
+    console.log('handleGetDirections called with shelter:', shelter);
+    console.log('Current location:', location);
+    
+    if (!location || !location.coords) {
+      console.error('Location or coords not available:', location);
+      alert('위치 정보가 필요합니다. 위치 권한을 허용해주세요.');
       return;
     }
 
     setSelectedShelter(shelter);
     
     try {
+      console.log('Making T-Map API request with coordinates:', {
+        startX: location.coords.longitude,
+        startY: location.coords.latitude,
+        endX: shelter.lng,
+        endY: shelter.lat,
+      });
+      
       // Request route from T-Map API
       const response = await fetch(`/api/tmap/route`, {
         method: 'POST',
@@ -46,17 +57,23 @@ export default function ShelterMap() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          startX: location.longitude,
-          startY: location.latitude,
+          startX: location.coords.longitude,
+          startY: location.coords.latitude,
           endX: shelter.lng,
           endY: shelter.lat,
         }),
       });
 
+      console.log('T-Map API response status:', response.status);
       const routeData = await response.json();
+      console.log('T-Map API response data:', routeData);
       
       if (routeData.features) {
         alert(`${shelter.name}로의 경로가 계산되었습니다. 도보 예상 시간: ${shelter.walkingTime}분`);
+      } else {
+        console.log('No features in route data, falling back to Google Maps');
+        const destination = encodeURIComponent(`${shelter.name} ${shelter.address}`);
+        window.open(`https://maps.google.com/maps?daddr=${destination}`, '_blank');
       }
     } catch (error) {
       console.error('Route calculation failed:', error);
@@ -127,7 +144,7 @@ export default function ShelterMap() {
                   <div className="text-center">
                     <i className="fas fa-map text-4xl text-emergency mb-4" aria-hidden="true"></i>
                     <p className="text-gray-600">
-                      현재 위치: {location.latitude.toFixed(4)}, {location.longitude.toFixed(4)}
+                      현재 위치: {location.coords.latitude.toFixed(4)}, {location.coords.longitude.toFixed(4)}
                     </p>
                     <p className="text-sm text-gray-500 mt-2">
                       T-Map 연동 완료 - 대피소 클릭으로 길찾기 가능
