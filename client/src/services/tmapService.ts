@@ -2,6 +2,7 @@ export interface TMapRoute {
   totalDistance: number;
   totalTime: number;
   coordinates: [number, number][];
+  isActualRoute?: boolean;
 }
 
 export class TMapService {
@@ -50,7 +51,12 @@ export class TMapService {
           'Accept': 'application/json',
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify(requestBody)
+        body: JSON.stringify({
+          startX: startLng,
+          startY: startLat,
+          endX: endLng,
+          endY: endLat
+        })
       });
 
       if (!response.ok) {
@@ -60,12 +66,19 @@ export class TMapService {
 
       const data = await response.json();
       
-      if (!data.features || data.features.length === 0) {
-        console.warn('T-Map API에서 경로를 찾을 수 없습니다.');
-        return this.getStraightLineRoute(startLat, startLng, endLat, endLng);
+      // 서버에서 이미 파싱된 데이터가 옴
+      if (data.coordinates && data.coordinates.length > 0) {
+        console.log(`✅ T-Map 실제 경로 받음: ${data.totalDistance}m, ${data.totalTime}초`);
+        return {
+          totalDistance: data.totalDistance,
+          totalTime: data.totalTime,
+          coordinates: data.coordinates,
+          isActualRoute: true // 실제 T-Map 경로임을 표시
+        };
       }
 
-      return this.parseRouteResponse(data);
+      console.warn('T-Map API에서 유효한 경로를 찾을 수 없습니다.');
+      return this.getStraightLineRoute(startLat, startLng, endLat, endLng);
 
     } catch (error) {
       console.error('❌ T-Map API 오류:', error);
@@ -128,7 +141,8 @@ export class TMapService {
       coordinates: [
         [startLat, startLng],
         [endLat, endLng]
-      ]
+      ],
+      isActualRoute: false // 직선 경로임을 표시
     };
   }
 

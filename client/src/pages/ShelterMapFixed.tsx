@@ -282,12 +282,12 @@ export default function ShelterMapFixed() {
       );
 
       if (route) {
-        // 실제 경로 그리기
+        // T-Map 실제 경로는 파란색 실선, 직선 경로는 빨간색 점선
         const polyline = L.polyline(route.coordinates, { 
-          color: '#dc2626', 
+          color: route.isActualRoute ? '#2563eb' : '#dc2626', // 파란색 vs 빨간색
           weight: 5, 
           opacity: 0.8,
-          dashArray: route.coordinates.length <= 2 ? '10, 10' : undefined // 직선일 때만 점선
+          dashArray: route.isActualRoute ? undefined : '10, 10' // 실제 경로는 실선, 직선은 점선
         }).addTo(mapRef.current);
         
         routeLayerRef.current = polyline;
@@ -316,7 +316,7 @@ export default function ShelterMapFixed() {
               <strong class="text-blue-600">현재 위치</strong><br/>
               <div class="mt-2 pt-2 border-t">
                 <p class="text-sm font-medium">📍 ${shelter.name}까지</p>
-                <p class="text-xs text-green-600">🚶 실제 도보: ${distanceKm}km (${timeMinutes}분)</p>
+                <p class="text-xs text-green-600">🚶 ${route.isActualRoute ? 'T-Map 실제 경로' : '직선 거리'}: ${distanceKm}km (${timeMinutes}분)</p>
               </div>
             </div>
           `);
@@ -402,6 +402,14 @@ export default function ShelterMapFixed() {
                   <div className="flex items-center gap-2">
                     <div className="w-4 h-4 bg-green-500 rounded-full"></div>
                     <span>{getText('outdoor')} 대피소</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="w-4 h-1 bg-blue-600"></div>
+                    <span>T-Map 실제 경로</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="w-4 h-1 bg-red-600" style={{ background: 'repeating-linear-gradient(to right, #dc2626 0, #dc2626 4px, transparent 4px, transparent 8px)' }}></div>
+                    <span>직선 거리</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <div className="w-4 h-4 bg-blue-500 rounded-full"></div>
