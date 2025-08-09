@@ -97,8 +97,8 @@ export default function ShelterMapInteractive() {
       
       try {
         // 기존 지도가 있다면 제거
-        if (mapRef.current._leaflet_id) {
-          mapRef.current._leaflet_id = null;
+        if ((mapRef.current as any)._leaflet_id) {
+          (mapRef.current as any)._leaflet_id = null;
         }
 
         // Leaflet 지도 생성
@@ -141,22 +141,28 @@ export default function ShelterMapInteractive() {
   // 대피소 마커 추가
   useEffect(() => {
     if (map && shelters && shelters.length > 0) {
-      console.log('Adding shelter markers:', shelters);
+      console.log('Adding shelter markers:', shelters.length, 'shelters');
       
       // 기존 대피소 마커들 제거 (사용자 위치 마커는 유지)
-      markers.slice(1).forEach(marker => map.removeLayer(marker));
+      if (markers.length > 1) {
+        markers.slice(1).forEach(marker => {
+          try {
+            map.removeLayer(marker);
+          } catch (e) {
+            console.warn('Failed to remove marker:', e);
+          }
+        });
+      }
       
-      const newMarkers = [markers[0]]; // 사용자 위치 마커 유지
+      const newMarkers = markers.length > 0 ? [markers[0]] : []; // 사용자 위치 마커 유지
       
       shelters.forEach((shelter) => {
         const markerColor = getShelterMarkerColor(shelter.type);
         
-        // 대피소 마커 아이콘 생성
+        // 대피소 마커 아이콘 생성 (단순한 원형 마커)
         const shelterIcon = window.L.divIcon({
-          html: `<div style="background-color: ${markerColor}; width: 24px; height: 24px; border-radius: 50%; border: 2px solid white; display: flex; align-items: center; justify-content: center; color: white; font-size: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.3);">
-            <i class="${getShelterIcon(shelter.type)}" style="font-size: 10px;"></i>
-          </div>`,
-          iconSize: [24, 24],
+          html: `<div style="background-color: ${markerColor}; width: 20px; height: 20px; border-radius: 50%; border: 2px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.3);"></div>`,
+          iconSize: [20, 20],
           className: 'shelter-marker'
         });
         
@@ -363,7 +369,40 @@ export default function ShelterMapInteractive() {
                   </div>
                 </div>
               ) : (
-                <div ref={mapRef} className="w-full h-96 rounded"></div>
+                <div className="relative">
+                  <div ref={mapRef} className="w-full h-96 rounded bg-gray-100"></div>
+                  {isLoadingShelters && (
+                    <div className="absolute inset-0 bg-white bg-opacity-75 flex items-center justify-center rounded">
+                      <div className="text-center">
+                        <div className="text-blue-500 text-2xl mb-2">🔍</div>
+                        <p className="text-sm text-gray-600">대피소 검색 중...</p>
+                      </div>
+                    </div>
+                  )}
+                  {!isLoadingShelters && shelters && shelters.length === 0 && (
+                    <div className="absolute inset-0 bg-white bg-opacity-90 flex items-center justify-center rounded">
+                      <div className="text-center">
+                        <div className="text-yellow-500 text-2xl mb-2">⚠️</div>
+                        <p className="text-sm text-gray-600">현재 위치 기준 대피소를 찾을 수 없습니다</p>
+                        <p className="text-xs text-gray-500 mt-1">정부 API에서 이 지역 데이터를 아직 제공하지 않을 수 있습니다</p>
+                        <div className="mt-3 space-x-2">
+                          <button 
+                            onClick={() => window.location.href = '/shelters?lat=37.5665&lng=126.9780'}
+                            className="text-xs bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600"
+                          >
+                            서울로 테스트
+                          </button>
+                          <button 
+                            onClick={() => window.location.reload()}
+                            className="text-xs bg-gray-500 text-white px-2 py-1 rounded hover:bg-gray-600"
+                          >
+                            다시 시도
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
               )}
             </CardContent>
           </Card>
@@ -402,6 +441,11 @@ export default function ShelterMapInteractive() {
               <h3 className="text-lg font-semibold mb-4 flex items-center">
                 <i className="fas fa-list text-emergency mr-2" aria-hidden="true"></i>
                 주변 대피소 ({shelters?.length || 0}곳)
+                {shelters && shelters.length > 0 && (
+                  <span className="ml-2 text-sm text-gray-500">
+                    (최근거리 {Math.round(shelters[0].distance/1000)}km)
+                  </span>
+                )}
               </h3>
               
               <div className="space-y-3 max-h-80 overflow-y-auto">

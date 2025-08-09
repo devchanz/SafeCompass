@@ -41,7 +41,7 @@ export class ShelterService {
       // 행정안전부 지진 대피장소 API 파라미터
       url.searchParams.set('serviceKey', this.config.apiKey);
       url.searchParams.set('pageNo', '1');
-      url.searchParams.set('numOfRows', '50'); // 대피소 수를 늘림
+      url.searchParams.set('numOfRows', '1000'); // 전국 데이터에서 대전 근처 대피소 찾기
       url.searchParams.set('dataType', 'JSON');
       
       // 위치 기반 검색은 API에서 지원하지 않을 수 있으므로 전체 데이터를 가져와서 필터링
@@ -109,7 +109,7 @@ export class ShelterService {
 
         const distance = this.calculateDistance(userLat, userLng, shelterLat, shelterLng);
         
-        if (distance <= 50) { // 50km 이내만 로그 출력
+        if (distance <= 100) { // 100km 이내만 로그 출력
           console.log(`📍 ${item.SHLT_NM}: ${distance.toFixed(2)}km (${item.ADDR})`);
         }
         
@@ -121,14 +121,37 @@ export class ShelterService {
           index
         };
       })
-      .filter(item => item !== null) // null 제거
+      .filter(item => item !== null && item.distance <= 100) // 100km 이내로 필터링 (대전 근처 대피소 찾기)
       .sort((a, b) => a.distance - b.distance)
-      .slice(0, 20); // 최대 20개 (거리 필터링 전에 가까운 순으로 정렬)
+      .slice(0, 20); // 최대 20개
       
-    console.log(`🎯 총 ${nearbyItems.length}개 대피소 발견됨 (가장 가까운 20개)`);
+    console.log(`🎯 총 ${nearbyItems.length}개 대피소 발견됨 (100km 이내)`);
     
     if (nearbyItems.length > 0) {
       console.log(`📊 거리 범위: ${nearbyItems[0]?.distance?.toFixed(2)}km ~ ${nearbyItems[nearbyItems.length-1]?.distance?.toFixed(2)}km`);
+    } else {
+      console.log('⚠️ 100km 내에 대피소가 없습니다. 검색 범위를 확대합니다.');
+      // 범위를 100km로 확대하여 재검색
+      const extendedItems = items
+        .map((item: any) => {
+          const shelterLat = parseFloat(item.LAT || 0);
+          const shelterLng = parseFloat(item.LOT || 0);
+          
+          if (shelterLat === 0 || shelterLng === 0 || 
+              shelterLat < 33 || shelterLat > 39 ||
+              shelterLng < 124 || shelterLng > 132) {
+            return null;
+          }
+
+          const distance = this.calculateDistance(userLat, userLng, shelterLat, shelterLng);
+          return { ...item, distance, shelterLat, shelterLng };
+        })
+        .filter(item => item !== null && item.distance <= 100)
+        .sort((a, b) => a.distance - b.distance)
+        .slice(0, 10);
+        
+      console.log(`🔍 확대 검색 결과: ${extendedItems.length}개 대피소 (100km 이내)`);
+      nearbyItems.push(...extendedItems);
     }
 
     return nearbyItems.map((item: any): RealShelter => {
