@@ -58,9 +58,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/users", async (req, res) => {
     try {
       const userData = insertUserSchema.parse(req.body);
+      console.log('Creating user via API:', userData);
       const user = await storage.createUser(userData);
+      console.log('User created successfully:', user);
       res.json(user);
     } catch (error) {
+      console.error('User creation failed:', error);
       res.status(400).json({ 
         message: "사용자 정보 저장에 실패했습니다", 
         error: (error as Error).message 

@@ -206,21 +206,73 @@ export class DatabaseStorage implements IStorage {
   }
 }
 
-// Switch between MemStorage and DatabaseStorage
-// Use DatabaseStorage for production, MemStorage for development/testing
-let storage: IStorage;
+// Create a smart storage that can handle database connection failures
+class SmartStorage implements IStorage {
+  private primaryStorage: IStorage;
+  private fallbackStorage: IStorage;
+  private useDatabase: boolean;
 
-try {
-  if (process.env.DATABASE_URL) {
-    console.log('Using DatabaseStorage with Supabase');
-    storage = new DatabaseStorage();
-  } else {
-    console.log('Using MemStorage (no DATABASE_URL found)');
-    storage = new MemStorage();
+  constructor() {
+    this.fallbackStorage = new MemStorage();
+    this.useDatabase = false;
+
+    if (process.env.DATABASE_URL) {
+      try {
+        console.log('Attempting to use DatabaseStorage with Supabase');
+        this.primaryStorage = new DatabaseStorage();
+        this.useDatabase = true;
+      } catch (error) {
+        console.error('Failed to initialize DatabaseStorage, using MemStorage:', error);
+        this.primaryStorage = this.fallbackStorage;
+      }
+    } else {
+      console.log('Using MemStorage (no DATABASE_URL found)');
+      this.primaryStorage = this.fallbackStorage;
+    }
   }
-} catch (error) {
-  console.error('Failed to initialize DatabaseStorage, falling back to MemStorage:', error);
-  storage = new MemStorage();
+
+  private async executeWithFallback<T>(operation: () => Promise<T>): Promise<T> {
+    if (!this.useDatabase) {
+      return operation();
+    }
+
+    try {
+      return await operation();
+    } catch (error) {
+      console.error('Database operation failed, falling back to MemStorage:', error);
+      this.useDatabase = false;
+      this.primaryStorage = this.fallbackStorage;
+      return operation();
+    }
+  }
+
+  async getUser(id: string): Promise<User | undefined> {
+    return this.executeWithFallback(() => this.primaryStorage.getUser(id));
+  }
+
+  async createUser(insertUser: InsertUser): Promise<User> {
+    return this.executeWithFallback(() => this.primaryStorage.createUser(insertUser));
+  }
+
+  async updateUser(id: string, updateData: Partial<InsertUser>): Promise<User | undefined> {
+    return this.executeWithFallback(() => this.primaryStorage.updateUser(id, updateData));
+  }
+
+  async getCompanionsByUserId(userId: string): Promise<Companion[]> {
+    return this.executeWithFallback(() => this.primaryStorage.getCompanionsByUserId(userId));
+  }
+
+  async createCompanion(companion: InsertCompanion): Promise<Companion> {
+    return this.executeWithFallback(() => this.primaryStorage.createCompanion(companion));
+  }
+
+  async createEmergencyEvent(event: InsertEmergencyEvent): Promise<EmergencyEvent> {
+    return this.executeWithFallback(() => this.primaryStorage.createEmergencyEvent(event));
+  }
+
+  async getEmergencyEventsByUserId(userId: string): Promise<EmergencyEvent[]> {
+    return this.executeWithFallback(() => this.primaryStorage.getEmergencyEventsByUserId(userId));
+  }
 }
 
-export { storage };
+export const storage = new SmartStorage();
