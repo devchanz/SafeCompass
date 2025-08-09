@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { useLanguage } from '@/contexts/LanguageContext';
+// import { useLanguage } from '@/contexts/LanguageContext'; // 더 이상 사용하지 않음
 import { TMapService } from '@/services/tmapService';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
@@ -31,7 +31,7 @@ interface Shelter {
 }
 
 export default function ShelterMapFixed() {
-  const { language } = useLanguage();
+  const language = localStorage.getItem('selectedLanguage') || 'ko'; // 로컬 스토리지에서 언어 가져오기
 
   // 하드코딩된 다국어 텍스트
   const getText = (key: string) => {
@@ -353,7 +353,7 @@ export default function ShelterMapFixed() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <i className="fas fa-map text-blue-600" aria-hidden="true"></i>
-{t('map.location_map')}
+위치 지도
                   {isLoading && (
                     <div className="w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
                   )}
