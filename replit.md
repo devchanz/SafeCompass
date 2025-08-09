@@ -20,7 +20,7 @@ Preferred communication style: Simple, everyday language.
   - Cross-platform shell scripts (clear-cache.sh, clear-cache.bat)
   - Cache clearing button integrated into Dashboard demo section
 - **T-Map Interactive Map Implementation**: 
-  - Created ShelterMapInteractive.tsx with Leaflet + T-Map REST API integration
+  - Created ShelterMapInteractive.tsx with full T-Map SDK integration
   - Real-time GPS location tracking with user position marker
   - Interactive shelter markers with click-to-select functionality
   - Visual route calculation and polyline display from user to selected shelter
@@ -28,13 +28,6 @@ Preferred communication style: Simple, everyday language.
   - Color-coded shelter types (blue=실내, green=옥외, purple=구호소)
   - Real shelter coordinate data integration from backend API
   - Enhanced UI with map status indicators and shelter information cards
-  - **Architecture Decision**: Using T-Map REST API for route data + Leaflet for map display (not T-Map native SDK)
-- **Profile Management System**:
-  - Fixed language selection redirect loop by removing duplicate window.location.href
-  - Created dedicated /modify route and ProfileModify.tsx page for profile editing
-  - Updated Dashboard profile edit button to navigate to /modify instead of /registration
-  - ProfileModify page UI designed identically to Registration page (same styling, layout, components)
-  - Removed Dashboard welcome screen for unregistered users (now redirects to /registration)
 
 # System Architecture
 

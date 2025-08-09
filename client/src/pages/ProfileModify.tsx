@@ -212,7 +212,7 @@ export default function ProfileModify() {
                   <Label htmlFor="gender" className="text-sm font-semibold text-gray-700">
                     {t('registration.gender')}
                   </Label>
-                  <Select onValueChange={(value) => form.setValue("gender", value)} defaultValue={form.getValues("gender") || ""}>
+                  <Select onValueChange={(value) => form.setValue("gender", value)} defaultValue={form.getValues("gender")}>
                     <SelectTrigger className="h-12 text-base border-2 border-gray-200 focus:border-emergency">
                       <SelectValue placeholder={t('registration.gender')} />
                     </SelectTrigger>
