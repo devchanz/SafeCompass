@@ -99,6 +99,31 @@
   body {
     @apply font-sans antialiased bg-gray-50 text-foreground;
     font-family: var(--font-sans);
+    /* PWA Mobile Optimization */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    /* Enable scrolling on mobile */
+    overflow-x: hidden;
+    overflow-y: auto;
+    /* PWA safe area padding */
+    padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+  }
+  
+  /* Mobile viewport optimization */
+  html {
+    height: 100%;
+    /* Prevent horizontal scroll on mobile */
+    overflow-x: hidden;
+  }
+  
+  #root {
+    min-height: 100vh;
+    min-height: -webkit-fill-available;
   }
 }
 
@@ -143,6 +168,35 @@
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: 1.5rem;
+  }
+  
+  /* Mobile-first PWA optimizations */
+  @media (max-width: 640px) {
+    .emergency-grid {
+      grid-template-columns: 1fr;
+      gap: 1rem;
+    }
+    
+    .emergency-card {
+      @apply p-4;
+    }
+    
+    /* Mobile safe area adjustments */
+    .min-h-screen {
+      min-height: calc(100vh - env(safe-area-inset-top) - env(safe-area-inset-bottom));
+    }
+    
+    /* Touch-friendly button sizes */
+    button {
+      min-height: 44px;
+      min-width: 44px;
+    }
+    
+    /* Language selection mobile optimization */
+    .language-selection-container {
+      padding: 1rem;
+      margin-bottom: env(safe-area-inset-bottom);
+    }
   }
 }
 

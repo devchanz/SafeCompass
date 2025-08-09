@@ -31,10 +31,9 @@ function AppContent() {
   // Force redirect to language selection for demo - clear any stored state
   useEffect(() => {
     localStorage.removeItem('selectedLanguage');
-    if (location !== '/language') {
-      setLocation('/language');
-    }
-  }, []);
+    console.log('Current location:', location);
+    setLocation('/language');
+  }, [location, setLocation]);
 
   // Listen for language selection changes
   useEffect(() => {
@@ -69,6 +68,18 @@ function AppContent() {
   }, [hasSelectedLanguage, userProfile, location, setLocation]);
 
 
+
+  // Force language selection page for demo
+  if (location !== '/language') {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emergency mx-auto"></div>
+          <p className="mt-2 text-gray-600">언어 선택 페이지로 이동 중...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
