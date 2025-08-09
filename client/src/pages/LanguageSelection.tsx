@@ -54,8 +54,18 @@ export default function LanguageSelection() {
           <CardContent className="pt-8 pb-8">
             {/* Logo and Title */}
             <div className="text-center mb-8">
-              <div className="w-20 h-20 bg-gradient-to-br from-emergency to-emergency-dark text-white rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
-                <i className="fas fa-compass text-3xl" aria-hidden="true"></i>
+              <div className="relative w-24 h-24 mx-auto mb-6">
+                {/* Outer ring with gradient shadow */}
+                <div className="absolute inset-0 bg-gradient-to-br from-red-500 via-red-600 to-red-700 rounded-full shadow-xl">
+                  <div className="absolute inset-1 bg-gradient-to-br from-red-400 to-red-600 rounded-full">
+                    <div className="absolute inset-1 bg-white rounded-full flex items-center justify-center">
+                      {/* Compass icon with better styling */}
+                      <i className="fas fa-compass text-red-600 text-4xl transform hover:rotate-45 transition-transform duration-500" aria-hidden="true"></i>
+                    </div>
+                  </div>
+                </div>
+                {/* Subtle pulse animation */}
+                <div className="absolute inset-0 bg-red-500 rounded-full animate-ping opacity-20"></div>
               </div>
               <h1 className="text-3xl font-bold text-emergency mb-2">안전나침반</h1>
               <p className="text-gray-600 font-medium">Safe Compass</p>
@@ -92,10 +102,24 @@ export default function LanguageSelection() {
                       onClick={() => !isFuture && handleLanguageSelect(lang.code as Language)}
                     >
                       <div className="flex items-center space-x-4 w-full">
-                        <div className="flex items-center justify-center w-12 h-12 bg-gradient-to-br from-gray-50 to-gray-100 rounded-lg border-2 border-gray-300">
-                          <span className="text-2xl" style={{ filter: isFuture ? 'grayscale(1)' : 'none' }}>
+                        <div className="relative flex items-center justify-center w-14 h-14 bg-white rounded-xl border-2 border-gray-200 shadow-sm overflow-hidden">
+                          {/* Flag background circle for active languages */}
+                          {!isFuture && (
+                            <div className="absolute inset-0 bg-gradient-to-br from-blue-50 to-gray-50 opacity-60"></div>
+                          )}
+                          <span 
+                            className="text-3xl relative z-10 transform transition-all duration-200 hover:scale-110" 
+                            style={{ 
+                              filter: isFuture ? 'grayscale(1) brightness(0.7)' : 'none',
+                              textShadow: !isFuture ? '0 2px 4px rgba(0,0,0,0.1)' : 'none'
+                            }}
+                          >
                             {lang.flag}
                           </span>
+                          {/* Shine effect for active languages */}
+                          {!isFuture && (
+                            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-0 hover:opacity-20 transform -skew-x-12 -translate-x-full hover:translate-x-full transition-all duration-700"></div>
+                          )}
                         </div>
                         <div className="flex-1">
                           <p className="font-semibold text-gray-900">{lang.name}</p>
@@ -104,13 +128,20 @@ export default function LanguageSelection() {
                           )}
                         </div>
                         <div className="flex items-center space-x-2">
-                          <span className="text-sm font-bold text-gray-600">
-                            {lang.displayCode}
-                          </span>
-                          {selectedLanguage === lang.code && (
-                            <div className="w-6 h-6 bg-emergency text-white rounded-full flex items-center justify-center">
-                              <i className="fas fa-check text-xs" aria-hidden="true"></i>
+                          {selectedLanguage === lang.code ? (
+                            <div className="flex items-center space-x-2">
+                              {/* Selected state with flag */}
+                              <div className="w-8 h-8 bg-gradient-to-br from-green-500 to-green-600 text-white rounded-full flex items-center justify-center shadow-lg">
+                                <span className="text-lg">{lang.flag}</span>
+                              </div>
+                              <div className="w-6 h-6 bg-emergency text-white rounded-full flex items-center justify-center animate-pulse">
+                                <i className="fas fa-check text-xs" aria-hidden="true"></i>
+                              </div>
                             </div>
+                          ) : (
+                            <span className="text-sm font-bold text-gray-600">
+                              {lang.displayCode}
+                            </span>
                           )}
                         </div>
                       </div>
