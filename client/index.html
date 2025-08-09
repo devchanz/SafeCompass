@@ -25,14 +25,13 @@
     <div id="root"></div>
     <!-- Clear storage for demo -->
     <script>
-      // Force clear storage for language selection demo
-      if (window.location.search.includes('clear=1')) {
+      // Add global function to clear storage
+      window.clearAppStorage = function() {
         localStorage.clear();
         sessionStorage.clear();
-        console.log('Storage cleared for demo');
-        // Redirect without the clear parameter
-        window.location.href = window.location.origin + window.location.pathname;
-      }
+        console.log('App storage cleared - reloading...');
+        window.location.reload();
+      };
     </script>
     <script type="module" src="/src/main.tsx"></script>
     <!-- This is a replit script which adds a banner on the top of the page when opened in development mode outside the replit environment -->

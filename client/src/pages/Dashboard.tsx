@@ -188,9 +188,16 @@ export default function Dashboard() {
               </Button>
               <Button 
                 onClick={() => {
-                  localStorage.clear();
-                  sessionStorage.clear();
-                  window.location.href = '/language';
+                  if (confirm('모든 데이터를 초기화하고 처음부터 시작하시겠습니까?')) {
+                    console.log('초기화 시작...');
+                    localStorage.clear();
+                    sessionStorage.clear();
+                    console.log('Storage 클리어 완료');
+                    // Force reload to restart app flow
+                    setTimeout(() => {
+                      window.location.href = window.location.origin;
+                    }, 100);
+                  }
                 }}
                 variant="outline" 
                 size="sm"

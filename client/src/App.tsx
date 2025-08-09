@@ -29,26 +29,28 @@ function AppContent() {
   // For demo: Always start with language selection
   const [hasSelectedLanguage, setHasSelectedLanguage] = useState(false);
 
-  // Check if language is selected, if not redirect to language selection
+  // Initialize app and check language selection
   useEffect(() => {
     const storedLanguage = localStorage.getItem('selectedLanguage');
-    console.log('App init - Stored language:', storedLanguage, 'Current location:', location);
+    console.log('🔄 App initialization - Language:', storedLanguage, 'Location:', location);
     
-    // Always redirect to language selection first if no language is selected
-    if (!storedLanguage && location !== '/language') {
-      console.log('No stored language, redirecting to /language');
-      setHasSelectedLanguage(false);
-      setLocation('/language');
+    // Priority 1: No language selected = must go to language selection
+    if (!storedLanguage) {
+      if (location !== '/language') {
+        console.log('❌ No language found, redirecting to language selection');
+        setHasSelectedLanguage(false);
+        setLocation('/language');
+      } else {
+        console.log('✅ Already on language selection page');
+        setHasSelectedLanguage(false);
+      }
       return;
     } 
     
-    if (storedLanguage) {
-      console.log('Found stored language:', storedLanguage);
-      setHasSelectedLanguage(true);
-      setLanguage(storedLanguage as Language);
-    } else {
-      setHasSelectedLanguage(false);
-    }
+    // Priority 2: Language selected = set up language and continue
+    console.log('✅ Language found:', storedLanguage);
+    setHasSelectedLanguage(true);
+    setLanguage(storedLanguage as Language);
   }, [location, setLocation, setLanguage]);
 
   // Listen for language selection changes
