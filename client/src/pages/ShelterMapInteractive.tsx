@@ -371,7 +371,7 @@ export default function ShelterMapInteractive() {
               ) : (
                 <div className="relative">
                   <div ref={mapRef} className="w-full h-96 rounded bg-gray-100"></div>
-                  {isLoadingShelters && (
+                  {isLoading && (
                     <div className="absolute inset-0 bg-white bg-opacity-75 flex items-center justify-center rounded">
                       <div className="text-center">
                         <div className="text-blue-500 text-2xl mb-2">🔍</div>
@@ -379,7 +379,7 @@ export default function ShelterMapInteractive() {
                       </div>
                     </div>
                   )}
-                  {!isLoadingShelters && shelters && shelters.length === 0 && (
+                  {!isLoading && shelters && shelters.length === 0 && (
                     <div className="absolute inset-0 bg-white bg-opacity-90 flex items-center justify-center rounded">
                       <div className="text-center">
                         <div className="text-yellow-500 text-2xl mb-2">⚠️</div>

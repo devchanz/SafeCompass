@@ -246,3 +246,23 @@ export class ShelterService {
     return facilities;
   }
 }
+
+// 팩토리 함수
+export function createShelterService(): ShelterService | null {
+  const apiKey = process.env.DISASTER_API_KEY;
+  
+  if (!apiKey) {
+    console.warn('⚠️ DISASTER_API_KEY 환경변수가 설정되지 않았습니다');
+    return null;
+  }
+
+  const config: DisasterApiConfig = {
+    apiKey,
+    baseUrl: 'https://www.safetydata.go.kr',
+    endpoints: {
+      shelters: '/V2/api/DSSP-IF-00706'
+    }
+  };
+
+  return new ShelterService(config);
+}
