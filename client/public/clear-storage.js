@@ -1,4 +1,1 @@
-// Clear localStorage to force language selection
-localStorage.clear();
-sessionStorage.clear();
-console.log('Storage cleared - ready for language selection');
+console.log('Clearing all localStorage on startup'); localStorage.clear();

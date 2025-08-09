@@ -32,15 +32,22 @@ function AppContent() {
   // Check if language is selected, if not redirect to language selection
   useEffect(() => {
     const storedLanguage = localStorage.getItem('selectedLanguage');
-    console.log('Stored language:', storedLanguage, 'Current location:', location);
+    console.log('App init - Stored language:', storedLanguage, 'Current location:', location);
     
+    // Always redirect to language selection first if no language is selected
     if (!storedLanguage && location !== '/language') {
       console.log('No stored language, redirecting to /language');
+      setHasSelectedLanguage(false);
       setLocation('/language');
-    } else if (storedLanguage) {
+      return;
+    } 
+    
+    if (storedLanguage) {
       console.log('Found stored language:', storedLanguage);
       setHasSelectedLanguage(true);
       setLanguage(storedLanguage as Language);
+    } else {
+      setHasSelectedLanguage(false);
     }
   }, [location, setLocation, setLanguage]);
 
@@ -69,26 +76,31 @@ function AppContent() {
     }
   }, [isEmergencyActive, hasUnreadAlert, location, setLocation]);
 
-  // Smart user flow based on user state
+  // Smart user flow based on user state - only runs after language is selected
   useEffect(() => {
-    if (hasSelectedLanguage) {
+    // Only proceed with user flow if language is selected and we're not on language page
+    if (hasSelectedLanguage && location !== '/language') {
       // Check for first-time user vs returning user
       const hasUserData = localStorage.getItem('hasRegistered') === 'true';
       const currentUserId = localStorage.getItem('currentUserId');
       
-      console.log('User flow check:', { hasUserData, userProfile: !!userProfile, currentUserId, location });
+      console.log('User flow check:', { hasUserData, userProfile: !!userProfile, currentUserId, location, hasSelectedLanguage });
       
-      if (!hasUserData && location !== '/registration' && location !== '/language') {
-        // New user: go to registration (don't check userProfile yet)
+      if (!hasUserData && location !== '/registration') {
+        // New user: go to registration 
         console.log('New user detected, redirecting to registration');
         setLocation('/registration');
       } else if (hasUserData && currentUserId && location === '/registration') {
         // Registered user shouldn't be on registration page
         console.log('Registered user on registration page, redirecting to dashboard');
         setLocation('/');
+      } else if (!hasUserData && !currentUserId && location === '/') {
+        // If on dashboard but no user data, go to registration
+        console.log('On dashboard but no user data, redirecting to registration');
+        setLocation('/registration');
       }
     }
-  }, [hasSelectedLanguage, location, setLocation]);
+  }, [hasSelectedLanguage, location, setLocation, userProfile]);
 
 
 
