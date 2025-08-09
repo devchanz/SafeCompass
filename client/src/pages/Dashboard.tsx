@@ -7,12 +7,83 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { clearBrowserCache, forcePageReload, resetUserSession, debugStorageState } from "@/utils/cacheUtils";
 
 export default function Dashboard() {
-  const { data: userProfile } = useUserProfile();
+  const { data: userProfile, isLoading } = useUserProfile();
   const { simulateEarthquake } = useEmergency();
   const { t } = useLanguage();
   const [, setLocation] = useLocation();
 
-  if (!userProfile) {
+  // Debug user profile state
+  const hasRegistered = localStorage.getItem('hasRegistered') === 'true';
+  const currentUserId = localStorage.getItem('currentUserId');
+  
+  console.log('Dashboard state:', { 
+    userProfile: !!userProfile, 
+    isLoading, 
+    hasRegistered, 
+    currentUserId,
+    userProfileData: userProfile 
+  });
+
+  // Show loading state while checking user profile
+  if (isLoading) {
+    return (
+      <div className="max-w-2xl mx-auto">
+        <Card className="emergency-card">
+          <CardContent className="text-center py-8">
+            <i className="fas fa-spinner fa-spin text-4xl text-emergency mb-4" aria-hidden="true"></i>
+            <h2 className="text-2xl font-bold mb-4">로딩 중...</h2>
+            <p className="text-gray-600">사용자 정보를 확인하고 있습니다.</p>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  // If user is registered but profile is null (server issue), show error with reset option
+  if (hasRegistered && currentUserId && !userProfile) {
+    return (
+      <div className="max-w-2xl mx-auto">
+        <Card className="emergency-card border-yellow-200 bg-yellow-50">
+          <CardContent className="text-center py-8">
+            <i className="fas fa-exclamation-triangle text-4xl text-yellow-600 mb-4" aria-hidden="true"></i>
+            <h2 className="text-2xl font-bold mb-4 text-yellow-800">데이터 동기화 문제</h2>
+            <p className="text-yellow-700 mb-6">
+              등록 정보가 서버와 동기화되지 않았습니다.<br />
+              데이터베이스 연결 문제로 인해 임시 저장소를 사용 중입니다.
+            </p>
+            <div className="space-y-3">
+              <Button 
+                className="bg-yellow-600 hover:bg-yellow-700 w-full"
+                onClick={() => {
+                  console.log('사용자 세션 초기화 시작...');
+                  localStorage.removeItem('hasRegistered');
+                  localStorage.removeItem('currentUserId');
+                  setLocation('/registration');
+                }}
+              >
+                <i className="fas fa-user-plus mr-2" aria-hidden="true"></i>
+                다시 등록하기
+              </Button>
+              <Button 
+                variant="outline"
+                className="w-full border-yellow-300 text-yellow-700 hover:bg-yellow-100"
+                onClick={() => {
+                  debugStorageState();
+                  window.location.reload();
+                }}
+              >
+                <i className="fas fa-refresh mr-2" aria-hidden="true"></i>
+                페이지 새로고침
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  // If truly no user profile (not registered), show welcome screen
+  if (!userProfile && !hasRegistered) {
     return (
       <div className="max-w-2xl mx-auto">
         <Card className="emergency-card">
