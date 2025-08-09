@@ -26,8 +26,8 @@ export class MemStorage implements IStorage {
     this.companions = new Map();
     this.emergencyEvents = new Map();
     
-    // Add demo user for testing
-    this.seedDemoData();
+    // Add demo user for testing - temporarily disabled to test registration flow
+    // this.seedDemoData();
   }
 
   private seedDemoData() {
