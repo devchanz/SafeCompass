@@ -1,0 +1,51 @@
+[
+  {
+    "id": "earthquake_indoor_general",
+    "type": "earthquake",
+    "situation": "indoor_general",
+    "content": "실내에서 지진이 발생했을 때는 즉시 튼튼한 탁자나 책상 아래로 몸을 피하세요. 머리와 목을 보호하고, 흔들림이 멈출 때까지 그 자리에 있으세요. 엘리베이터는 절대 사용하지 마시고, 가스밸브를 잠그고 전기차단기를 내리세요.",
+    "keywords": ["실내", "지진", "탁자", "머리보호", "가스밸브", "전기차단기"]
+  },
+  {
+    "id": "earthquake_outdoor_general",
+    "type": "earthquake",
+    "situation": "outdoor_general",
+    "content": "실외에서 지진이 발생했을 때는 건물, 전봇대, 나무 등에서 멀리 떨어진 넓은 공간으로 이동하세요. 가방이나 손으로 머리를 보호하고, 차를 운전 중이라면 안전한 곳에 정차하세요.",
+    "keywords": ["실외", "지진", "건물", "전봇대", "넓은공간", "머리보호"]
+  },
+  {
+    "id": "earthquake_mobility_assisted",
+    "type": "earthquake",
+    "situation": "mobility_assisted",
+    "content": "대피에 도움이 필요한 경우, 무리하게 혼자 이동하지 마세요. 주변에 도움을 요청하고, 가능하면 제자리에서 머리와 몸을 보호하세요. 미리 등록된 비상연락처에 연락하여 상황을 알리세요.",
+    "keywords": ["도움필요", "무리하지말기", "제자리", "비상연락처", "머리보호"]
+  },
+  {
+    "id": "earthquake_mobility_unable",
+    "type": "earthquake",
+    "situation": "mobility_unable",
+    "content": "대피가 불가능한 상황에서는 즉시 119에 신고하고 위치를 알리세요. 가능한 한 안전한 자세를 취하고, 주변 사람들에게 도움을 요청하세요. 휠체어 사용자는 바퀴를 잠그고 머리를 보호하세요.",
+    "keywords": ["대피불가능", "119신고", "안전자세", "휠체어", "바퀴잠금"]
+  },
+  {
+    "id": "earthquake_visual_impaired",
+    "type": "earthquake",
+    "situation": "visual_impaired",
+    "content": "시각 장애가 있는 경우, 익숙한 장소에 머물며 주변 소리에 집중하세요. 안내견이 있다면 하네스를 잡고 안내견의 판단을 따르세요. 휴대폰의 음성 안내 기능을 활용하여 비상연락처에 연락하세요.",
+    "keywords": ["시각장애", "익숙한장소", "소리집중", "안내견", "음성안내"]
+  },
+  {
+    "id": "earthquake_hearing_impaired",
+    "type": "earthquake",
+    "situation": "hearing_impaired",
+    "content": "청각 장애가 있는 경우, 시각적 신호에 집중하세요. 휴대폰의 진동 알림을 최대로 설정하고, 주변 사람들의 행동을 관찰하여 상황을 파악하세요. 문자나 메신저를 통해 상황을 알리세요.",
+    "keywords": ["청각장애", "시각적신호", "진동알림", "행동관찰", "문자연락"]
+  },
+  {
+    "id": "earthquake_elderly",
+    "type": "earthquake",
+    "situation": "elderly",
+    "content": "고령자의 경우 급작스러운 움직임을 피하고, 안전한 자세를 취한 후 도움을 요청하세요. 복용 중인 약물이 있다면 미리 준비해두고, 비상연락처에 빠르게 상황을 알리세요.",
+    "keywords": ["고령자", "급작스런움직임피하기", "약물준비", "도움요청", "비상연락처"]
+  }
+]

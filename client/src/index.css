@@ -1,0 +1,217 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: hsl(0 0% 100%);
+  --foreground: hsl(210 25% 7.8431%);
+  --card: hsl(180 6.6667% 97.0588%);
+  --card-foreground: hsl(210 25% 7.8431%);
+  --popover: hsl(0 0% 100%);
+  --popover-foreground: hsl(210 25% 7.8431%);
+  --primary: hsl(203.8863 88.2845% 53.1373%);
+  --primary-foreground: hsl(0 0% 100%);
+  --secondary: hsl(210 25% 7.8431%);
+  --secondary-foreground: hsl(0 0% 100%);
+  --muted: hsl(240 1.9608% 90%);
+  --muted-foreground: hsl(210 25% 7.8431%);
+  --accent: hsl(211.5789 51.3514% 92.7451%);
+  --accent-foreground: hsl(203.8863 88.2845% 53.1373%);
+  --destructive: hsl(356.3033 90.5579% 54.3137%);
+  --destructive-foreground: hsl(0 0% 100%);
+  --border: hsl(201.4286 30.4348% 90.9804%);
+  --input: hsl(200 23.0769% 97.4510%);
+  --ring: hsl(202.8169 89.1213% 53.1373%);
+  --chart-1: hsl(203.8863 88.2845% 53.1373%);
+  --chart-2: hsl(159.7826 100% 36.0784%);
+  --chart-3: hsl(42.0290 92.8251% 56.2745%);
+  --chart-4: hsl(147.1429 78.5047% 41.9608%);
+  --chart-5: hsl(341.4894 75.2000% 50.9804%);
+  --sidebar: hsl(180 6.6667% 97.0588%);
+  --sidebar-foreground: hsl(210 25% 7.8431%);
+  --sidebar-primary: hsl(203.8863 88.2845% 53.1373%);
+  --sidebar-primary-foreground: hsl(0 0% 100%);
+  --sidebar-accent: hsl(211.5789 51.3514% 92.7451%);
+  --sidebar-accent-foreground: hsl(203.8863 88.2845% 53.1373%);
+  --sidebar-border: hsl(205.0000 25.0000% 90.5882%);
+  --sidebar-ring: hsl(202.8169 89.1213% 53.1373%);
+  --font-sans: 'Noto Sans KR', system-ui, sans-serif;
+  --font-serif: Georgia, serif;
+  --font-mono: Menlo, monospace;
+  --radius: 1.3rem;
+  
+  /* Emergency app colors */
+  --emergency: hsl(0 81% 43%);
+  --emergency-dark: hsl(0 63% 31%);
+  --safety: hsl(158 64% 38%);
+  --warning: hsl(25 85% 45%);
+  --emergency-foreground: hsl(0 0% 100%);
+  --safety-foreground: hsl(0 0% 100%);
+  --warning-foreground: hsl(0 0% 100%);
+}
+
+.dark {
+  --background: hsl(0 0% 0%);
+  --foreground: hsl(200 6.6667% 91.1765%);
+  --card: hsl(228 9.8039% 10%);
+  --card-foreground: hsl(0 0% 85.0980%);
+  --popover: hsl(0 0% 0%);
+  --popover-foreground: hsl(200 6.6667% 91.1765%);
+  --primary: hsl(203.7736 87.6033% 52.5490%);
+  --primary-foreground: hsl(0 0% 100%);
+  --secondary: hsl(195.0000 15.3846% 94.9020%);
+  --secondary-foreground: hsl(210 25% 7.8431%);
+  --muted: hsl(0 0% 9.4118%);
+  --muted-foreground: hsl(210 3.3898% 46.2745%);
+  --accent: hsl(205.7143 70% 7.8431%);
+  --accent-foreground: hsl(203.7736 87.6033% 52.5490%);
+  --destructive: hsl(356.3033 90.5579% 54.3137%);
+  --destructive-foreground: hsl(0 0% 100%);
+  --border: hsl(210 5.2632% 14.9020%);
+  --input: hsl(207.6923 27.6596% 18.4314%);
+  --ring: hsl(202.8169 89.1213% 53.1373%);
+  --chart-1: hsl(203.8863 88.2845% 53.1373%);
+  --chart-2: hsl(159.7826 100% 36.0784%);
+  --chart-3: hsl(42.0290 92.8251% 56.2745%);
+  --chart-4: hsl(147.1429 78.5047% 41.9608%);
+  --chart-5: hsl(341.4894 75.2000% 50.9804%);
+  --sidebar: hsl(228 9.8039% 10%);
+  --sidebar-foreground: hsl(0 0% 85.0980%);
+  --sidebar-primary: hsl(202.8169 89.1213% 53.1373%);
+  --sidebar-primary-foreground: hsl(0 0% 100%);
+  --sidebar-accent: hsl(205.7143 70% 7.8431%);
+  --sidebar-accent-foreground: hsl(203.7736 87.6033% 52.5490%);
+  --sidebar-border: hsl(205.7143 15.7895% 26.0784%);
+  --sidebar-ring: hsl(202.8169 89.1213% 53.1373%);
+  --font-sans: 'Noto Sans KR', system-ui, sans-serif;
+  --font-serif: Georgia, serif;
+  --font-mono: Menlo, monospace;
+  --radius: 1.3rem;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply font-sans antialiased bg-gray-50 text-foreground;
+    font-family: var(--font-sans);
+  }
+}
+
+@layer components {
+  .emergency-card {
+    @apply bg-white rounded-xl p-6 shadow-lg border-l-4 border-l-red-600;
+  }
+  
+  .emergency-pulse {
+    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+  
+  .large-text {
+    font-size: 1.5rem;
+  }
+  
+  .accessibility-visual {
+    border: 3px solid var(--safety);
+  }
+  
+  .accessibility-hearing {
+    background: repeating-linear-gradient(
+      45deg,
+      var(--warning) 25%,
+      transparent 25%,
+      transparent 50%,
+      var(--warning) 50%,
+      var(--warning) 75%,
+      transparent 75%
+    );
+  }
+  
+  .sos-float {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 1000;
+    box-shadow: 0 10px 25px hsl(0 81% 43% / 0.3);
+  }
+  
+  .emergency-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+  }
+}
+
+@layer utilities {
+  .text-emergency {
+    color: var(--emergency);
+  }
+  
+  .text-emergency-dark {
+    color: var(--emergency-dark);
+  }
+  
+  .text-safety {
+    color: var(--safety);
+  }
+  
+  .text-warning {
+    color: var(--warning);
+  }
+  
+  .bg-emergency {
+    background-color: var(--emergency);
+    color: var(--emergency-foreground);
+  }
+  
+  .bg-emergency-dark {
+    background-color: var(--emergency-dark);
+    color: var(--emergency-foreground);
+  }
+  
+  .bg-safety {
+    background-color: var(--safety);
+    color: var(--safety-foreground);
+  }
+  
+  .bg-warning {
+    background-color: var(--warning);
+    color: var(--warning-foreground);
+  }
+  
+  .border-emergency {
+    border-color: var(--emergency);
+  }
+  
+  .border-safety {
+    border-color: var(--safety);
+  }
+  
+  .border-warning {
+    border-color: var(--warning);
+  }
+  
+  .hover\:bg-emergency:hover {
+    background-color: var(--emergency);
+    color: var(--emergency-foreground);
+  }
+  
+  .hover\:bg-emergency-dark:hover {
+    background-color: var(--emergency-dark);
+    color: var(--emergency-foreground);
+  }
+  
+  .hover\:bg-safety:hover {
+    background-color: var(--safety);
+    color: var(--safety-foreground);
+  }
+  
+  .hover\:bg-warning:hover {
+    background-color: var(--warning);
+    color: var(--warning-foreground);
+  }
+}
