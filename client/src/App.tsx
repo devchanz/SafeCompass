@@ -32,22 +32,18 @@ function AppContent() {
     }
   }, [isEmergencyActive, hasUnreadAlert, location, setLocation]);
 
-  // Auto-switch language based on user profile
-  useEffect(() => {
-    if (userProfile?.language && userProfile.language !== language) {
-      const userLang = userProfile.language;
-      if (['ko', 'en', 'vi', 'zh'].includes(userLang)) {
-        setLanguage(userLang as Language);
-      }
-    }
-  }, [userProfile, language, setLanguage]);
-
   // Check if language has been selected - force reset for demo
   const [hasSelectedLanguage, setHasSelectedLanguage] = useState(() => {
     // Temporarily force language selection screen
     localStorage.removeItem('selectedLanguage');
     return false;
   });
+
+  // Auto-switch language based on user profile - disabled for demo
+  useEffect(() => {
+    // Disable auto-switching for demo mode
+    return;
+  }, [userProfile, language, setLanguage]);
 
   // Listen for language selection changes
   useEffect(() => {
@@ -79,6 +75,13 @@ function AppContent() {
       setLocation('/registration');
     }
   }, [hasSelectedLanguage, userProfile, location, setLocation]);
+
+  // Force redirect to language selection for demo
+  useEffect(() => {
+    if (location !== '/language') {
+      setLocation('/language');
+    }
+  }, [location, setLocation]);
 
 
 
