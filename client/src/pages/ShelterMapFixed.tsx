@@ -74,6 +74,9 @@ export default function ShelterMapFixed() {
   // 대피소 데이터 조회
   const { data: shelters = [], isLoading, error } = useQuery<Shelter[]>({
     queryKey: ['/api/shelters', userLocation?.lat, userLocation?.lng],
+    queryFn: () => 
+      fetch(`/api/shelters?lat=${userLocation?.lat}&lng=${userLocation?.lng}`)
+        .then(res => res.json()),
     enabled: !!userLocation,
   });
 
