@@ -25,30 +25,22 @@ function AppContent() {
   const { isEmergencyActive, hasUnreadAlert, markAlertAsRead } = useEmergencyNotification();
   const [showNavigation, setShowNavigation] = useState(false);
 
-  // Auto-redirect to emergency page if emergency is active and unread
-  useEffect(() => {
-    if (isEmergencyActive && hasUnreadAlert && location !== '/emergency') {
-      setLocation('/emergency');
-    }
-  }, [isEmergencyActive, hasUnreadAlert, location, setLocation]);
+  // For demo: Always start with language selection
+  const [hasSelectedLanguage, setHasSelectedLanguage] = useState(false);
 
-  // Check if language has been selected - force reset for demo
-  const [hasSelectedLanguage, setHasSelectedLanguage] = useState(() => {
-    // Temporarily force language selection screen
+  // Force redirect to language selection for demo - clear any stored state
+  useEffect(() => {
     localStorage.removeItem('selectedLanguage');
-    return false;
-  });
-
-  // Auto-switch language based on user profile - disabled for demo
-  useEffect(() => {
-    // Disable auto-switching for demo mode
-    return;
-  }, [userProfile, language, setLanguage]);
+    if (location !== '/language') {
+      setLocation('/language');
+    }
+  }, []);
 
   // Listen for language selection changes
   useEffect(() => {
     const handleStorageChange = () => {
-      setHasSelectedLanguage(localStorage.getItem('selectedLanguage') !== null);
+      const hasLanguage = localStorage.getItem('selectedLanguage') !== null;
+      setHasSelectedLanguage(hasLanguage);
     };
     
     window.addEventListener('storage', handleStorageChange);
@@ -62,12 +54,12 @@ function AppContent() {
     return () => window.removeEventListener('storage', handleStorageChange);
   }, [hasSelectedLanguage]);
 
-  // Redirect to language selection if no language has been selected
+  // Auto-redirect to emergency page if emergency is active and unread
   useEffect(() => {
-    if (!hasSelectedLanguage && location !== '/language') {
-      setLocation('/language');
+    if (isEmergencyActive && hasUnreadAlert && location !== '/emergency') {
+      setLocation('/emergency');
     }
-  }, [hasSelectedLanguage, location, setLocation]);
+  }, [isEmergencyActive, hasUnreadAlert, location, setLocation]);
 
   // Redirect to registration if language selected but no user profile exists
   useEffect(() => {
@@ -75,13 +67,6 @@ function AppContent() {
       setLocation('/registration');
     }
   }, [hasSelectedLanguage, userProfile, location, setLocation]);
-
-  // Force redirect to language selection for demo
-  useEffect(() => {
-    if (location !== '/language') {
-      setLocation('/language');
-    }
-  }, [location, setLocation]);
 
 
 
