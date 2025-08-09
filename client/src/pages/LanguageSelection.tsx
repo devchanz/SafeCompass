@@ -74,10 +74,10 @@ export default function LanguageSelection() {
             <div className="space-y-5">
               <div className="text-center">
                 <h2 className="text-lg font-semibold mb-2">
-                  언어를 선택해주세요
+{t('language.title')}
                 </h2>
                 <p className="text-sm text-gray-500">
-                  Please select your language
+                  {t('language.select')}
                 </p>
               </div>
               
@@ -124,7 +124,7 @@ export default function LanguageSelection() {
                         <div className="flex-1">
                           <p className="font-semibold text-gray-900">{lang.name}</p>
                           {isFuture && (
-                            <p className="text-xs text-gray-400 mt-1">준비 중</p>
+                            <p className="text-xs text-gray-400 mt-1">{t('language.coming_soon')}</p>
                           )}
                         </div>
                         <div className="flex items-center space-x-2">
@@ -160,7 +160,7 @@ export default function LanguageSelection() {
                   onClick={() => setShowAllLanguages(true)}
                 >
                   <i className="fas fa-plus mr-2" aria-hidden="true"></i>
-                  더 많은 언어 보기 ({futureLanguages.length}개 준비 중)
+{t('language.show_more')} ({futureLanguages.length}{t('language.preparing')})
                 </Button>
               )}
             </div>
@@ -168,7 +168,7 @@ export default function LanguageSelection() {
             {/* Footer */}
             <div className="mt-8 text-center border-t border-gray-100 pt-6">
               <p className="text-sm font-medium text-emergency mb-1">
-                맞춤형 재난 대응 솔루션
+                {t('footer.tagline')}
               </p>
               <p className="text-xs text-gray-500">
                 Personalized Disaster Response Solution

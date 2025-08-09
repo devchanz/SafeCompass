@@ -245,10 +245,10 @@ export default function ShelterMapFixed() {
       <div className="max-w-7xl mx-auto">
         <div className="mb-6">
           <h1 className="text-2xl font-bold text-gray-900 mb-2">
-            🏢 지진 대피소 지도 (수정된 버전)
+            🏢 {t('map.title')} (수정된 버전)
           </h1>
           <p className="text-gray-600">
-            실시간 GPS 위치 기반으로 주변 지진 대피소를 검색하고 경로를 확인하세요
+            {t('map.subtitle')}
           </p>
         </div>
 
@@ -266,7 +266,7 @@ export default function ShelterMapFixed() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <i className="fas fa-map text-blue-600" aria-hidden="true"></i>
-                  대피소 위치 지도
+{t('map.location_map')}
                   {isLoading && (
                     <div className="w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
                   )}
@@ -282,7 +282,7 @@ export default function ShelterMapFixed() {
                     <div className="flex items-center justify-center h-full">
                       <div className="text-center">
                         <div className="w-8 h-8 border-2 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-2"></div>
-                        <p className="text-gray-600">위치 정보를 가져오는 중...</p>
+                        <p className="text-gray-600">{t('map.loading_location')}</p>
                       </div>
                     </div>
                   )}
@@ -292,19 +292,19 @@ export default function ShelterMapFixed() {
                 <div className="mt-4 flex flex-wrap gap-3 text-sm">
                   <div className="flex items-center gap-2">
                     <div className="w-4 h-4 bg-red-600 rounded-full"></div>
-                    <span>현재 위치</span>
+                    <span>{t('map.current_location')}</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <div className="w-4 h-4 bg-green-500 rounded-full"></div>
-                    <span>옥외 대피소</span>
+                    <span>{t('map.type.outdoor')} 대피소</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <div className="w-4 h-4 bg-blue-500 rounded-full"></div>
-                    <span>실내 대피소</span>
+                    <span>{t('map.type.indoor')} 대피소</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <div className="w-4 h-4 bg-purple-500 rounded-full"></div>
-                    <span>해일 대피소</span>
+                    <span>해일 {t('map.type.shelter')}</span>
                   </div>
                 </div>
               </CardContent>
@@ -318,7 +318,7 @@ export default function ShelterMapFixed() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <i className="fas fa-list text-green-600" aria-hidden="true"></i>
-                  근처 대피소 ({(shelters as Shelter[]).length}개)
+                  {t('map.nearby_shelters')} ({(shelters as Shelter[]).length}개)
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -334,12 +334,12 @@ export default function ShelterMapFixed() {
                 ) : error ? (
                   <Alert>
                     <AlertDescription>
-                      대피소 정보를 불러올 수 없습니다. 네트워크 연결을 확인해주세요.
+{t('map.network_error')}
                     </AlertDescription>
                   </Alert>
                 ) : (shelters as Shelter[]).length === 0 ? (
                   <p className="text-gray-500 text-center py-4">
-                    주변에 등록된 대피소가 없습니다
+{t('map.no_shelters')}
                   </p>
                 ) : (
                   <div className="space-y-3 max-h-96 overflow-y-auto">
@@ -362,8 +362,8 @@ export default function ShelterMapFixed() {
                         </Badge>
                         <p className="text-xs text-gray-600 mt-1">{shelter.address}</p>
                         <div className="flex justify-between text-xs text-gray-500 mt-2">
-                          <span>거리: {shelter.distance}km</span>
-                          <span>도보: {shelter.walkingTime}분</span>
+                          <span>{t('map.distance')}: {shelter.distance}{t('map.km')}</span>
+                          <span>{t('map.walking_time')}: {shelter.walkingTime}{t('map.minutes')}</span>
                         </div>
                       </div>
                     ))}
@@ -377,7 +377,7 @@ export default function ShelterMapFixed() {
               <Card>
                 <CardHeader>
                   <CardTitle className="text-lg text-blue-600">
-                    선택된 대피소
+선택된 {t('map.type.shelter')}
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
@@ -388,19 +388,19 @@ export default function ShelterMapFixed() {
                     
                     <div className="grid grid-cols-2 gap-4 text-sm">
                       <div>
-                        <span className="font-medium">거리:</span>
-                        <p>{selectedShelter.distance}km</p>
+                        <span className="font-medium">{t('map.distance')}:</span>
+                        <p>{selectedShelter.distance}{t('map.km')}</p>
                       </div>
                       <div>
-                        <span className="font-medium">도보 시간:</span>
-                        <p>{selectedShelter.walkingTime}분</p>
+                        <span className="font-medium">{t('map.walking_time')} 시간:</span>
+                        <p>{selectedShelter.walkingTime}{t('map.minutes')}</p>
                       </div>
                     </div>
 
                     {selectedShelter.capacity > 0 && (
                       <div>
-                        <span className="font-medium">수용 인원:</span>
-                        <p>{selectedShelter.capacity}명</p>
+                        <span className="font-medium">{t('map.capacity')}:</span>
+                        <p>{selectedShelter.capacity}{t('map.people')}</p>
                       </div>
                     )}
                   </div>

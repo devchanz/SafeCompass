@@ -81,7 +81,72 @@ const translations = {
     'emergency.location.outdoor': '길거리/야외',
     'emergency.location.transport': '지하철/버스',
     'emergency.mobility.yes': '네, 이동할 수 있습니다',
-    'emergency.mobility.no': '아니요, 이동이 어렵습니다'
+    'emergency.mobility.no': '아니요, 이동이 어렵습니다',
+    
+    // 지도 페이지
+    'map.title': '대피소 지도',
+    'map.loading_location': '위치 정보를 가져오는 중...',
+    'map.location_error': '위치 정보를 가져올 수 없습니다',
+    'map.enable_location': '위치 서비스를 활성화해주세요',
+    'map.nearby_shelters': '근처 대피소',
+    'map.no_shelters': '주변에 등록된 대피소가 없습니다',
+    'map.loading_shelters': '대피소 정보 로딩 중...',
+    'map.network_error': '대피소 정보를 불러올 수 없습니다. 네트워크 연결을 확인해주세요.',
+    'map.current_location': '현재 위치',
+    'map.walking_time': '도보',
+    'map.distance': '거리',
+    'map.capacity': '수용인원',
+    'map.type.indoor': '실내',
+    'map.type.outdoor': '옥외',
+    'map.type.shelter': '구호소',
+    'map.minutes': '분',
+    'map.km': 'km',
+    'map.people': '명',
+    'map.subtitle': '실시간 GPS 위치 기반으로 주변 지진 대피소를 검색하고 경로를 확인하세요',
+    'map.location_map': '대피소 위치 지도',
+    
+    // 언어 선택 페이지
+    'language.title': '언어를 선택해주세요',
+    'language.subtitle': '맞춤형 재난 대응 솔루션',
+    'language.select': '언어 선택',
+    'language.continue': '계속하기',
+    'language.korean': '한국어',
+    'language.english': 'English',
+    'language.vietnamese': 'Tiếng Việt',
+    'language.chinese': '中文',
+    'language.coming_soon': '곧 제공 예정',
+    'language.show_more': '더 많은 언어 보기',
+    'language.preparing': '개 준비 중',
+    
+    // 프로필 수정 페이지
+    'profile.modify.title': '프로필 수정',
+    'profile.modify.basic_info': '기본 정보',
+    'profile.modify.accessibility_info': '접근성 정보',
+    'profile.modify.companion_info': '동행자 정보',
+    'profile.modify.companion_name': '동행자 이름',
+    'profile.modify.companion_phone': '동행자 연락처',
+    'profile.modify.save_success': '프로필이 성공적으로 수정되었습니다',
+    'profile.modify.save_error': '프로필 수정 중 오류가 발생했습니다',
+    
+    // 개인화 가이드 페이지
+    'guide.title': '맞춤형 안전 가이드',
+    'guide.generating': '맞춤형 가이드 생성 중...',
+    'guide.error': '가이드 생성 중 오류가 발생했습니다',
+    'guide.retry': '다시 시도',
+    'guide.speak': '음성으로 듣기',
+    'guide.stop_speaking': '음성 중지',
+    'guide.vibrate': '진동 알림',
+    
+    // 응급상황 페이지
+    'emergency.alert.title': '응급 상황',
+    'emergency.alert.subtitle': '현재 상황을 알려주세요',
+    'emergency.alert.step1': '1단계: 현재 위치',
+    'emergency.alert.step2': '2단계: 이동 가능 여부',
+    'emergency.alert.generating': '맞춤형 대응 가이드 생성 중...',
+    'emergency.alert.please_wait': '잠시만 기다려주세요',
+    
+    // 푸터
+    'footer.tagline': '맞춤형 재난 대응 솔루션'
   },
   en: {
     'nav.dashboard': 'Dashboard',
@@ -152,7 +217,72 @@ const translations = {
     'emergency.location.outdoor': 'Street/Outdoor',
     'emergency.location.transport': 'Subway/Bus',
     'emergency.mobility.yes': 'Yes, I can move',
-    'emergency.mobility.no': 'No, movement is difficult'
+    'emergency.mobility.no': 'No, movement is difficult',
+    
+    // Map page
+    'map.title': 'Shelter Map',
+    'map.loading_location': 'Getting location information...',
+    'map.location_error': 'Unable to get location information',
+    'map.enable_location': 'Please enable location services',
+    'map.nearby_shelters': 'Nearby Shelters',
+    'map.no_shelters': 'No registered shelters nearby',
+    'map.loading_shelters': 'Loading shelter information...',
+    'map.network_error': 'Unable to load shelter information. Please check your network connection.',
+    'map.current_location': 'Current Location',
+    'map.walking_time': 'Walk',
+    'map.distance': 'Distance',
+    'map.capacity': 'Capacity',
+    'map.type.indoor': 'Indoor',
+    'map.type.outdoor': 'Outdoor',
+    'map.type.shelter': 'Shelter',
+    'map.minutes': 'min',
+    'map.km': 'km',
+    'map.people': 'people',
+    'map.subtitle': 'Search nearby earthquake shelters based on real-time GPS location and check routes',
+    'map.location_map': 'Shelter Location Map',
+    
+    // Language selection page
+    'language.title': 'Please select your language',
+    'language.subtitle': 'Personalized Disaster Response Solution',
+    'language.select': 'Language Selection',
+    'language.continue': 'Continue',
+    'language.korean': '한국어',
+    'language.english': 'English',
+    'language.vietnamese': 'Tiếng Việt',
+    'language.chinese': '中文',
+    'language.coming_soon': 'Coming Soon',
+    'language.show_more': 'Show more languages',
+    'language.preparing': ' preparing',
+    
+    // Profile modify page
+    'profile.modify.title': 'Edit Profile',
+    'profile.modify.basic_info': 'Basic Information',
+    'profile.modify.accessibility_info': 'Accessibility Information',
+    'profile.modify.companion_info': 'Companion Information',
+    'profile.modify.companion_name': 'Companion Name',
+    'profile.modify.companion_phone': 'Companion Phone',
+    'profile.modify.save_success': 'Profile updated successfully',
+    'profile.modify.save_error': 'Error occurred while updating profile',
+    
+    // Personalized guide page
+    'guide.title': 'Personalized Safety Guide',
+    'guide.generating': 'Generating personalized guide...',
+    'guide.error': 'Error occurred while generating guide',
+    'guide.retry': 'Retry',
+    'guide.speak': 'Listen with voice',
+    'guide.stop_speaking': 'Stop voice',
+    'guide.vibrate': 'Vibration alert',
+    
+    // Emergency page
+    'emergency.alert.title': 'Emergency Situation',
+    'emergency.alert.subtitle': 'Please tell us your current situation',
+    'emergency.alert.step1': 'Step 1: Current Location',
+    'emergency.alert.step2': 'Step 2: Mobility Status',
+    'emergency.alert.generating': 'Generating personalized response guide...',
+    'emergency.alert.please_wait': 'Please wait',
+    
+    // Footer
+    'footer.tagline': 'Personalized Disaster Response Solution'
   },
   vi: {
     'nav.dashboard': 'Bảng điều khiển',
@@ -172,7 +302,45 @@ const translations = {
     'emergency.earthquake_detected': 'Phát hiện động đất',
     'emergency.location_question': 'Bạn hiện tại đang ở đâu?',
     'emergency.mobility_question': 'Bạn có thể di chuyển bây giờ không?',
-    'emergency.generate_guide': 'Tạo hướng dẫn tùy chỉnh'
+    'emergency.generate_guide': 'Tạo hướng dẫn tùy chỉnh',
+    
+    // Map page
+    'map.title': 'Bản đồ nơi trú ẩn',
+    'map.loading_location': 'Đang lấy thông tin vị trí...',
+    'map.location_error': 'Không thể lấy thông tin vị trí',
+    'map.enable_location': 'Vui lòng bật dịch vụ vị trí',
+    'map.nearby_shelters': 'Nơi trú ẩn gần đây',
+    'map.no_shelters': 'Không có nơi trú ẩn đăng ký gần đây',
+    'map.loading_shelters': 'Đang tải thông tin nơi trú ẩn...',
+    'map.network_error': 'Không thể tải thông tin nơi trú ẩn. Vui lòng kiểm tra kết nối mạng.',
+    'map.current_location': 'Vị trí hiện tại',
+    'map.walking_time': 'Đi bộ',
+    'map.distance': 'Khoảng cách',
+    'map.capacity': 'Sức chứa',
+    'map.type.indoor': 'Trong nhà',
+    'map.type.outdoor': 'Ngoài trời',
+    'map.type.shelter': 'Nơi trú ẩn',
+    'map.minutes': 'phút',
+    'map.km': 'km',
+    'map.people': 'người',
+    'map.subtitle': 'Tìm kiếm nơi trú ẩn động đất gần đây dựa trên vị trí GPS thời gian thực và kiểm tra tuyến đường',
+    'map.location_map': 'Bản đồ vị trí nơi trú ẩn',
+    
+    // Language selection page
+    'language.title': 'Vui lòng chọn ngôn ngữ của bạn',
+    'language.subtitle': 'Giải pháp ứng phó thảm họa cá nhân hóa',
+    'language.select': 'Chọn ngôn ngữ',
+    'language.continue': 'Tiếp tục',
+    'language.korean': '한국어',
+    'language.english': 'English',
+    'language.vietnamese': 'Tiếng Việt',
+    'language.chinese': '中文',
+    'language.coming_soon': 'Sắp có',
+    'language.show_more': 'Xem thêm ngôn ngữ',
+    'language.preparing': ' đang chuẩn bị',
+    
+    // Footer
+    'footer.tagline': 'Giải pháp ứng phó thảm họa cá nhân hóa'
   },
   zh: {
     'nav.dashboard': '仪表板',
@@ -192,7 +360,45 @@ const translations = {
     'emergency.earthquake_detected': '检测到地震',
     'emergency.location_question': '您目前在哪里？',
     'emergency.mobility_question': '您现在能够移动吗？',
-    'emergency.generate_guide': '生成自定义指南'
+    'emergency.generate_guide': '生成自定义指南',
+    
+    // Map page
+    'map.title': '避难所地图',
+    'map.loading_location': '正在获取位置信息...',
+    'map.location_error': '无法获取位置信息',
+    'map.enable_location': '请启用位置服务',
+    'map.nearby_shelters': '附近避难所',
+    'map.no_shelters': '附近没有注册的避难所',
+    'map.loading_shelters': '正在加载避难所信息...',
+    'map.network_error': '无法加载避难所信息。请检查网络连接。',
+    'map.current_location': '当前位置',
+    'map.walking_time': '步行',
+    'map.distance': '距离',
+    'map.capacity': '容量',
+    'map.type.indoor': '室内',
+    'map.type.outdoor': '室外',
+    'map.type.shelter': '避难所',
+    'map.minutes': '分钟',
+    'map.km': '公里',
+    'map.people': '人',
+    'map.subtitle': '基于实时GPS位置搜索附近地震避难所并检查路线',
+    'map.location_map': '避难所位置地图',
+    
+    // Language selection page
+    'language.title': '请选择您的语言',
+    'language.subtitle': '个性化灾难应对解决方案',
+    'language.select': '语言选择',
+    'language.continue': '继续',
+    'language.korean': '한국어',
+    'language.english': 'English',
+    'language.vietnamese': 'Tiếng Việt',
+    'language.chinese': '中文',
+    'language.coming_soon': '即将推出',
+    'language.show_more': '显示更多语言',
+    'language.preparing': '个准备中',
+    
+    // Footer
+    'footer.tagline': '个性化灾难应对解决方案'
   }
 };
 
