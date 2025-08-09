@@ -1,27 +1,29 @@
-import { createContext, useContext, useState, ReactNode, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
 
 export type Language = 'ko' | 'en' | 'vi' | 'zh';
 
 interface LanguageContextType {
-  language: Language;
-  setLanguage: (language: Language) => void;
+  currentLanguage: Language;
+  setLanguage: (lang: Language) => void;
   t: (key: string) => string;
 }
 
-const translations: Record<Language, Record<string, string>> = {
+const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
+
+const translations = {
   ko: {
     // Navigation
     'nav.dashboard': '대시보드',
-    'nav.registration': '사용자 등록',
-    'nav.emergency': '응급상황',
+    'nav.registration': '정보 등록',
+    'nav.emergency': '응급 상황',
     'nav.shelter': '대피소 찾기',
-    'nav.guide': '맞춤 가이드',
+    'nav.guide': '맞춤형 가이드',
     
     // Dashboard
     'dashboard.title': '안전나침반',
-    'dashboard.subtitle': '개인화된 지진 대응 가이드',
+    'dashboard.subtitle': '개인 맞춤형 지진 대응 가이드',
     'dashboard.emergency_alert': '지진 경보 발령',
-    'dashboard.earthquake_info': '규모 6.2, 발생지: 서울 인근',
+    'dashboard.earthquake_info': '규모 6.2, 위치: 서울 인근',
     'dashboard.time_ago': '2분 전',
     'dashboard.respond': '대응하기',
     'dashboard.profile_info': '프로필 정보',
@@ -32,12 +34,36 @@ const translations: Record<Language, Record<string, string>> = {
     'dashboard.address': '주소',
     'dashboard.companion': '동행 파트너',
     'dashboard.edit_profile': '프로필 수정',
+    'dashboard.welcome': '환영합니다!',
+    'dashboard.welcome_message': '맞춤형 안전 가이드를 받기 위해 먼저 개인정보를 등록해주세요.',
+    'dashboard.register_info': '정보 등록하기',
+    'dashboard.safety_status': '안전 상태',
+    'dashboard.no_danger_detected': '현재 위험 상황이 감지되지 않았습니다',
+    'dashboard.last_check': '마지막 확인',
+    'dashboard.just_now': '방금 전',
+    'dashboard.quick_actions': '빠른 실행',
+    'dashboard.emergency_manual': '응급매뉴얼',
+    'dashboard.find_shelter': '대피소 찾기',
+    'dashboard.alert_test': '알림 테스트',
+    'dashboard.alert_test_executed': '알림 테스트가 실행되었습니다',
+    'dashboard.settings': '설정',
+    'dashboard.my_profile': '내 프로필',
+    'dashboard.age_suffix': '세',
+    'dashboard.mobility_independent': '자력대피 가능',
+    'dashboard.mobility_assisted': '부분 도움 필요',
+    'dashboard.mobility_unable': '자력대피 불가능',
+    'dashboard.visual_support': '시각',
+    'dashboard.hearing_support': '청각',
+    'dashboard.basic_support': '기본',
+    'dashboard.demo_mode': '데모 모드',
+    'dashboard.demo_description': '아래 버튼을 클릭하여 지진 경보를 시뮬레이션할 수 있습니다.',
+    'dashboard.earthquake_simulation': '지진 경보 시뮬레이션',
     
     // Registration
     'registration.title': '사용자 정보 등록',
-    'registration.edit_title': '정보 수정',
-    'registration.subtitle': '맞춤형 안전 가이드를 위해 정보를 입력해주세요',
+    'registration.subtitle': '개인 맞춤형 지진 대응 가이드를 위해 정보를 입력해주세요',
     'registration.basic_info': '기본 정보',
+    'registration.edit_title': '정보 수정',
     'registration.name': '이름',
     'registration.age': '나이',
     'registration.gender': '성별',
@@ -45,36 +71,36 @@ const translations: Record<Language, Record<string, string>> = {
     'registration.language': '언어',
     'registration.accessibility_support': '접근성 지원 및 자력대피 능력',
     'registration.companion': '동행 파트너 (선택사항)',
-    'registration.save': '정보 저장하기',
+    'registration.save': '프로필 저장',
     'registration.name_placeholder': '홍길동',
     'registration.age_placeholder': '25',
     'registration.address_placeholder': '서울특별시 강남구',
-    'registration.gender_placeholder': '선택해주세요',
+    'registration.gender_placeholder': '성별을 선택해주세요',
     'registration.gender_male': '남성',
     'registration.gender_female': '여성',
     'registration.gender_other': '기타',
-    'registration.mobility': '자력대피 능력',
+    'registration.language_placeholder': '언어를 선택해주세요',
     'registration.accessibility': '접근성 지원',
-    'registration.companion_name': '동행자 이름',
-    'registration.companion_phone': '동행자 전화번호',
     'registration.accessibility_normal': '일반',
-    'registration.accessibility_normal_desc': '특별한 지원 불필요',
+    'registration.accessibility_normal_desc': '특별한 지원이 필요하지 않음',
     'registration.accessibility_visual': '시각 지원',
-    'registration.accessibility_visual_desc': '음성 안내, 큰 글씨',
+    'registration.accessibility_visual_desc': '음성 안내, 큰 글자',
     'registration.accessibility_hearing': '청각 지원',
     'registration.accessibility_hearing_desc': '진동, 시각적 신호',
-    'registration.language_placeholder': '언어 선택',
+    'registration.mobility': '자력대피 능력',
     'registration.mobility_independent': '혼자 대피 가능',
     'registration.mobility_assisted': '도움 필요',
-    'registration.mobility_independent_desc': '혼자서도 신속히 이동',
-    'registration.mobility_assisted_desc': '타인의 도움 필요',
-    'registration.companion_subtitle': '응급상황 시 연락받을 동행 파트너의 정보를 입력해주세요. 이 정보는 SOS 신호 시 자동으로 전송됩니다.',
-    'registration.companion_name_desc': '응급상황 시 연락받을 사람의 이름',
-    'registration.companion_phone_desc': 'SMS와 전화로 응급상황을 알릴 번호',
+    'registration.mobility_independent_desc': '혼자서 빠르게 이동 가능',
+    'registration.mobility_assisted_desc': '다른 사람의 도움이 필요',
+    'registration.companion_subtitle': '응급 상황 시 연락받을 동행 파트너 정보를 입력하세요. 이 정보는 SOS 신호와 함께 자동으로 전송됩니다.',
+    'registration.companion_name': '동행 파트너 이름',
+    'registration.companion_phone': '전화번호',
+    'registration.companion_name_desc': '응급 상황 시 연락할 사람의 이름',
+    'registration.companion_phone_desc': 'SMS와 응급 통화용 번호',
     'registration.companion_relationship': '관계',
     'registration.companion_relationship_placeholder': '동행 파트너와의 관계를 선택해주세요',
-    'registration.companion_relationship_desc': '응급상황 시 연락받을 사람과의 관계',
-    'registration.companion_name_placeholder': '김철수',
+    'registration.companion_relationship_desc': '응급연락처와의 관계',
+    'registration.companion_name_placeholder': '김민수',
     'registration.companion_phone_placeholder': '010-1234-5678',
     'registration.companion_family': '가족 (배우자, 부모, 자녀)',
     'registration.companion_friend': '친구',
@@ -82,16 +108,16 @@ const translations: Record<Language, Record<string, string>> = {
     'registration.companion_colleague': '직장 동료',
     'registration.companion_caregiver': '돌봄 제공자',
     'registration.companion_role_title': '동행 파트너 역할',
-    'registration.companion_role_1': '응급상황 발생 시 SMS로 위치와 상황 정보 자동 전송',
+    'registration.companion_role_1': '응급상황 시 SMS로 위치와 상황 정보 자동 전송',
     'registration.companion_role_2': '대피가 어려운 경우 구조 지원 요청',
     'registration.companion_role_3': '의료진에게 개인 정보 제공 (필요시)',
     
     // Emergency
     'emergency.title': '현재 상황을 알려주세요',
-    'emergency.earthquake_detected': '지진이 감지되었습니다',
+    'emergency.earthquake_detected': '지진 감지됨',
     'emergency.location_question': '현재 어디에 계신가요?',
     'emergency.mobility_question': '지금 움직일 수 있나요?',
-    'emergency.generate_guide': '맞춤 가이드 생성',
+    'emergency.generate_guide': '맞춤형 가이드 생성',
     
     // Common
     'common.loading': '로딩 중...',
@@ -99,11 +125,11 @@ const translations: Record<Language, Record<string, string>> = {
     'common.save': '저장',
     'common.cancel': '취소',
     'common.next': '다음',
-    'common.back': '이전',
+    'common.back': '뒤로',
     'common.close': '닫기',
     
     // Location options
-    'emergency.location.home': '집 안 (거실/침실)',
+    'emergency.location.home': '집 (거실/침실)',
     'emergency.location.office': '사무실/학교',
     'emergency.location.outdoor': '길거리/야외',
     'emergency.location.transport': '지하철/버스',
@@ -123,7 +149,7 @@ const translations: Record<Language, Record<string, string>> = {
     // Dashboard
     'dashboard.title': 'Safe Compass',
     'dashboard.subtitle': 'Personalized Earthquake Response Guide',
-    'dashboard.emergency_alert': 'Earthquake Alert Issued',
+    'dashboard.emergency_alert': 'Earthquake Alert',
     'dashboard.earthquake_info': 'Magnitude 6.2, Location: Near Seoul',
     'dashboard.time_ago': '2 minutes ago',
     'dashboard.respond': 'Respond',
@@ -135,10 +161,36 @@ const translations: Record<Language, Record<string, string>> = {
     'dashboard.address': 'Address',
     'dashboard.companion': 'Emergency Companion',
     'dashboard.edit_profile': 'Edit Profile',
+    'dashboard.welcome': 'Welcome!',
+    'dashboard.welcome_message': 'Please register your personal information first to receive customized safety guides.',
+    'dashboard.register_info': 'Register Information',
+    'dashboard.safety_status': 'Safety Status',
+    'dashboard.no_danger_detected': 'No dangerous situation currently detected',
+    'dashboard.last_check': 'Last Check',
+    'dashboard.just_now': 'Just now',
+    'dashboard.quick_actions': 'Quick Actions',
+    'dashboard.emergency_manual': 'Emergency Manual',
+    'dashboard.find_shelter': 'Find Shelter',
+    'dashboard.alert_test': 'Alert Test',
+    'dashboard.alert_test_executed': 'Alert test has been executed',
+    'dashboard.settings': 'Settings',
+    'dashboard.my_profile': 'My Profile',
+    'dashboard.age_suffix': ' years old',
+    'dashboard.mobility_independent': 'Can evacuate independently',
+    'dashboard.mobility_assisted': 'Partial assistance needed',
+    'dashboard.mobility_unable': 'Cannot evacuate independently',
+    'dashboard.visual_support': 'Visual',
+    'dashboard.hearing_support': 'Hearing',
+    'dashboard.basic_support': 'Basic',
+    'dashboard.demo_mode': 'Demo Mode',
+    'dashboard.demo_description': 'Click the button below to simulate earthquake alerts.',
+    'dashboard.earthquake_simulation': 'Earthquake Alert Simulation',
     
     // Registration
     'registration.title': 'User Registration',
-    'registration.subtitle': 'Please enter your personal information for customized earthquake response',
+    'registration.subtitle': 'Please enter your personal information to get customized earthquake response guide',
+    'registration.basic_info': 'Basic Information',
+    'registration.edit_title': 'Edit Information',
     'registration.name': 'Name',
     'registration.age': 'Age',
     'registration.gender': 'Gender',
@@ -147,8 +199,6 @@ const translations: Record<Language, Record<string, string>> = {
     'registration.accessibility_support': 'Accessibility Support & Self-Evacuation Capability',
     'registration.companion': 'Emergency Companion (Optional)',
     'registration.save': 'Save Profile',
-    'registration.basic_info': 'Basic Information',
-    'registration.edit_title': 'Edit Information',
     'registration.name_placeholder': 'John Doe',
     'registration.age_placeholder': '25',
     'registration.address_placeholder': 'Seoul, South Korea',
@@ -208,7 +258,7 @@ const translations: Record<Language, Record<string, string>> = {
     // Location options
     'emergency.location.home': 'Home (Living room/Bedroom)',
     'emergency.location.office': 'Office/School',
-    'emergency.location.outdoor': 'Street/Outdoor',
+    'emergency.location.outdoor': 'Street/Outdoors',
     'emergency.location.transport': 'Subway/Bus',
     
     // Mobility options
@@ -238,11 +288,36 @@ const translations: Record<Language, Record<string, string>> = {
     'dashboard.address': 'Địa Chỉ',
     'dashboard.companion': 'Người Đồng Hành Khẩn Cấp',
     'dashboard.edit_profile': 'Chỉnh Sửa Hồ Sơ',
+    'dashboard.welcome': 'Chào mừng!',
+    'dashboard.welcome_message': 'Vui lòng đăng ký thông tin cá nhân trước để nhận hướng dẫn an toàn tùy chỉnh.',
+    'dashboard.register_info': 'Đăng Ký Thông Tin',
+    'dashboard.safety_status': 'Tình Trạng An Toàn',
+    'dashboard.no_danger_detected': 'Hiện tại không phát hiện tình huống nguy hiểm',
+    'dashboard.last_check': 'Kiểm Tra Cuối',
+    'dashboard.just_now': 'Vừa xong',
+    'dashboard.quick_actions': 'Hành Động Nhanh',
+    'dashboard.emergency_manual': 'Sổ Tay Khẩn Cấp',
+    'dashboard.find_shelter': 'Tìm Nơi Trú Ẩn',
+    'dashboard.alert_test': 'Kiểm Tra Cảnh Báo',
+    'dashboard.alert_test_executed': 'Kiểm tra cảnh báo đã được thực hiện',
+    'dashboard.settings': 'Cài Đặt',
+    'dashboard.my_profile': 'Hồ Sơ Của Tôi',
+    'dashboard.age_suffix': ' tuổi',
+    'dashboard.mobility_independent': 'Có thể sơ tán độc lập',
+    'dashboard.mobility_assisted': 'Cần hỗ trợ một phần',
+    'dashboard.mobility_unable': 'Không thể sơ tán độc lập',
+    'dashboard.visual_support': 'Thị Giác',
+    'dashboard.hearing_support': 'Thính Giác',
+    'dashboard.basic_support': 'Cơ Bản',
+    'dashboard.demo_mode': 'Chế Độ Demo',
+    'dashboard.demo_description': 'Nhấp vào nút bên dưới để mô phỏng cảnh báo động đất.',
+    'dashboard.earthquake_simulation': 'Mô Phỏng Cảnh Báo Động Đất',
     
     // Registration
     'registration.title': 'Đăng Ký Người Dùng',
     'registration.subtitle': 'Vui lòng nhập thông tin cá nhân để có hướng dẫn ứng phó động đất tùy chỉnh',
     'registration.basic_info': 'Thông Tin Cơ Bản',
+    'registration.edit_title': 'Chỉnh Sửa Thông Tin',
     'registration.name': 'Tên',
     'registration.age': 'Tuổi',
     'registration.gender': 'Giới Tính',
@@ -340,11 +415,36 @@ const translations: Record<Language, Record<string, string>> = {
     'dashboard.address': '地址',
     'dashboard.companion': '紧急联系人',
     'dashboard.edit_profile': '编辑个人资料',
+    'dashboard.welcome': '欢迎！',
+    'dashboard.welcome_message': '请先注册您的个人信息以获得定制的安全指南。',
+    'dashboard.register_info': '注册信息',
+    'dashboard.safety_status': '安全状态',
+    'dashboard.no_danger_detected': '目前未检测到危险情况',
+    'dashboard.last_check': '最后检查',
+    'dashboard.just_now': '刚刚',
+    'dashboard.quick_actions': '快速操作',
+    'dashboard.emergency_manual': '应急手册',
+    'dashboard.find_shelter': '寻找避难所',
+    'dashboard.alert_test': '警报测试',
+    'dashboard.alert_test_executed': '警报测试已执行',
+    'dashboard.settings': '设置',
+    'dashboard.my_profile': '我的资料',
+    'dashboard.age_suffix': '岁',
+    'dashboard.mobility_independent': '能够独立疏散',
+    'dashboard.mobility_assisted': '需要部分协助',
+    'dashboard.mobility_unable': '无法独立疏散',
+    'dashboard.visual_support': '视觉',
+    'dashboard.hearing_support': '听觉',
+    'dashboard.basic_support': '基本',
+    'dashboard.demo_mode': '演示模式',
+    'dashboard.demo_description': '点击下方按钮来模拟地震警报。',
+    'dashboard.earthquake_simulation': '地震警报模拟',
     
     // Registration
     'registration.title': '用户注册',
     'registration.subtitle': '请输入您的个人信息以获得定制的地震应对指南',
     'registration.basic_info': '基本信息',
+    'registration.edit_title': '编辑信息',
     'registration.name': '姓名',
     'registration.age': '年龄',
     'registration.gender': '性别',
@@ -418,176 +518,39 @@ const translations: Record<Language, Record<string, string>> = {
     // Mobility options
     'emergency.mobility.yes': '是，我能够移动',
     'emergency.mobility.no': '不，移动困难'
-  },
-  vi: {
-    // Navigation
-    'nav.dashboard': 'Bảng điều khiển',
-    'nav.registration': 'Đăng ký',
-    'nav.emergency': 'Khẩn cấp',
-    'nav.shelter': 'Tìm nơi trú ẩn',
-    'nav.guide': 'Hướng dẫn tùy chỉnh',
-    
-    // Dashboard
-    'dashboard.title': 'La bàn an toàn',
-    'dashboard.subtitle': 'Hướng dẫn ứng phó động đất cá nhân hóa',
-    'dashboard.emergency_alert': 'Cảnh báo động đất đã được phát',
-    'dashboard.earthquake_info': 'Cường độ 6.2, Địa điểm: Gần Seoul',
-    'dashboard.time_ago': '2 phút trước',
-    'dashboard.respond': 'Ứng phó',
-    'dashboard.profile_info': 'Thông tin hồ sơ',
-    'dashboard.name': 'Tên',
-    'dashboard.age': 'Tuổi',
-    'dashboard.evacuation_ability': 'Khả năng sơ tán tự lực',
-    'dashboard.accessibility': 'Hỗ trợ tiếp cận',
-    'dashboard.address': 'Địa chỉ',
-    'dashboard.companion': 'Bạn đồng hành khẩn cấp',
-    'dashboard.edit_profile': 'Chỉnh sửa hồ sơ',
-    
-    // Registration
-    'registration.title': 'Đăng ký người dùng',
-    'registration.subtitle': 'Vui lòng nhập thông tin cá nhân để ứng phó động đất tùy chỉnh',
-    'registration.name': 'Tên',
-    'registration.age': 'Tuổi',
-    'registration.gender': 'Giới tính',
-    'registration.address': 'Địa chỉ',
-    'registration.language': 'Ngôn ngữ',
-    'registration.accessibility_support': 'Hỗ trợ tiếp cận & Khả năng sơ tán tự lực',
-    'registration.companion': 'Bạn đồng hành khẩn cấp (Tùy chọn)',
-    'registration.save': 'Lưu',
-    
-    // Emergency
-    'emergency.title': 'Cho chúng tôi biết tình huống hiện tại của bạn',
-    'emergency.earthquake_detected': 'Phát hiện động đất',
-    'emergency.location_question': 'Bạn hiện đang ở đâu?',
-    'emergency.mobility_question': 'Bạn có thể di chuyển ngay bây giờ không?',
-    'emergency.generate_guide': 'Tạo hướng dẫn tùy chỉnh',
-    
-    // Common
-    'common.loading': 'Đang tải...',
-    'common.error': 'Đã xảy ra lỗi',
-    'common.save': 'Lưu',
-    'common.cancel': 'Hủy',
-    'common.next': 'Tiếp theo',
-    'common.back': 'Trở lại',
-    'common.close': 'Đóng',
-    
-    // Location options
-    'emergency.location.home': 'Nhà (Phòng khách/Phòng ngủ)',
-    'emergency.location.office': 'Văn phòng/Trường học',
-    'emergency.location.outdoor': 'Đường phố/Ngoài trời',
-    'emergency.location.transport': 'Tàu điện ngầm/Xe buýt',
-    
-    // Mobility options
-    'emergency.mobility.yes': 'Có, tôi có thể di chuyển',
-    'emergency.mobility.no': 'Không, khó di chuyển'
-  },
-  zh: {
-    // Navigation
-    'nav.dashboard': '仪表板',
-    'nav.registration': '注册',
-    'nav.emergency': '紧急情况',
-    'nav.shelter': '寻找避难所',
-    'nav.guide': '自定义指南',
-    
-    // Dashboard
-    'dashboard.title': '安全指南针',
-    'dashboard.subtitle': '个性化地震应对指南',
-    'dashboard.emergency_alert': '地震警报已发布',
-    'dashboard.earthquake_info': '震级6.2，地点：首尔附近',
-    'dashboard.time_ago': '2分钟前',
-    'dashboard.respond': '响应',
-    'dashboard.profile_info': '个人资料信息',
-    'dashboard.name': '姓名',
-    'dashboard.age': '年龄',
-    'dashboard.evacuation_ability': '自主疏散能力',
-    'dashboard.accessibility': '无障碍支持',
-    'dashboard.address': '地址',
-    'dashboard.companion': '紧急伙伴',
-    'dashboard.edit_profile': '编辑个人资料',
-    
-    // Registration
-    'registration.title': '用户注册',
-    'registration.subtitle': '请输入您的个人信息以获得定制的地震应对方案',
-    'registration.name': '姓名',
-    'registration.age': '年龄',
-    'registration.gender': '性别',
-    'registration.address': '地址',
-    'registration.language': '语言',
-    'registration.accessibility_support': '无障碍支持和自主疏散能力',
-    'registration.companion': '紧急伙伴（可选）',
-    'registration.save': '保存',
-    
-    // Emergency
-    'emergency.title': '请告诉我们您当前的情况',
-    'emergency.earthquake_detected': '检测到地震',
-    'emergency.location_question': '您目前在哪里？',
-    'emergency.mobility_question': '您现在能够移动吗？',
-    'emergency.generate_guide': '生成自定义指南',
-    
-    // Common
-    'common.loading': '加载中...',
-    'common.error': '发生错误',
-    'common.save': '保存',
-    'common.cancel': '取消',
-    'common.next': '下一步',
-    'common.back': '返回',
-    'common.close': '关闭',
-    
-    // Location options
-    'emergency.location.home': '家中（客厅/卧室）',
-    'emergency.location.office': '办公室/学校',
-    'emergency.location.outdoor': '街道/户外',
-    'emergency.location.transport': '地铁/公交车',
-    
-    // Mobility options
-    'emergency.mobility.yes': '是的，我可以移动',
-    'emergency.mobility.no': '不，移动困难'
   }
 };
 
-const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
-
-export function LanguageProvider({ children }: { children: ReactNode }) {
-  const [language, setLanguage] = useState<Language>(() => {
-    // Check if language was previously selected
-    const savedLanguage = localStorage.getItem('selectedLanguage') as Language;
-    return savedLanguage || 'ko';
-  });
-
-  const t = (key: string): string => {
-    return translations[language]?.[key] || key;
-  };
+export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const [currentLanguage, setCurrentLanguage] = useState<Language>('ko');
 
   useEffect(() => {
-    // Save language preference to localStorage
-    localStorage.setItem('selectedLanguage', language);
-  }, [language]);
-
-  useEffect(() => {
-    // Load language preference from localStorage
-    const saved = localStorage.getItem('selectedLanguage') as Language;
-    if (saved && (saved === 'ko' || saved === 'en' || saved === 'vi' || saved === 'zh')) {
-      setLanguage(saved);
+    const savedLanguage = localStorage.getItem('preferred-language') as Language;
+    if (savedLanguage && ['ko', 'en', 'vi', 'zh'].includes(savedLanguage)) {
+      setCurrentLanguage(savedLanguage);
     }
   }, []);
 
+  const setLanguage = (lang: Language) => {
+    setCurrentLanguage(lang);
+    localStorage.setItem('preferred-language', lang);
+  };
+
+  const t = (key: string): string => {
+    return translations[currentLanguage][key] || key;
+  };
+
   return (
-    <LanguageContext.Provider value={{ language, setLanguage, t }}>
+    <LanguageContext.Provider value={{ currentLanguage, setLanguage, t }}>
       {children}
     </LanguageContext.Provider>
   );
-}
+};
 
-export function useLanguage() {
+export const useLanguage = () => {
   const context = useContext(LanguageContext);
   if (context === undefined) {
     throw new Error('useLanguage must be used within a LanguageProvider');
   }
   return context;
-}
-
-// Optional: provide a hook that returns null instead of throwing
-export function useLanguageOptional() {
-  const context = useContext(LanguageContext);
-  return context;
-}
+};
