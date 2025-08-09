@@ -42,7 +42,33 @@ export default function ProfileModify() {
         profile_updated: '프로필이 수정되었습니다',
         error: '오류',
         profile_not_found: '프로필 정보를 찾을 수 없습니다.',
-        update_failed: '프로필 업데이트에 실패했습니다.'
+        update_failed: '프로필 업데이트에 실패했습니다.',
+        basic_info: '기본 정보',
+        name: '이름',
+        age: '나이',
+        gender: '성별',
+        gender_male: '남성',
+        gender_female: '여성',
+        gender_other: '기타',
+        address: '주소',
+        accessibility_support: '접근성 지원',
+        accessibility: '접근성 요구사항',
+        accessibility_normal: '일반',
+        accessibility_normal_desc: '특별한 도움이 필요하지 않음',
+        accessibility_visual: '시각 장애',
+        accessibility_visual_desc: '시각적 안내가 필요함',
+        accessibility_hearing: '청각 장애',
+        accessibility_hearing_desc: '청각적 안내가 필요함',
+        mobility: '이동성',
+        mobility_independent: '독립적 이동 가능',
+        mobility_independent_desc: '도움 없이 혼자 이동할 수 있음',
+        mobility_assisted: '이동 지원 필요',
+        mobility_assisted_desc: '휠체어, 목발 등의 보조기구 사용',
+        companion: '동행 파트너',
+        companion_subtitle: '비상시 연락할 동행자 정보를 입력하세요',
+        companion_name: '동행자 이름',
+        companion_name_placeholder: '동행자 이름을 입력하세요',
+        companion_phone: '연락처'
       },
       en: {
         title: 'Edit Profile',
@@ -53,7 +79,33 @@ export default function ProfileModify() {
         profile_updated: 'Profile has been updated',
         error: 'Error',
         profile_not_found: 'Profile information not found.',
-        update_failed: 'Failed to update profile.'
+        update_failed: 'Failed to update profile.',
+        basic_info: 'Basic Information',
+        name: 'Name',
+        age: 'Age',
+        gender: 'Gender',
+        gender_male: 'Male',
+        gender_female: 'Female',
+        gender_other: 'Other',
+        address: 'Address',
+        accessibility_support: 'Accessibility Support',
+        accessibility: 'Accessibility Requirements',
+        accessibility_normal: 'Normal',
+        accessibility_normal_desc: 'No special assistance needed',
+        accessibility_visual: 'Visual Impairment',
+        accessibility_visual_desc: 'Visual guidance needed',
+        accessibility_hearing: 'Hearing Impairment',
+        accessibility_hearing_desc: 'Auditory guidance needed',
+        mobility: 'Mobility',
+        mobility_independent: 'Independent Movement',
+        mobility_independent_desc: 'Can move without assistance',
+        mobility_assisted: 'Assisted Movement',
+        mobility_assisted_desc: 'Uses wheelchair, crutches, etc.',
+        companion: 'Companion',
+        companion_subtitle: 'Enter companion information for emergency contact',
+        companion_name: 'Companion Name',
+        companion_name_placeholder: 'Enter companion name',
+        companion_phone: 'Phone Number'
       },
       vi: {
         title: 'Chỉnh sửa hồ sơ',
@@ -64,7 +116,33 @@ export default function ProfileModify() {
         profile_updated: 'Hồ sơ đã được cập nhật',
         error: 'Lỗi',
         profile_not_found: 'Không tìm thấy thông tin hồ sơ.',
-        update_failed: 'Cập nhật hồ sơ thất bại.'
+        update_failed: 'Cập nhật hồ sơ thất bại.',
+        basic_info: 'Thông tin cơ bản',
+        name: 'Tên',
+        age: 'Tuổi',
+        gender: 'Giới tính',
+        gender_male: 'Nam',
+        gender_female: 'Nữ',
+        gender_other: 'Khác',
+        address: 'Địa chỉ',
+        accessibility_support: 'Hỗ trợ tiếp cận',
+        accessibility: 'Yêu cầu tiếp cận',
+        accessibility_normal: 'Bình thường',
+        accessibility_normal_desc: 'Không cần hỗ trợ đặc biệt',
+        accessibility_visual: 'Khiếm thị',
+        accessibility_visual_desc: 'Cần hướng dẫn bằng thị giác',
+        accessibility_hearing: 'Khiếm thính',
+        accessibility_hearing_desc: 'Cần hướng dẫn bằng âm thanh',
+        mobility: 'Khả năng di chuyển',
+        mobility_independent: 'Di chuyển độc lập',
+        mobility_independent_desc: 'Có thể di chuyển không cần hỗ trợ',
+        mobility_assisted: 'Cần hỗ trợ di chuyển',
+        mobility_assisted_desc: 'Sử dụng xe lăn, nạng, v.v.',
+        companion: 'Người đồng hành',
+        companion_subtitle: 'Nhập thông tin người đồng hành để liên hệ khẩn cấp',
+        companion_name: 'Tên người đồng hành',
+        companion_name_placeholder: 'Nhập tên người đồng hành',
+        companion_phone: 'Số điện thoại'
       },
       zh: {
         title: '编辑个人资料',
@@ -75,7 +153,33 @@ export default function ProfileModify() {
         profile_updated: '个人资料已更新',
         error: '错误',
         profile_not_found: '找不到个人资料信息。',
-        update_failed: '更新个人资料失败。'
+        update_failed: '更新个人资料失败。',
+        basic_info: '基本信息',
+        name: '姓名',
+        age: '年龄',
+        gender: '性别',
+        gender_male: '男性',
+        gender_female: '女性',
+        gender_other: '其他',
+        address: '地址',
+        accessibility_support: '无障碍支持',
+        accessibility: '无障碍需求',
+        accessibility_normal: '正常',
+        accessibility_normal_desc: '无需特殊协助',
+        accessibility_visual: '视觉障碍',
+        accessibility_visual_desc: '需要视觉引导',
+        accessibility_hearing: '听觉障碍',
+        accessibility_hearing_desc: '需要听觉引导',
+        mobility: '行动能力',
+        mobility_independent: '独立行动',
+        mobility_independent_desc: '可以无协助行动',
+        mobility_assisted: '辅助行动',
+        mobility_assisted_desc: '使用轮椅、拐杖等',
+        companion: '同伴',
+        companion_subtitle: '输入紧急联系的同伴信息',
+        companion_name: '同伴姓名',
+        companion_name_placeholder: '输入同伴姓名',
+        companion_phone: '联系电话'
       }
     };
     return texts[language]?.[key] || texts['ko'][key] || key;
@@ -203,10 +307,10 @@ export default function ProfileModify() {
           </div>
         </div>
         <h1 className="text-4xl font-bold text-emergency">
-          {t('registration.edit_title')}
+          {getText('title')}
         </h1>
         <p className="text-gray-600 text-lg max-w-2xl mx-auto">
-          {t('registration.subtitle')}
+          {getText('subtitle')}
         </p>
       </div>
 
@@ -221,20 +325,20 @@ export default function ProfileModify() {
                   <i className="fas fa-user text-emergency text-lg" aria-hidden="true"></i>
                 </div>
                 <h3 className="text-xl font-bold text-emergency">
-                  {t('registration.basic_info')}
+                  {getText('basic_info')}
                 </h3>
               </div>
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
                   <Label htmlFor="name" className="text-sm font-semibold text-gray-700">
-                    {t('registration.name')}
+                    {getText('name')}
                   </Label>
                   <Input
                     id="name"
                     {...form.register("name")}
                     className="h-12 text-base border-2 border-gray-200 focus:border-emergency"
-                    placeholder={t('registration.name')}
+                    placeholder={getText('name')}
                   />
                   {form.formState.errors.name && (
                     <p className="text-red-500 text-sm">{form.formState.errors.name.message}</p>
@@ -243,14 +347,14 @@ export default function ProfileModify() {
 
                 <div className="space-y-2">
                   <Label htmlFor="age" className="text-sm font-semibold text-gray-700">
-                    {t('registration.age')}
+                    {getText('age')}
                   </Label>
                   <Input
                     id="age"
                     type="number"
                     {...form.register("age", { valueAsNumber: true })}
                     className="h-12 text-base border-2 border-gray-200 focus:border-emergency"
-                    placeholder={t('registration.age')}
+                    placeholder={getText('age')}
                   />
                   {form.formState.errors.age && (
                     <p className="text-red-500 text-sm">{form.formState.errors.age.message}</p>
@@ -261,16 +365,16 @@ export default function ProfileModify() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
                   <Label htmlFor="gender" className="text-sm font-semibold text-gray-700">
-                    {t('registration.gender')}
+                    {getText('gender')}
                   </Label>
                   <Select onValueChange={(value) => form.setValue("gender", value)} defaultValue={form.getValues("gender") || undefined}>
                     <SelectTrigger className="h-12 text-base border-2 border-gray-200 focus:border-emergency">
-                      <SelectValue placeholder={t('registration.gender')} />
+                      <SelectValue placeholder={getText('gender')} />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="male">{t('registration.gender_male')}</SelectItem>
-                      <SelectItem value="female">{t('registration.gender_female')}</SelectItem>
-                      <SelectItem value="other">{t('registration.gender_other')}</SelectItem>
+                      <SelectItem value="male">{getText('gender_male')}</SelectItem>
+                      <SelectItem value="female">{getText('gender_female')}</SelectItem>
+                      <SelectItem value="other">{getText('gender_other')}</SelectItem>
                     </SelectContent>
                   </Select>
                   {form.formState.errors.gender && (
@@ -280,13 +384,13 @@ export default function ProfileModify() {
 
                 <div className="space-y-2">
                   <Label htmlFor="address" className="text-sm font-semibold text-gray-700">
-                    {t('registration.address')}
+                    {getText('address')}
                   </Label>
                   <Input
                     id="address"
                     {...form.register("address")}
                     className="h-12 text-base border-2 border-gray-200 focus:border-emergency"
-                    placeholder={t('registration.address')}
+                    placeholder={getText('address')}
                   />
                   {form.formState.errors.address && (
                     <p className="text-red-500 text-sm">{form.formState.errors.address.message}</p>
@@ -302,14 +406,14 @@ export default function ProfileModify() {
                   <i className="fas fa-universal-access text-safety text-lg" aria-hidden="true"></i>
                 </div>
                 <h3 className="text-xl font-bold text-emergency">
-                  {t('registration.accessibility_support')}
+                  {getText('accessibility_support')}
                 </h3>
               </div>
               
               {/* 접근성 지원 선택 */}
               <div className="space-y-4">
                 <Label className="text-base font-semibold text-gray-700">
-                  {t('registration.accessibility')}
+                  {getText('accessibility')}
                 </Label>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                   <Button
@@ -327,9 +431,9 @@ export default function ProfileModify() {
                     </div>
                     <div className="text-center">
                       <p className={`text-sm font-semibold ${selectedAccessibility.length === 0 ? 'text-gray-800' : 'text-gray-700'}`}>
-                        {t('registration.accessibility_normal')}
+                        {getText('accessibility_normal')}
                       </p>
-                      <p className="text-xs text-gray-600">{t('registration.accessibility_normal_desc')}</p>
+                      <p className="text-xs text-gray-600">{getText('accessibility_normal_desc')}</p>
                     </div>
                   </Button>
                   
@@ -348,9 +452,9 @@ export default function ProfileModify() {
                     </div>
                     <div className="text-center">
                       <p className={`text-sm font-semibold ${selectedAccessibility.includes('visual') ? 'text-blue-800' : 'text-gray-700'}`}>
-                        {t('registration.accessibility_visual')}
+                        {getText('accessibility_visual')}
                       </p>
-                      <p className="text-xs text-gray-600">{t('registration.accessibility_visual_desc')}</p>
+                      <p className="text-xs text-gray-600">{getText('accessibility_visual_desc')}</p>
                     </div>
                   </Button>
                   
@@ -369,9 +473,9 @@ export default function ProfileModify() {
                     </div>
                     <div className="text-center">
                       <p className={`text-sm font-semibold ${selectedAccessibility.includes('hearing') ? 'text-yellow-800' : 'text-gray-700'}`}>
-                        {t('registration.accessibility_hearing')}
+                        {getText('accessibility_hearing')}
                       </p>
-                      <p className="text-xs text-gray-600">{t('registration.accessibility_hearing_desc')}</p>
+                      <p className="text-xs text-gray-600">{getText('accessibility_hearing_desc')}</p>
                     </div>
                   </Button>
                 </div>
@@ -380,7 +484,7 @@ export default function ProfileModify() {
               {/* 자력대피 능력 선택 */}
               <div className="space-y-4">
                 <Label className="text-base font-semibold text-gray-700">
-                  {t('registration.mobility')}
+                  {getText('mobility')}
                 </Label>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <Button
@@ -398,9 +502,9 @@ export default function ProfileModify() {
                     </div>
                     <div className="text-center">
                       <p className={`text-sm font-semibold ${form.watch("mobility") === "independent" ? 'text-green-800' : 'text-gray-700'}`}>
-                        {t('registration.mobility_independent')}
+                        {getText('mobility_independent')}
                       </p>
-                      <p className="text-xs text-gray-600">{t('registration.mobility_independent_desc')}</p>
+                      <p className="text-xs text-gray-600">{getText('mobility_independent_desc')}</p>
                     </div>
                   </Button>
                   
@@ -419,9 +523,9 @@ export default function ProfileModify() {
                     </div>
                     <div className="text-center">
                       <p className={`text-sm font-semibold ${form.watch("mobility") === "unable" ? 'text-red-800' : 'text-gray-700'}`}>
-                        {t('registration.mobility_assisted')}
+                        {getText('mobility_assisted')}
                       </p>
-                      <p className="text-xs text-gray-600">{t('registration.mobility_assisted_desc')}</p>
+                      <p className="text-xs text-gray-600">{getText('mobility_assisted_desc')}</p>
                     </div>
                   </Button>
                 </div>
@@ -435,31 +539,31 @@ export default function ProfileModify() {
                   <i className="fas fa-user-friends text-warning text-lg" aria-hidden="true"></i>
                 </div>
                 <h3 className="text-xl font-bold text-emergency">
-                  {t('registration.companion')}
+                  {getText('companion')}
                 </h3>
               </div>
               
               <p className="text-gray-600 bg-gray-50 p-4 rounded-lg border-l-4 border-warning">
                 <i className="fas fa-info-circle text-warning mr-2" aria-hidden="true"></i>
-                {t('registration.companion_subtitle')}
+                {getText('companion_subtitle')}
               </p>
               
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div className="space-y-2">
                   <Label htmlFor="partner-name" className="text-sm font-semibold text-gray-700">
-                    {t('registration.companion_name')}
+                    {getText('companion_name')}
                   </Label>
                   <Input
                     id="partner-name"
                     {...form.register("partner.name")}
                     className="h-12 text-base border-2 border-gray-200 focus:border-emergency"
-                    placeholder={t('registration.companion_name_placeholder')}
+                    placeholder={getText('companion_name_placeholder')}
                   />
                 </div>
 
                 <div className="space-y-2">
                   <Label htmlFor="partner-phone" className="text-sm font-semibold text-gray-700">
-                    {t('registration.companion_phone')}
+                    {getText('companion_phone')}
                   </Label>
                   <Input
                     id="partner-phone"
@@ -510,7 +614,7 @@ export default function ProfileModify() {
                   ) : (
                     <>
                       <i className="fas fa-save mr-3" aria-hidden="true"></i>
-                      {t('registration.save')}
+                      {getText('save')}
                     </>
                   )}
                 </Button>

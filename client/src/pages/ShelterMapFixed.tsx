@@ -31,7 +31,94 @@ interface Shelter {
 }
 
 export default function ShelterMapFixed() {
-  const { t } = useLanguage();
+  const { language } = useLanguage();
+
+  // 하드코딩된 다국어 텍스트
+  const getText = (key: string) => {
+    const texts: Record<string, Record<string, string>> = {
+      ko: {
+        shelter_map: '대피소 지도',
+        current_location: '현재 위치',
+        loading_location: '위치 정보 확인 중...',
+        location_error: '위치 정보 오류',
+        shelter_search: '대피소 검색 중...',
+        shelter_found: '개 대피소 발견',
+        no_shelters: '주변에 대피소가 없습니다',
+        distance: '거리',
+        walking_time: '도보',
+        minutes: '분',
+        capacity: '수용인원',
+        indoor: '실내',
+        outdoor: '옥외',
+        relief_center: '구호소',
+        select_shelter: '대피소 선택',
+        route_calculation: '경로 계산',
+        back_to_list: '목록으로',
+        refresh_location: '위치 새로고침'
+      },
+      en: {
+        shelter_map: 'Shelter Map',
+        current_location: 'Current Location',
+        loading_location: 'Getting location...',
+        location_error: 'Location Error',
+        shelter_search: 'Searching shelters...',
+        shelter_found: ' shelters found',
+        no_shelters: 'No shelters nearby',
+        distance: 'Distance',
+        walking_time: 'Walking',
+        minutes: 'min',
+        capacity: 'Capacity',
+        indoor: 'Indoor',
+        outdoor: 'Outdoor',
+        relief_center: 'Relief Center',
+        select_shelter: 'Select Shelter',
+        route_calculation: 'Route Calculation',
+        back_to_list: 'Back to List',
+        refresh_location: 'Refresh Location'
+      },
+      vi: {
+        shelter_map: 'Bản đồ nơi trú ẩn',
+        current_location: 'Vị trí hiện tại',
+        loading_location: 'Đang xác định vị trí...',
+        location_error: 'Lỗi vị trí',
+        shelter_search: 'Đang tìm nơi trú ẩn...',
+        shelter_found: ' nơi trú ẩn được tìm thấy',
+        no_shelters: 'Không có nơi trú ẩn gần đây',
+        distance: 'Khoảng cách',
+        walking_time: 'Đi bộ',
+        minutes: 'phút',
+        capacity: 'Sức chứa',
+        indoor: 'Trong nhà',
+        outdoor: 'Ngoài trời',
+        relief_center: 'Trung tâm cứu trợ',
+        select_shelter: 'Chọn nơi trú ẩn',
+        route_calculation: 'Tính toán lộ trình',
+        back_to_list: 'Quay lại danh sách',
+        refresh_location: 'Làm mới vị trí'
+      },
+      zh: {
+        shelter_map: '避难所地图',
+        current_location: '当前位置',
+        loading_location: '正在获取位置...',
+        location_error: '位置错误',
+        shelter_search: '正在搜索避难所...',
+        shelter_found: ' 个避难所',
+        no_shelters: '附近没有避难所',
+        distance: '距离',
+        walking_time: '步行',
+        minutes: '分钟',
+        capacity: '容量',
+        indoor: '室内',
+        outdoor: '室外',
+        relief_center: '救援中心',
+        select_shelter: '选择避难所',
+        route_calculation: '路线计算',
+        back_to_list: '返回列表',
+        refresh_location: '刷新位置'
+      }
+    };
+    return texts[language]?.[key] || texts['ko'][key] || key;
+  };
   const [userLocation, setUserLocation] = useState<{lat: number, lng: number} | null>(null);
   const [selectedShelter, setSelectedShelter] = useState<Shelter | null>(null);
   const [locationStatus, setLocationStatus] = useState<'loading' | 'success' | 'error'>('loading');
@@ -245,10 +332,10 @@ export default function ShelterMapFixed() {
       <div className="max-w-7xl mx-auto">
         <div className="mb-6">
           <h1 className="text-2xl font-bold text-gray-900 mb-2">
-            🏢 {t('map.title')} (수정된 버전)
+            🏢 {getText('shelter_map')} (수정된 버전)
           </h1>
           <p className="text-gray-600">
-            {t('map.subtitle')}
+            대피소 위치와 실시간 경로를 확인하세요
           </p>
         </div>
 
@@ -282,7 +369,7 @@ export default function ShelterMapFixed() {
                     <div className="flex items-center justify-center h-full">
                       <div className="text-center">
                         <div className="w-8 h-8 border-2 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-2"></div>
-                        <p className="text-gray-600">{t('map.loading_location')}</p>
+                        <p className="text-gray-600">{getText('loading_location')}</p>
                       </div>
                     </div>
                   )}
@@ -292,19 +379,19 @@ export default function ShelterMapFixed() {
                 <div className="mt-4 flex flex-wrap gap-3 text-sm">
                   <div className="flex items-center gap-2">
                     <div className="w-4 h-4 bg-red-600 rounded-full"></div>
-                    <span>{t('map.current_location')}</span>
+                    <span>{getText('current_location')}</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <div className="w-4 h-4 bg-green-500 rounded-full"></div>
-                    <span>{t('map.type.outdoor')} 대피소</span>
+                    <span>{getText('outdoor')} 대피소</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <div className="w-4 h-4 bg-blue-500 rounded-full"></div>
-                    <span>{t('map.type.indoor')} 대피소</span>
+                    <span>{getText('indoor')} 대피소</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <div className="w-4 h-4 bg-purple-500 rounded-full"></div>
-                    <span>해일 {t('map.type.shelter')}</span>
+                    <span>{getText('relief_center')}</span>
                   </div>
                 </div>
               </CardContent>
@@ -318,7 +405,7 @@ export default function ShelterMapFixed() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <i className="fas fa-list text-green-600" aria-hidden="true"></i>
-                  {t('map.nearby_shelters')} ({(shelters as Shelter[]).length}개)
+                  주변 대피소 ({(shelters as Shelter[]).length}{getText('shelter_found')})
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -334,12 +421,12 @@ export default function ShelterMapFixed() {
                 ) : error ? (
                   <Alert>
                     <AlertDescription>
-{t('map.network_error')}
+네트워크 오류가 발생했습니다
                     </AlertDescription>
                   </Alert>
                 ) : (shelters as Shelter[]).length === 0 ? (
                   <p className="text-gray-500 text-center py-4">
-{t('map.no_shelters')}
+{getText('no_shelters')}
                   </p>
                 ) : (
                   <div className="space-y-3 max-h-96 overflow-y-auto">
@@ -362,8 +449,8 @@ export default function ShelterMapFixed() {
                         </Badge>
                         <p className="text-xs text-gray-600 mt-1">{shelter.address}</p>
                         <div className="flex justify-between text-xs text-gray-500 mt-2">
-                          <span>{t('map.distance')}: {shelter.distance}{t('map.km')}</span>
-                          <span>{t('map.walking_time')}: {shelter.walkingTime}{t('map.minutes')}</span>
+                          <span>{getText('distance')}: {shelter.distance}km</span>
+                          <span>{getText('walking_time')}: {shelter.walkingTime}{getText('minutes')}</span>
                         </div>
                       </div>
                     ))}
@@ -377,7 +464,7 @@ export default function ShelterMapFixed() {
               <Card>
                 <CardHeader>
                   <CardTitle className="text-lg text-blue-600">
-선택된 {t('map.type.shelter')}
+{getText('select_shelter')}
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
@@ -388,19 +475,19 @@ export default function ShelterMapFixed() {
                     
                     <div className="grid grid-cols-2 gap-4 text-sm">
                       <div>
-                        <span className="font-medium">{t('map.distance')}:</span>
-                        <p>{selectedShelter.distance}{t('map.km')}</p>
+                        <span className="font-medium">{getText('distance')}:</span>
+                        <p>{selectedShelter.distance}km</p>
                       </div>
                       <div>
-                        <span className="font-medium">{t('map.walking_time')} 시간:</span>
-                        <p>{selectedShelter.walkingTime}{t('map.minutes')}</p>
+                        <span className="font-medium">{getText('walking_time')} 시간:</span>
+                        <p>{selectedShelter.walkingTime}{getText('minutes')}</p>
                       </div>
                     </div>
 
                     {selectedShelter.capacity > 0 && (
                       <div>
-                        <span className="font-medium">{t('map.capacity')}:</span>
-                        <p>{selectedShelter.capacity}{t('map.people')}</p>
+                        <span className="font-medium">{getText('capacity')}:</span>
+                        <p>{selectedShelter.capacity}명</p>
                       </div>
                     )}
                   </div>

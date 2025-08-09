@@ -67,7 +67,33 @@ export default function Dashboard() {
         tip1: 'Take cover under a table during earthquake',
         tip2: 'Move to safe place after shaking stops',
         tip3: 'Do not use elevators',
-        tip4: 'Turn off gas and electricity'
+        tip4: 'Turn off gas and electricity',
+        safety_status: 'Safety Status',
+        no_danger_detected: 'No danger detected',
+        last_check: 'Last check',
+        just_now: 'Just now',
+        emergency_manual: 'Emergency Manual',
+        find_shelter: 'Find Shelter',
+        alert_test: 'Alert Test',
+        alert_test_executed: 'Alert test executed!',
+        settings: 'Settings',
+        user_profile: 'User Profile',
+        name_label: 'Name',
+        age_label: 'Age',
+        age_suffix: ' years old',
+        mobility_label: 'Mobility',
+        accessibility_label: 'Accessibility',
+        mobility_independent: 'Independent',
+        mobility_assisted: 'Needs assistance',
+        mobility_unable: 'Unable to move',
+        visual_support: 'Visual support',
+        hearing_support: 'Hearing support',
+        basic_support: 'Basic support',
+        edit_profile: 'Edit Profile',
+        development_mode: 'Development Mode',
+        development_desc: 'Testing and development tools',
+        cache_clear: 'Clear Cache',
+        new_user: 'New User'
       },
       vi: {
         loading: 'Đang tải...',
@@ -89,7 +115,33 @@ export default function Dashboard() {
         tip1: 'Trú ẩn dưới bàn khi có động đất',
         tip2: 'Di chuyển đến nơi an toàn sau khi dừng rung',
         tip3: 'Không sử dụng thang máy',
-        tip4: 'Tắt gas và điện'
+        tip4: 'Tắt gas và điện',
+        safety_status: 'Tình trạng an toàn',
+        no_danger_detected: 'Không phát hiện nguy hiểm',
+        last_check: 'Kiểm tra lần cuối',
+        just_now: 'Vừa xong',
+        emergency_manual: 'Sách hướng dẫn khẩn cấp',
+        find_shelter: 'Tìm nơi trú ẩn',
+        alert_test: 'Kiểm tra cảnh báo',
+        alert_test_executed: 'Đã thực hiện kiểm tra cảnh báo!',
+        settings: 'Cài đặt',
+        user_profile: 'Hồ sơ người dùng',
+        name_label: 'Tên',
+        age_label: 'Tuổi',
+        age_suffix: ' tuổi',
+        mobility_label: 'Khả năng di chuyển',
+        accessibility_label: 'Khả năng tiếp cận',
+        mobility_independent: 'Độc lập',
+        mobility_assisted: 'Cần hỗ trợ',
+        mobility_unable: 'Không thể di chuyển',
+        visual_support: 'Hỗ trợ thị giác',
+        hearing_support: 'Hỗ trợ thính giác',
+        basic_support: 'Hỗ trợ cơ bản',
+        edit_profile: 'Chỉnh sửa hồ sơ',
+        development_mode: 'Chế độ phát triển',
+        development_desc: 'Công cụ kiểm tra và phát triển',
+        cache_clear: 'Xóa bộ nhớ cache',
+        new_user: 'Người dùng mới'
       },
       zh: {
         loading: '加载中...',
@@ -111,7 +163,33 @@ export default function Dashboard() {
         tip1: '地震时躲在桌子下面',
         tip2: '震动停止后移动到安全地点',
         tip3: '不要使用电梯',
-        tip4: '关闭煤气和电源'
+        tip4: '关闭煤气和电源',
+        safety_status: '安全状态',
+        no_danger_detected: '未检测到危险',
+        last_check: '最后检查',
+        just_now: '刚刚',
+        emergency_manual: '应急手册',
+        find_shelter: '寻找避难所',
+        alert_test: '警报测试',
+        alert_test_executed: '警报测试已执行！',
+        settings: '设置',
+        user_profile: '用户档案',
+        name_label: '姓名',
+        age_label: '年龄',
+        age_suffix: '岁',
+        mobility_label: '行动能力',
+        accessibility_label: '无障碍',
+        mobility_independent: '独立',
+        mobility_assisted: '需要帮助',
+        mobility_unable: '无法移动',
+        visual_support: '视觉支持',
+        hearing_support: '听力支持',
+        basic_support: '基本支持',
+        edit_profile: '编辑个人资料',
+        development_mode: '开发模式',
+        development_desc: '测试和开发工具',
+        cache_clear: '清除缓存',
+        new_user: '新用户'
       }
     };
     return texts[language]?.[key] || texts['ko'][key] || key;
@@ -292,34 +370,34 @@ export default function Dashboard() {
           
           <div className="space-y-3">
             <div className="flex justify-between items-center">
-              <span className="text-gray-600">이름:</span>
+              <span className="text-gray-600">{getText('name_label')}:</span>
               <span className="font-medium">{userProfile?.name}</span>
             </div>
             <div className="flex justify-between items-center">
-              <span className="text-gray-600">나이:</span>
-              <span className="font-medium">{userProfile?.age}세</span>
+              <span className="text-gray-600">{getText('age_label')}:</span>
+              <span className="font-medium">{userProfile?.age}{getText('age_suffix')}</span>
             </div>
             <div className="flex justify-between items-center">
-              <span className="text-gray-600">대피 능력:</span>
+              <span className="text-gray-600">{getText('mobility_label')}:</span>
               <span className={`font-medium ${
                 userProfile?.mobility === 'independent' ? 'text-safety' :
                 userProfile?.mobility === 'assisted' ? 'text-warning' : 'text-emergency'
               }`}>
-                {userProfile?.mobility === 'independent' ? '독립적 이동' :
-                 userProfile?.mobility === 'assisted' ? '도움 필요' : '이동 불가'}
+                {userProfile?.mobility === 'independent' ? getText('mobility_independent') :
+                 userProfile?.mobility === 'assisted' ? getText('mobility_assisted') : getText('mobility_unable')}
               </span>
             </div>
             <div className="flex justify-between items-center">
-              <span className="text-gray-600">접근성:</span>
+              <span className="text-gray-600">{getText('accessibility_label')}:</span>
               <div className="flex space-x-2">
                 {userProfile?.accessibility?.includes('visual') && (
-                  <span className="px-2 py-1 bg-safety text-white text-xs rounded">시각 지원</span>
+                  <span className="px-2 py-1 bg-safety text-white text-xs rounded">{getText('visual_support')}</span>
                 )}
                 {userProfile?.accessibility?.includes('hearing') && (
-                  <span className="px-2 py-1 bg-warning text-white text-xs rounded">청각 지원</span>
+                  <span className="px-2 py-1 bg-warning text-white text-xs rounded">{getText('hearing_support')}</span>
                 )}
                 {(!userProfile?.accessibility || userProfile?.accessibility?.length === 0) && (
-                  <span className="px-2 py-1 bg-gray-300 text-gray-700 text-xs rounded">기본 지원</span>
+                  <span className="px-2 py-1 bg-gray-300 text-gray-700 text-xs rounded">{getText('basic_support')}</span>
                 )}
               </div>
             </div>
@@ -334,7 +412,7 @@ export default function Dashboard() {
             }}
           >
             <i className="fas fa-edit mr-1" aria-hidden="true"></i>
-프로필 수정
+{getText('edit_profile')}
           </Button>
         </CardContent>
       </Card>
@@ -344,7 +422,7 @@ export default function Dashboard() {
         <CardContent className="pt-6">
           <p className="text-sm text-yellow-800 mb-3">
             <i className="fas fa-flask mr-2" aria-hidden="true"></i>
-            <strong>개발 모드:</strong> 테스트 및 개발 도구
+            <strong>{getText('development_mode')}:</strong> {getText('development_desc')}
           </p>
           <div className="grid gap-2">
             <Button 
@@ -362,7 +440,7 @@ export default function Dashboard() {
                 className="border-blue-300 text-blue-700 hover:bg-blue-50"
               >
                 <i className="fas fa-broom mr-1" aria-hidden="true"></i>
-                캐시 정리
+{getText('cache_clear')}
               </Button>
               <Button 
                 onClick={() => {
@@ -382,7 +460,7 @@ export default function Dashboard() {
                 className="border-green-300 text-green-700 hover:bg-green-50"
               >
                 <i className="fas fa-user-plus mr-1" aria-hidden="true"></i>
-                새 사용자
+{getText('new_user')}
               </Button>
             </div>
           </div>
