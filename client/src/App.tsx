@@ -162,18 +162,6 @@ function AppContent() {
                 </Button>
                 
                 <Button
-                  variant={location === '/registration' ? 'default' : 'ghost'}
-                  size="sm"
-                  onClick={() => {
-                    setLocation('/registration');
-                    setShowNavigation(false);
-                  }}
-                >
-                  <i className="fas fa-user-edit mr-2" aria-hidden="true"></i>
-                  {t('nav.registration')}
-                </Button>
-                
-                <Button
                   variant={location === '/shelters' ? 'default' : 'ghost'}
                   size="sm"
                   onClick={() => {

@@ -1,4 +1,4 @@
-import { Link } from "wouter";
+import { Link, useLocation } from "wouter";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useUserProfile } from "@/hooks/useUserProfile";
@@ -9,6 +9,7 @@ export default function Dashboard() {
   const { data: userProfile } = useUserProfile();
   const { simulateEarthquake } = useEmergency();
   const { t } = useLanguage();
+  const [, setLocation] = useLocation();
 
   if (!userProfile) {
     return (
@@ -146,12 +147,14 @@ export default function Dashboard() {
             </div>
           </div>
           
-          <Link href="/registration">
-            <Button variant="ghost" className="mt-4 w-full text-emergency hover:text-emergency-dark">
-              <i className="fas fa-edit mr-1" aria-hidden="true"></i>
-              {t('dashboard.edit_profile')}
-            </Button>
-          </Link>
+          <Button 
+            variant="ghost" 
+            className="mt-4 w-full text-emergency hover:text-emergency-dark"
+            onClick={() => setLocation('/registration')}
+          >
+            <i className="fas fa-edit mr-1" aria-hidden="true"></i>
+            {t('dashboard.edit_profile')}
+          </Button>
         </CardContent>
       </Card>
 
