@@ -42,9 +42,11 @@ function AppContent() {
     }
   }, [userProfile, language, setLanguage]);
 
-  // Check if language has been selected
+  // Check if language has been selected - force reset for demo
   const [hasSelectedLanguage, setHasSelectedLanguage] = useState(() => {
-    return localStorage.getItem('selectedLanguage') !== null;
+    // Temporarily force language selection screen
+    localStorage.removeItem('selectedLanguage');
+    return false;
   });
 
   // Listen for language selection changes
