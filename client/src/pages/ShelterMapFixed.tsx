@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { TMapService } from '@/services/tmapService';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 
@@ -40,6 +41,7 @@ export default function ShelterMapFixed() {
   const userMarkerRef = useRef<L.Marker | null>(null);
   const shelterMarkersRef = useRef<L.Marker[]>([]);
   const routeLayerRef = useRef<L.Polyline | null>(null);
+  const tmapService = useRef(new TMapService());
 
   // 사용자 위치 가져오기
   useEffect(() => {
@@ -70,7 +72,7 @@ export default function ShelterMapFixed() {
   }, []);
 
   // 대피소 데이터 조회
-  const { data: shelters = [], isLoading, error } = useQuery({
+  const { data: shelters = [], isLoading, error } = useQuery<Shelter[]>({
     queryKey: ['/api/shelters', userLocation?.lat, userLocation?.lng],
     enabled: !!userLocation,
   });
@@ -125,7 +127,7 @@ export default function ShelterMapFixed() {
     shelterMarkersRef.current = [];
 
     // 새 대피소 마커 추가
-    shelters.forEach((shelter: Shelter) => {
+    (shelters as Shelter[]).forEach((shelter: Shelter) => {
       const shelterIcon = L.divIcon({
         html: `<div style="background-color: ${getShelterColor(shelter.type)}; border-radius: 50%; width: 16px; height: 16px; border: 2px solid white; box-shadow: 0 0 5px rgba(0,0,0,0.3);"></div>`,
         iconSize: [16, 16],
@@ -144,15 +146,15 @@ export default function ShelterMapFixed() {
         </div>
       `);
 
-      marker.on('click', () => {
+      marker.on('click', async () => {
         setSelectedShelter(shelter);
-        showRoute(shelter);
+        await showRoute(shelter);
       });
 
       shelterMarkersRef.current.push(marker);
     });
 
-    console.log(`✅ ${shelters.length}개 대피소 마커 추가 완료`);
+    console.log(`✅ ${(shelters as Shelter[]).length}개 대피소 마커 추가 완료`);
   }, [shelters]);
 
   // 대피소 타입별 색상
@@ -163,8 +165,8 @@ export default function ShelterMapFixed() {
     return '#6b7280'; // 회색
   };
 
-  // 경로 표시
-  const showRoute = (shelter: Shelter) => {
+  // T-Map API를 사용한 도보 경로 표시
+  const showRoute = async (shelter: Shelter) => {
     if (!mapRef.current || !userLocation) return;
 
     // 기존 경로 제거
@@ -172,24 +174,70 @@ export default function ShelterMapFixed() {
       mapRef.current.removeLayer(routeLayerRef.current);
     }
 
-    // 직선 경로 그리기 (실제 길찾기 API는 따로 구현 필요)
-    const routePoints: [number, number][] = [
-      [userLocation.lat, userLocation.lng],
-      [shelter.lat, shelter.lng]
-    ];
+    console.log(`🗺️ ${shelter.name}로의 도보 경로 검색 시작`);
 
-    const polyline = L.polyline(routePoints, { 
-      color: '#dc2626', 
-      weight: 4, 
-      opacity: 0.7,
-      dashArray: '10, 10'
-    }).addTo(mapRef.current);
-    
-    routeLayerRef.current = polyline;
+    try {
+      // T-Map API로 실제 도보 경로 가져오기
+      const route = await tmapService.current.getWalkingRoute(
+        userLocation.lat, 
+        userLocation.lng, 
+        shelter.lat, 
+        shelter.lng
+      );
 
-    // 지도 범위를 경로에 맞게 조정
-    const group = new L.FeatureGroup([polyline]);
-    mapRef.current.fitBounds(group.getBounds(), { padding: [20, 20] });
+      if (route) {
+        // 실제 경로 그리기
+        const polyline = L.polyline(route.coordinates, { 
+          color: '#dc2626', 
+          weight: 5, 
+          opacity: 0.8,
+          dashArray: route.coordinates.length <= 2 ? '10, 10' : undefined // 직선일 때만 점선
+        }).addTo(mapRef.current);
+        
+        routeLayerRef.current = polyline;
+
+        // 지도 범위를 경로에 맞게 조정
+        const group = new L.FeatureGroup([polyline]);
+        mapRef.current.fitBounds(group.getBounds(), { padding: [20, 20] });
+
+        // 경로 정보 표시
+        const distanceKm = (route.totalDistance / 1000).toFixed(1);
+        const timeMinutes = Math.ceil(route.totalTime / 60);
+        
+        console.log(`✅ 경로 표시 완료: ${distanceKm}km, ${timeMinutes}분`);
+        
+        // 팝업에 실제 경로 정보 업데이트
+        if (userMarkerRef.current) {
+          userMarkerRef.current.bindPopup(`
+            <div class="p-2">
+              <strong>현재 위치</strong><br/>
+              <small>📍 ${shelter.name}까지<br/>
+              🚶 ${distanceKm}km (${timeMinutes}분)</small>
+            </div>
+          `);
+        }
+      }
+    } catch (error) {
+      console.error('❌ 경로 표시 오류:', error);
+      
+      // 오류 시 직선 경로로 대체
+      const routePoints: [number, number][] = [
+        [userLocation.lat, userLocation.lng],
+        [shelter.lat, shelter.lng]
+      ];
+
+      const polyline = L.polyline(routePoints, { 
+        color: '#dc2626', 
+        weight: 4, 
+        opacity: 0.7,
+        dashArray: '10, 10'
+      }).addTo(mapRef.current);
+      
+      routeLayerRef.current = polyline;
+
+      const group = new L.FeatureGroup([polyline]);
+      mapRef.current.fitBounds(group.getBounds(), { padding: [20, 20] });
+    }
   };
 
   return (
@@ -270,7 +318,7 @@ export default function ShelterMapFixed() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <i className="fas fa-list text-green-600" aria-hidden="true"></i>
-                  근처 대피소 ({shelters.length}개)
+                  근처 대피소 ({(shelters as Shelter[]).length}개)
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -289,13 +337,13 @@ export default function ShelterMapFixed() {
                       대피소 정보를 불러올 수 없습니다. 네트워크 연결을 확인해주세요.
                     </AlertDescription>
                   </Alert>
-                ) : shelters.length === 0 ? (
+                ) : (shelters as Shelter[]).length === 0 ? (
                   <p className="text-gray-500 text-center py-4">
                     주변에 등록된 대피소가 없습니다
                   </p>
                 ) : (
                   <div className="space-y-3 max-h-96 overflow-y-auto">
-                    {shelters.map((shelter: Shelter) => (
+                    {(shelters as Shelter[]).map((shelter: Shelter) => (
                       <div
                         key={shelter.id}
                         className={`p-3 border rounded-lg cursor-pointer transition-colors ${
@@ -303,9 +351,9 @@ export default function ShelterMapFixed() {
                             ? 'bg-blue-50 border-blue-300' 
                             : 'hover:bg-gray-50'
                         }`}
-                        onClick={() => {
+                        onClick={async () => {
                           setSelectedShelter(shelter);
-                          showRoute(shelter);
+                          await showRoute(shelter);
                         }}
                       >
                         <h3 className="font-medium text-sm">{shelter.name}</h3>

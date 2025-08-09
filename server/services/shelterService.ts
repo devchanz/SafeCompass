@@ -49,7 +49,7 @@ export class ShelterService {
       for (const shelterCode of earthquakeCodes) {
         console.log(`🔍 구분코드 ${shelterCode} 검색 시작`);
         
-        for (let pageNo = 1; pageNo <= 10; pageNo++) {
+        for (let pageNo = 1; pageNo <= 50; pageNo++) {
           try {
             const url = new URL(this.config.endpoints.shelters, this.config.baseUrl);
             
@@ -98,7 +98,7 @@ export class ShelterService {
             
             allItems.push(...items);
             
-            if (allItems.length >= 1000) {
+            if (allItems.length >= 5000) {
               console.log(`충분한 데이터 수집: ${allItems.length}개`);
               break;
             }
@@ -140,9 +140,9 @@ export class ShelterService {
           lng: shelterLng,
         };
       })
-      .filter(item => item !== null && item.distance <= 100) // 100km 반경
+      .filter(item => item !== null && item.distance <= 50) // 50km 반경
       .sort((a, b) => a.distance - b.distance)
-      .slice(0, 20);
+      .slice(0, 50);
 
     const shelters: RealShelter[] = nearbyItems.map((item: any) => {
       const walkingTime = Math.ceil((item.distance / 5) * 60); // 5km/h 보행속도
