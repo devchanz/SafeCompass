@@ -196,33 +196,39 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Generate personalized guide with OpenAI
   app.post("/api/guides/personalized", async (req, res) => {
-    const { userId, situation, relevantManuals } = req.body;
+    const { userId, userProfile, situation, relevantManuals } = req.body;
 
     try {
-      // 사용자 프로필 조회
-      console.log("🔍 사용자 조회 시도:", userId);
-      const userProfile = await storage.getUser(userId);
-      console.log("👤 조회된 사용자 프로필:", userProfile);
+      let finalUserProfile = userProfile;
       
-      if (!userProfile) {
-        return res.status(404).json({ error: "User not found" });
+      // userId가 있으면 DB에서 조회, 없으면 직접 전달된 userProfile 사용
+      if (userId) {
+        console.log("🔍 사용자 조회 시도:", userId);
+        const dbUserProfile = await storage.getUser(userId);
+        console.log("👤 조회된 사용자 프로필:", dbUserProfile);
+        
+        if (dbUserProfile) {
+          finalUserProfile = dbUserProfile;
+        }
       }
+      
+      // userProfile이 직접 전달되었거나 DB에서 조회된 경우
+      if (finalUserProfile) {
+        console.log("✅ 최종 사용자 프로필:", finalUserProfile);
+        
+        const guide = await generatePersonalizedGuide({
+          userProfile: {
+            ...finalUserProfile,
+            gender: finalUserProfile.gender || undefined,
+            accessibility: finalUserProfile.accessibility || []
+          },
+          situation
+        });
 
-      const guide = await generatePersonalizedGuide({
-        userProfile: {
-          ...userProfile,
-          gender: userProfile.gender || undefined,
-          accessibility: userProfile.accessibility || []
-        },
-        situation,
-        relevantManuals: relevantManuals || [
-          "지진 발생 시 행동 요령: 1) 튼튼한 테이블 아래로 대피 2) 출입구 확보 3) 화재 예방",
-          "실내 대피 방법: 1) 가스·전기 차단 2) 엘리베이터 사용 금지 3) 계단 이용",
-          "긴급 상황 대응: 1) 119 신고 2) 부상자 응급처치 3) 대피소 이동"
-        ]
-      });
-
-      res.json(guide);
+        res.json(guide);
+      } else {
+        return res.status(404).json({ error: "User profile not found" });
+      }
     } catch (error) {
       console.error("Error generating personalized guide:", error);
       res.status(500).json({ 

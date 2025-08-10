@@ -440,16 +440,25 @@ export default function SimplePersonalizedGuide() {
         </Card>
       </div>
 
-      {/* Back Button */}
-      <div className="text-center">
-        <Button 
-          onClick={() => setLocation('/emergency')}
-          variant="outline"
-          className="px-8"
-        >
-          <i className="fas fa-arrow-left mr-2"></i>
-          {getText('back_to_emergency')}
-        </Button>
+      {/* Navigation Buttons */}
+      <div className="text-center space-y-4">
+        <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <Button 
+            onClick={() => setLocation('/')}
+            className="bg-green-600 hover:bg-green-700 text-white px-8"
+          >
+            <i className="fas fa-home mr-2"></i>
+            홈 대시보드
+          </Button>
+          <Button 
+            onClick={() => setLocation('/emergency')}
+            variant="outline"
+            className="px-8"
+          >
+            <i className="fas fa-arrow-left mr-2"></i>
+            {getText('back_to_emergency')}
+          </Button>
+        </div>
       </div>
     </div>
   );

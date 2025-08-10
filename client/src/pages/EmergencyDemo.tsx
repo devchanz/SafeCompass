@@ -143,6 +143,8 @@ export default function EmergencyDemo() {
               
               // 시뮬레이션 완료 후 대시보드로 이동하여 PUSH 알림 표시
               setTimeout(() => {
+                // 알림 표시를 위한 플래그 설정
+                sessionStorage.setItem('showEmergencyAlert', 'true');
                 
                 // 알림 중복 방지를 위해 현재 알림 ID 기록
                 if (currentAlert?.id) {
@@ -153,7 +155,9 @@ export default function EmergencyDemo() {
                   }
                 }
                 
+                console.log('🔄 대시보드로 이동하여 PUSH 알림 표시');
                 setLocation('/');
+                setIsRunning(false);
               }, 1000);
               
             }, 1500);

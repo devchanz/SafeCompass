@@ -20,7 +20,14 @@ export default function Dashboard() {
 
   // 알림 자동 표시
   React.useEffect(() => {
-    if (currentAlert && currentAlert.isActive) {
+    const shouldShowAlert = sessionStorage.getItem('showEmergencyAlert');
+    
+    if (shouldShowAlert === 'true' && currentAlert && currentAlert.isActive) {
+      console.log('✅ Dashboard에서 Emergency Alert 표시');
+      setShowNotification(true);
+      // 플래그 제거하여 다시 표시되지 않도록 함
+      sessionStorage.removeItem('showEmergencyAlert');
+    } else if (currentAlert && currentAlert.isActive) {
       setShowNotification(true);
     }
   }, [currentAlert]);
