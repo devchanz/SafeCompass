@@ -170,6 +170,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         userId: requestData.userId,
         type: requestData.disasterType,
         severity: "medium",
+        classification: "지진",
         location: requestData.situation.gps,
         situation: requestData.situation,
         personalizedGuide: JSON.stringify(guide)
@@ -195,9 +196,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Generate personalized guide with OpenAI
   app.post("/api/guides/personalized", async (req, res) => {
-    const { userProfile, situation, relevantManuals } = req.body;
+    const { userId, situation, relevantManuals } = req.body;
 
     try {
+      // 사용자 프로필 조회
+      console.log("🔍 사용자 조회 시도:", userId);
+      const userProfile = await storage.getUser(userId);
+      console.log("👤 조회된 사용자 프로필:", userProfile);
+      
+      if (!userProfile) {
+        return res.status(404).json({ error: "User not found" });
+      }
+
       const guide = await generatePersonalizedGuide({
         userProfile,
         situation,
