@@ -7,6 +7,8 @@ import { UserClassificationService } from "./services/userClassificationService.
 import { EmergencyNotificationService } from "./services/emergencyNotificationService.js";
 import { insertUserSchema, insertCompanionSchema, insertEmergencyEventSchema } from "@shared/schema";
 import { generatePersonalizedGuide } from "./services/openai";
+import { disasterMonitoring } from "./services/disasterMonitoringService.js";
+import disasterRoutes from "./routes/disaster.js";
 import { z } from "zod";
 
 const generateManualSchema = z.object({
@@ -58,6 +60,50 @@ const mockShelters = [
 
 export async function registerRoutes(app: Express): Promise<Server> {
   
+  // 재난 API 라우트 등록
+  app.use('/api/disaster', disasterRoutes);
+
+  // 재난 모니터링 상태 확인 API
+  app.get('/api/disaster-monitoring/status', (req, res) => {
+    const status = disasterMonitoring.getStatus();
+    res.json({
+      success: true,
+      data: status,
+      timestamp: new Date().toISOString()
+    });
+  });
+
+  // 재난 모니터링 시작/중지 API
+  app.post('/api/disaster-monitoring/start', async (req, res) => {
+    try {
+      await disasterMonitoring.startMonitoring();
+      res.json({
+        success: true,
+        message: '재난 모니터링이 시작되었습니다'
+      });
+    } catch (error) {
+      res.status(500).json({
+        success: false,
+        error: '재난 모니터링 시작에 실패했습니다'
+      });
+    }
+  });
+
+  app.post('/api/disaster-monitoring/stop', (req, res) => {
+    try {
+      disasterMonitoring.stopMonitoring();
+      res.json({
+        success: true,
+        message: '재난 모니터링이 중지되었습니다'
+      });
+    } catch (error) {
+      res.status(500).json({
+        success: false,
+        error: '재난 모니터링 중지에 실패했습니다'
+      });
+    }
+  });
+
   // User management
   app.post("/api/users", async (req, res) => {
     try {
@@ -150,7 +196,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           gender: user.gender || undefined,
           language: user.language,
           accessibility: user.accessibility || [],
-          mobility: user.mobility,
+          mobility: user.mobility as "independent" | "assisted" | "unable",
           address: user.address
         },
         situation: {
@@ -162,7 +208,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         relevantManuals: [] // Will be populated by RAG service
       };
 
-      // Generate personalized guide
+      // Generate personalized guide using RAG for reliability
       const guide = await ragService.generatePersonalizedGuide(ragRequest);
 
       // Save emergency event
@@ -226,7 +272,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
             accessibility: finalUserProfile.accessibility || [],
             mobility: finalUserProfile.mobility as "independent" | "assisted" | "unable"
           },
-          situation
+          situation,
+
         });
 
         res.json(guide);
