@@ -146,8 +146,16 @@ export class DatabaseStorage implements IStorage {
     if (!process.env.DATABASE_URL) {
       throw new Error('DATABASE_URL environment variable is required');
     }
+    
+    // DATABASE_URL 유효성 검사 및 정리
+    const dbUrl = process.env.DATABASE_URL.trim();
+    if (dbUrl.includes('pospostgresql') || !dbUrl.startsWith('postgresql://')) {
+      console.error('⚠️ DATABASE_URL이 손상되었습니다. 메모리 저장소를 사용하세요.');
+      throw new Error('DATABASE_URL format is invalid');
+    }
+    
     console.log('Initializing DatabaseStorage with Supabase PostgreSQL');
-    const sql = postgres(process.env.DATABASE_URL);
+    const sql = postgres(dbUrl);
     this.db = drizzle(sql);
   }
 
