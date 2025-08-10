@@ -152,51 +152,51 @@ export default function EmergencyAlert() {
             <div className="grid grid-cols-2 gap-4">
               <Button
                 variant={locationContext === "집 안 (거실/침실)" ? "default" : "outline"}
-                className={`h-20 flex flex-col items-center justify-center text-sm rounded-2xl shadow-lg transition-all duration-300 transform hover:scale-105 ${
+                className={`h-24 flex flex-col items-center justify-center text-xs px-2 py-3 rounded-2xl shadow-lg transition-all duration-300 transform hover:scale-105 ${
                   locationContext === "집 안 (거실/침실)" 
                     ? "bg-gradient-to-r from-blue-600 to-blue-700 text-white" 
                     : "border-2 hover:bg-blue-50 dark:hover:bg-blue-900/20"
                 }`}
                 onClick={() => setLocationContext("집 안 (거실/침실)")}
               >
-                <i className="fas fa-home text-2xl mb-2" aria-hidden="true"></i>
-                <span className="truncate text-center">{getText('location_home')}</span>
+                <i className="fas fa-home text-xl mb-1" aria-hidden="true"></i>
+                <span className="text-center leading-tight whitespace-pre-line">{getText('location_home')}</span>
               </Button>
               <Button
                 variant={locationContext === "사무실/학교" ? "default" : "outline"}
-                className={`h-20 flex flex-col items-center justify-center text-sm rounded-2xl shadow-lg transition-all duration-300 transform hover:scale-105 ${
+                className={`h-24 flex flex-col items-center justify-center text-xs px-2 py-3 rounded-2xl shadow-lg transition-all duration-300 transform hover:scale-105 ${
                   locationContext === "사무실/학교" 
                     ? "bg-gradient-to-r from-blue-600 to-blue-700 text-white" 
                     : "border-2 hover:bg-blue-50 dark:hover:bg-blue-900/20"
                 }`}
                 onClick={() => setLocationContext("사무실/학교")}
               >
-                <i className="fas fa-building text-2xl mb-2" aria-hidden="true"></i>
-                <span className="truncate text-center">{getText('location_office')}</span>
+                <i className="fas fa-building text-xl mb-1" aria-hidden="true"></i>
+                <span className="text-center leading-tight">{getText('location_office')}</span>
               </Button>
               <Button
                 variant={locationContext === "길거리/야외" ? "default" : "outline"}
-                className={`h-20 flex flex-col items-center justify-center text-sm rounded-2xl shadow-lg transition-all duration-300 transform hover:scale-105 ${
+                className={`h-24 flex flex-col items-center justify-center text-xs px-2 py-3 rounded-2xl shadow-lg transition-all duration-300 transform hover:scale-105 ${
                   locationContext === "길거리/야외" 
                     ? "bg-gradient-to-r from-blue-600 to-blue-700 text-white" 
                     : "border-2 hover:bg-blue-50 dark:hover:bg-blue-900/20"
                 }`}
                 onClick={() => setLocationContext("길거리/야외")}
               >
-                <i className="fas fa-road text-2xl mb-2" aria-hidden="true"></i>
-                <span className="truncate text-center">{getText('location_outdoor')}</span>
+                <i className="fas fa-road text-xl mb-1" aria-hidden="true"></i>
+                <span className="text-center leading-tight">{getText('location_outdoor')}</span>
               </Button>
               <Button
                 variant={locationContext === "지하철/버스" ? "default" : "outline"}
-                className={`h-20 flex flex-col items-center justify-center text-sm rounded-2xl shadow-lg transition-all duration-300 transform hover:scale-105 ${
+                className={`h-24 flex flex-col items-center justify-center text-xs px-2 py-3 rounded-2xl shadow-lg transition-all duration-300 transform hover:scale-105 ${
                   locationContext === "지하철/버스" 
                     ? "bg-gradient-to-r from-blue-600 to-blue-700 text-white" 
                     : "border-2 hover:bg-blue-50 dark:hover:bg-blue-900/20"
                 }`}
                 onClick={() => setLocationContext("지하철/버스")}
               >
-                <i className="fas fa-subway text-2xl mb-2" aria-hidden="true"></i>
-                <span className="truncate text-center">{getText('location_transport')}</span>
+                <i className="fas fa-subway text-xl mb-1" aria-hidden="true"></i>
+                <span className="text-center leading-tight">{getText('location_transport')}</span>
               </Button>
             </div>
           </div>
@@ -208,27 +208,27 @@ export default function EmergencyAlert() {
             <div className="grid grid-cols-1 gap-4">
               <Button
                 variant={canMove ? "default" : "outline"}
-                className={`h-16 flex items-center justify-center text-base rounded-2xl shadow-lg transition-all duration-300 transform hover:scale-105 ${
+                className={`h-20 flex items-center justify-center text-sm px-4 py-4 rounded-2xl shadow-lg transition-all duration-300 transform hover:scale-105 ${
                   canMove 
                     ? "bg-gradient-to-r from-green-600 to-emerald-600 text-white" 
                     : "border-2 hover:bg-green-50 dark:hover:bg-green-900/20"
                 }`}
                 onClick={() => setCanMove(true)}
               >
-                <i className="fas fa-walking text-xl mr-3" aria-hidden="true"></i>
-                <span className="truncate">{getText('mobility_yes')}</span>
+                <i className="fas fa-walking text-lg mr-3 flex-shrink-0" aria-hidden="true"></i>
+                <span className="leading-tight text-center">{getText('mobility_yes')}</span>
               </Button>
               <Button
                 variant={!canMove ? "default" : "outline"}
-                className={`h-16 flex items-center justify-center text-base rounded-2xl shadow-lg transition-all duration-300 transform hover:scale-105 ${
+                className={`h-20 flex items-center justify-center text-sm px-4 py-4 rounded-2xl shadow-lg transition-all duration-300 transform hover:scale-105 ${
                   !canMove 
                     ? "bg-gradient-to-r from-orange-600 to-red-600 text-white" 
                     : "border-2 hover:bg-orange-50 dark:hover:bg-orange-900/20"
                 }`}
                 onClick={() => setCanMove(false)}
               >
-                <i className="fas fa-wheelchair text-xl mr-3" aria-hidden="true"></i>
-                <span className="truncate">{getText('mobility_no')}</span>
+                <i className="fas fa-wheelchair text-lg mr-3 flex-shrink-0" aria-hidden="true"></i>
+                <span className="leading-tight text-center">{getText('mobility_no')}</span>
               </Button>
             </div>
           </div>
