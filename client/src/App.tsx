@@ -6,7 +6,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 import NotFound from "@/pages/not-found";
-import Dashboard from "@/pages/Dashboard";
+import ModernDashboard from "@/pages/ModernDashboard";
 import Registration from "@/pages/Registration";
 import ProfileModify from "@/pages/ProfileModify";
 import EmergencyAlert from "@/pages/EmergencyAlert";
@@ -181,7 +181,10 @@ function AppContent() {
                   }}
                 >
                   <i className="fas fa-tachometer-alt mr-2" aria-hidden="true"></i>
-                  {getText('nav.dashboard')}
+                  {language === 'ko' ? '대시보드' : 
+                     language === 'en' ? 'Dashboard' : 
+                     language === 'vi' ? 'Bảng điều khiển' : 
+                     '仪表板'}
                 </Button>
                 
                 <Button
@@ -230,7 +233,7 @@ function AppContent() {
       <main className={location === '/language' ? '' : 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6'}>
         <Switch>
           <Route path="/language" component={LanguageSelection} />
-          <Route path="/" component={Dashboard} />
+          <Route path="/" component={ModernDashboard} />
           <Route path="/registration" component={Registration} />
           <Route path="/modify" component={ProfileModify} />
           <Route path="/emergency" component={EmergencyAlert} />
