@@ -192,6 +192,31 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Generate personalized guide with OpenAI
+  app.post("/api/guides/personalized", async (req, res) => {
+    const { userProfile, situation, relevantManuals } = req.body;
+
+    try {
+      const guide = await generatePersonalizedGuide({
+        userProfile,
+        situation,
+        relevantManuals: relevantManuals || [
+          "지진 발생 시 행동 요령: 1) 튼튼한 테이블 아래로 대피 2) 출입구 확보 3) 화재 예방",
+          "실내 대피 방법: 1) 가스·전기 차단 2) 엘리베이터 사용 금지 3) 계단 이용",
+          "긴급 상황 대응: 1) 119 신고 2) 부상자 응급처치 3) 대피소 이동"
+        ]
+      });
+
+      res.json(guide);
+    } catch (error) {
+      console.error("Error generating personalized guide:", error);
+      res.status(500).json({ 
+        error: "Failed to generate guide",
+        message: error instanceof Error ? error.message : "Unknown error"
+      });
+    }
+  });
+
   // Shelter information - 실제 API 연동 대응
   app.get("/api/shelters/:lat/:lng", async (req, res) => {
     try {

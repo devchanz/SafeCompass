@@ -107,15 +107,8 @@ export default function EmergencyAlert() {
       return;
     }
 
-    try {
-      await generateGuide.mutateAsync({
-        locationContext,
-        canMove,
-      });
-      setLocation("/guide");
-    } catch (error) {
-      console.error("Guide generation failed:", error);
-    }
+    // 개인화 가이드 생성 페이지로 이동
+    setLocation("/personalized-guide");
   };
 
   return (

@@ -1,9 +1,12 @@
+import { useState } from "react";
 import { Link, useLocation } from "wouter";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useUserProfile } from "@/hooks/useUserProfile";
 import { useEmergency } from "@/hooks/useEmergency";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useEmergencySystem } from "@/hooks/useEmergencySystem";
+import PushNotification from "@/components/PushNotification";
 import { clearBrowserCache, forcePageReload, resetUserSession, debugStorageState } from "@/utils/cacheUtils";
 
 export default function Dashboard() {
@@ -11,6 +14,16 @@ export default function Dashboard() {
   const { simulateEarthquake } = useEmergency();
   const { language } = useLanguage();
   const [, setLocation] = useLocation();
+  const { currentAlert, triggerEmergencyDemo } = useEmergencySystem();
+  const [showNotification, setShowNotification] = useState(false);
+
+  const handleDismissAlert = () => {
+    setShowNotification(false);
+  };
+
+  const handleOpenAlert = () => {
+    setShowNotification(false);
+  };
 
   // 하드코딩된 다국어 텍스트
   const getText = (key: string) => {
@@ -307,6 +320,12 @@ export default function Dashboard() {
 
   return (
     <div className="space-y-6">
+      {/* Push Notification */}
+      <PushNotification 
+        alert={currentAlert}
+        onDismiss={handleDismissAlert}
+        onOpen={handleOpenAlert}
+      />
       {/* Emergency Status Card */}
       <Card className="emergency-card">
         <CardContent className="pt-6">

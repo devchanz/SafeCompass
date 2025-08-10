@@ -38,38 +38,72 @@ export async function generatePersonalizedGuide(
   request: PersonalizedGuideRequest
 ): Promise<PersonalizedGuideResponse> {
   try {
-    const prompt = `
-당신은 재난 안전 전문가입니다. 다음 정보를 바탕으로 개인 맞춤형 지진 대응 가이드를 생성해주세요.
+    const disasterTypeKo = request.situation.disasterType === 'earthquake' ? '지진' : 
+                          request.situation.disasterType === 'fire' ? '화재' : request.situation.disasterType;
+    
+    const mobilityKo = request.userProfile.mobility === 'independent' ? '독립적 이동 가능' :
+                      request.userProfile.mobility === 'assisted' ? '이동 지원 필요' : 
+                      request.userProfile.mobility === 'unable' ? '이동 불가' : request.userProfile.mobility;
 
-사용자 프로필:
-- 나이: ${request.userProfile.age}세
+    const prompt = `
+당신은 한국의 재난 안전 전문가입니다. 실제 ${disasterTypeKo} 상황에서 다음 사용자를 위한 초개인화된 생존 가이드를 생성해주세요.
+
+=== 사용자 프로필 ===
+- 나이: ${request.userProfile.age}세 (연령대별 신체능력과 인지능력 고려)
 - 성별: ${request.userProfile.gender || '미상'}
 - 언어: ${request.userProfile.language}
 - 접근성 지원: ${request.userProfile.accessibility.join(', ')}
-- 대피 능력: ${request.userProfile.mobility}
-- 주소: ${request.userProfile.address}
+- 대피 능력: ${mobilityKo}
+- 거주지: ${request.userProfile.address}
 
-현재 상황:
-- 재난 유형: ${request.situation.disasterType}
-- 위치: ${request.situation.locationContext}
-- 이동 가능성: ${request.situation.canMove ? '가능' : '어려움'}
+=== 현재 재난 상황 ===
+- 재난 유형: ${disasterTypeKo}
+- 현재 위치: ${request.situation.locationContext}
+- 이동 가능성: ${request.situation.canMove ? '이동 가능' : '이동 어려움/불가능'}
+- 재난 심각도: ${(request.situation as any).severity || 'critical'}
+- 재난 분류: ${(request.situation as any).classification || '긴급재난'}
+${(request.situation as any).magnitude ? `- 지진 규모: ${(request.situation as any).magnitude}` : ''}
+- 재난 발생지: ${(request.situation as any).location}
+${(request.situation as any).additionalInfo ? `- 추가 상황: ${(request.situation as any).additionalInfo}` : ''}
 
-관련 매뉴얼 내용:
-${request.relevantManuals.join('\n\n')}
+=== 맞춤형 가이드 생성 요구사항 ===
+1. 사용자의 나이와 신체능력에 맞는 구체적인 행동 지침
+2. 현재 위치(${request.situation.locationContext})에 특화된 대응 방법
+3. 이동 가능성(${request.situation.canMove ? '가능' : '불가능'})을 고려한 실용적 조치
+4. 접근성 지원사항(${request.userProfile.accessibility.join(', ')})에 맞춘 소통 방식
+5. 한국의 실제 재난 대응 체계와 연계된 정보
 
 다음 JSON 형식으로 응답해주세요:
 {
   "guide": {
-    "primaryActions": ["즉시 행동 사항 1", "즉시 행동 사항 2", ...],
-    "safetyTips": ["안전 수칙 1", "안전 수칙 2", ...],
-    "specialConsiderations": ["특별 주의사항 1", "특별 주의사항 2", ...],
-    "emergencyContacts": ["연락처 정보 1", "연락처 정보 2", ...]
+    "primaryActions": [
+      "1단계: 즉시 실행해야 할 생명보호 행동",
+      "2단계: 안전 확보 후 다음 행동",
+      "3단계: 대피 또는 구조 요청 행동",
+      "4단계: 추가 안전 확보 조치"
+    ],
+    "safetyTips": [
+      "위치별 안전 수칙 1",
+      "개인 특성 맞춤 안전 수칙 2", 
+      "재난 유형별 주의사항 3"
+    ],
+    "specialConsiderations": [
+      "나이 ${request.userProfile.age}세 고려사항",
+      "이동능력 ${mobilityKo} 특별 고려사항",
+      "접근성 ${request.userProfile.accessibility.join(', ')} 관련 주의사항"
+    ],
+    "emergencyContacts": [
+      "119 (재난신고센터) - 즉시 연락",
+      "지역 재난관리본부: 042-270-4119",
+      "대전시 통합상황실: 042-270-2500",
+      "가족 비상연락망 활성화"
+    ]
   },
-  "audioText": "음성 안내용 전체 텍스트",
-  "estimatedReadingTime": 예상_읽기_시간_초
+  "audioText": "${request.userProfile.age}세 ${request.userProfile.gender}분, 현재 ${request.situation.locationContext}에 계시는군요. ${disasterTypeKo}이 발생했으니 침착하게 들어주세요. 첫째로...",
+  "estimatedReadingTime": 180
 }
 
-중요: 사용자의 나이, 접근성 필요사항, 대피 능력을 반드시 고려하여 맞춤형 조언을 제공하세요.
+반드시 실제 한국 상황에 맞는 구체적이고 실용적인 조언을 제공하세요.
 `;
 
     const response = await openai.chat.completions.create({
