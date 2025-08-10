@@ -6,6 +6,7 @@ import { DisasterClassificationService } from "./services/disasterClassification
 import { UserClassificationService } from "./services/userClassificationService.js";
 import { EmergencyNotificationService } from "./services/emergencyNotificationService.js";
 import { insertUserSchema, insertCompanionSchema, insertEmergencyEventSchema } from "@shared/schema";
+import { generatePersonalizedGuide } from "./services/openai";
 import { z } from "zod";
 
 const generateManualSchema = z.object({

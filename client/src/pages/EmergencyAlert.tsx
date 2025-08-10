@@ -107,8 +107,12 @@ export default function EmergencyAlert() {
       return;
     }
 
-    // 개인화 가이드 생성 페이지로 이동
-    setLocation("/personalized-guide");
+    // URL 파라미터로 상황 정보 전달하여 바로 OpenAI API 호출
+    const params = new URLSearchParams({
+      location: locationContext,
+      canMove: canMove.toString()
+    });
+    setLocation(`/simple-guide?${params.toString()}`);
   };
 
   return (

@@ -13,6 +13,7 @@ import EmergencyAlert from "@/pages/EmergencyAlert";
 import EnhancedPersonalizedGuide from "@/pages/EnhancedPersonalizedGuide";
 import EmergencyDemo from "@/pages/EmergencyDemo";
 import PersonalizedGuideGeneration from "@/pages/PersonalizedGuideGeneration";
+import SimplePersonalizedGuide from "@/pages/SimplePersonalizedGuide";
 import ShelterMapFixed from "@/pages/ShelterMapFixed";
 import LanguageSelection from "@/pages/LanguageSelection";
 import SOSButton from "@/components/SOSButton";
@@ -244,6 +245,7 @@ function AppContent() {
           <Route path="/emergency" component={EmergencyAlert} />
           <Route path="/guide" component={EnhancedPersonalizedGuide} />
           <Route path="/personalized-guide" component={PersonalizedGuideGeneration} />
+          <Route path="/simple-guide" component={SimplePersonalizedGuide} />
           <Route path="/shelters" component={ShelterMapFixed} />
           <Route path="/shelter-map" component={ShelterMapFixed} />
           <Route path="/shelter-map-fixed" component={ShelterMapFixed} />

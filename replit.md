@@ -6,7 +6,13 @@
 
 Preferred communication style: Simple, everyday language.
 
-## Recent Changes (2025-08-09)
+## Recent Changes (2025-08-10)
+- **완전한 재난 대응 워크플로우 구현 (2025-08-10)**:
+  - 개발 모드 → 재난 시스템 데모 → 지진 시뮬레이션 → Dashboard PUSH 알림 순차 진행
+  - 중복 사용자 정보 입력 제거: Emergency에서 바로 OpenAI API 호출하는 /simple-guide 페이지 구현
+  - OpenAI API 호출 로깅 및 디버깅 시스템 추가 (실제 gpt-4o 모델 사용)
+  - 1차 DB 정보 + 2차 상황 입력 → 직접 개인화 가이드 생성 (단계별 매뉴얼, 대피소 안내, SOS 연락)
+  - PUSH 알림에서 화재 → 지진으로 재난 타입 변경으로 일관된 지진 대응 시스템
 - **T-Map API 보행자 경로 완전 해결**:
   - 공식 T-Map API 문서 분석으로 정확한 매개변수 설정 완료
   - 클라이언트 API 키 설정 오류 수정으로 실제 T-Map 경로 호출 성공
