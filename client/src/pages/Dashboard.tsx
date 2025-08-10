@@ -30,7 +30,7 @@ export default function Dashboard() {
     } else if (currentAlert && currentAlert.isActive) {
       setShowNotification(true);
     }
-  }, [currentAlert]);
+  }, [currentAlert?.id, currentAlert?.isActive]); // 특정 속성만 의존성으로 설정
 
   const handleDismissAlert = () => {
     setShowNotification(false);

@@ -54,7 +54,6 @@ export default function PushNotification({ alert, onDismiss, onOpen }: PushNotif
     if (alert && alert.isActive) {
       setIsVisible(true);
       
-      // 진동은 useEmergencySystem에서 처리하므로 여기서는 제거
       // 자동 숨김 (15초 후)
       const timer = setTimeout(() => {
         setIsVisible(false);
@@ -65,7 +64,7 @@ export default function PushNotification({ alert, onDismiss, onOpen }: PushNotif
     } else {
       setIsVisible(false);
     }
-  }, [alert, onDismiss]);
+  }, [alert?.id, alert?.isActive]); // onDismiss 의존성 제거하여 무한 루프 방지
 
   if (!alert || !isVisible) return null;
 

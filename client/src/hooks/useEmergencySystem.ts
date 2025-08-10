@@ -144,12 +144,11 @@ export function useEmergencySystem() {
       const processedAlerts = JSON.parse(sessionStorage.getItem('processedAlerts') || '[]');
       if (processedAlerts.includes(alertId)) {
         console.log('🔄 이미 처리된 알림 ID:', alertId);
-        setIsEmergencyActive(true); // 상태만 동기화
+        // 상태 업데이트 제거 - 무한 루프 방지
         return;
       }
       
       console.log('🚨 새로운 긴급 알림 감지:', alertId);
-      setIsEmergencyActive(true);
       
       // 전역 처리 목록에 추가
       processedAlerts.push(alertId);
@@ -176,11 +175,8 @@ export function useEmergencySystem() {
       }
     } else if (!alert || !alert.isActive) {
       console.log('📴 긴급 상황 종료');
-      setIsEmergencyActive(false);
-      // 세션 종료시 처리 목록 초기화
-      sessionStorage.removeItem('processedAlerts');
     }
-  }, [currentAlert]); // currentAlert 객체 변경시에만 재실행
+  }, [currentAlert?.id, currentAlert?.isActive]); // 특정 속성만 추적하여 무한 루프 방지
 
   return {
     // 상태
