@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-// import { useLanguage } from '@/contexts/LanguageContext'; // 더 이상 사용하지 않음
+
 import { TMapService } from '@/services/tmapService';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
@@ -141,7 +141,6 @@ export default function ShelterMapFixed() {
           };
           setUserLocation(location);
           setLocationStatus('success');
-          console.log('✅ 사용자 위치 획득:', location);
         },
         (error) => {
           console.error('❌ 위치 접근 오류:', error);
@@ -165,7 +164,6 @@ export default function ShelterMapFixed() {
   });
 
   // 디버깅용 로그
-  console.log('🔍 Debug Info:', {
     userLocation,
     isLoading,
     error: error?.message,
@@ -250,7 +248,6 @@ export default function ShelterMapFixed() {
       shelterMarkersRef.current.push(marker);
     });
 
-    console.log(`✅ ${(shelters as Shelter[]).length}개 대피소 마커 추가 완료`);
   }, [shelters]);
 
   // 대피소 타입별 색상
@@ -270,11 +267,9 @@ export default function ShelterMapFixed() {
       mapRef.current.removeLayer(routeLayerRef.current);
     }
 
-    console.log(`🗺️ ${shelter.name}로의 도보 경로 검색 시작`);
 
     try {
       // T-Map API로 실제 도보 경로 가져오기
-      console.log('🔍 T-Map 경로 요청 시작:', { 
         출발: [userLocation.lat, userLocation.lng], 
         도착: [shelter.lat, shelter.lng] 
       });
@@ -286,7 +281,6 @@ export default function ShelterMapFixed() {
         shelter.lng
       );
       
-      console.log('📍 T-Map 응답 데이터:', route);
 
       if (route) {
         // T-Map 실제 경로는 파란색 실선, 직선 경로는 빨간색 점선
@@ -307,7 +301,6 @@ export default function ShelterMapFixed() {
         const distanceKm = (route.totalDistance / 1000).toFixed(1);
         const timeMinutes = Math.ceil(route.totalTime / 60);
         
-        console.log(`✅ 경로 표시 완료: ${distanceKm}km, ${timeMinutes}분`);
         
         // T-Map 실제 경로 정보로 대피소 정보 업데이트
         setSelectedShelter({

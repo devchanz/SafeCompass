@@ -125,6 +125,7 @@ export class MemStorage implements IStorage {
       } : null,
       magnitude: insertEvent.magnitude || null,
       personalizedGuide: insertEvent.personalizedGuide || null,
+      userClassification: insertEvent.userClassification || null,
       createdAt: new Date()
     };
     this.emergencyEvents.set(id, event);

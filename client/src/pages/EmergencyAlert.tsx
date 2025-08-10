@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useEmergency } from "@/hooks/useEmergency";
-import { useEmergencyNotification } from "@/hooks/useEmergencyNotification";
+import { useEmergencySystem } from "@/hooks/useEmergencySystem";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function EmergencyAlert() {
@@ -13,7 +13,7 @@ export default function EmergencyAlert() {
   const [locationContext, setLocationContext] = useState<string>("");
   const [canMove, setCanMove] = useState<boolean>(true);
   const { generateGuide } = useEmergency();
-  const { currentAlert, markAlertAsRead } = useEmergencyNotification();
+  const { currentAlert, markAsRead } = useEmergencySystem();
   const [isGenerating, setIsGenerating] = useState(false);
   const { language } = useLanguage();
 
@@ -97,9 +97,8 @@ export default function EmergencyAlert() {
   };
 
   useEffect(() => {
-    // Mark alert as read when user enters the emergency page
-    markAlertAsRead();
-  }, [markAlertAsRead]);
+    // Alert는 Dashboard에서 처리되므로 여기서는 제거
+  }, []);
 
   const handleGenerateGuide = async () => {
     if (!locationContext) {

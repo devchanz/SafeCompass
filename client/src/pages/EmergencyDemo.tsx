@@ -113,7 +113,6 @@ export default function EmergencyDemo() {
       updateStepStatus(1, 'running');
       setProgress(10);
       
-      console.log('🔥 Step 1: 재난 감지 시작...');
       const demoResponse = await fetch('/api/emergency/demo', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -144,7 +143,6 @@ export default function EmergencyDemo() {
               
               // 시뮬레이션 완료 후 대시보드로 이동하여 PUSH 알림 표시
               setTimeout(() => {
-                console.log('🚀 지진 시뮬레이션 완료 - Dashboard로 이동합니다...');
                 
                 // 알림 중복 방지를 위해 현재 알림 ID 기록
                 if (currentAlert?.id) {

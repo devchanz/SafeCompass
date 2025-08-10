@@ -176,7 +176,6 @@ export default function EnhancedPersonalizedGuide() {
     
     // 실제로는 동행파트너 연락처로 SMS 발송
     if (confirm('동행파트너에게 도움 요청을 보내시겠습니까?')) {
-      console.log('SMS 발송:', message);
       alert('동행파트너에게 도움 요청을 보냈습니다.');
     }
   };

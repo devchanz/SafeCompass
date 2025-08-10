@@ -20,14 +20,14 @@ import SOSButton from "@/components/SOSButton";
 import { AccessibilityProvider } from "@/components/AccessibilityProvider";
 import { LanguageProvider, useLanguage, Language } from "@/contexts/LanguageContext";
 import { useUserProfile } from "@/hooks/useUserProfile";
-import { useEmergencyNotification } from "@/hooks/useEmergencyNotification";
+import { useEmergencySystem } from "@/hooks/useEmergencySystem";
 import AccessibilityTest from "@/components/AccessibilityTest";
 
 function AppContent() {
   const { language, setLanguage } = useLanguage();
   const { data: userProfile } = useUserProfile();
   const [location, setLocation] = useLocation();
-  const { isEmergencyActive, hasUnreadAlert, markAlertAsRead } = useEmergencyNotification();
+  const { currentAlert, isEmergencyActive } = useEmergencySystem();
   const [showNavigation, setShowNavigation] = useState(false);
 
   // For demo: Always start with language selection
@@ -36,23 +36,19 @@ function AppContent() {
   // Initialize app and check language selection
   useEffect(() => {
     const storedLanguage = localStorage.getItem('selectedLanguage');
-    console.log('🔄 App initialization - Language:', storedLanguage, 'Location:', location);
     
     // Priority 1: No language selected = must go to language selection
     if (!storedLanguage) {
       if (location !== '/language') {
-        console.log('❌ No language found, redirecting to language selection');
         setHasSelectedLanguage(false);
         setLocation('/language');
       } else {
-        console.log('✅ Already on language selection page');
         setHasSelectedLanguage(false);
       }
       return;
     } 
     
     // Priority 2: Language selected = set up language and continue
-    console.log('✅ Language found:', storedLanguage);
     setHasSelectedLanguage(true);
     setLanguage(storedLanguage as Language);
   }, [location, setLocation, setLanguage]);
@@ -75,12 +71,12 @@ function AppContent() {
     return () => window.removeEventListener('storage', handleStorageChange);
   }, [hasSelectedLanguage]);
 
-  // Auto-redirect to emergency page if emergency is active and unread
+  // Auto-redirect to emergency page if emergency is active
   useEffect(() => {
-    if (isEmergencyActive && hasUnreadAlert && location !== '/emergency') {
+    if (isEmergencyActive && currentAlert?.isActive && location !== '/emergency') {
       setLocation('/emergency');
     }
-  }, [isEmergencyActive, hasUnreadAlert, location, setLocation]);
+  }, [isEmergencyActive, currentAlert, location, setLocation]);
 
   // Smart user flow based on user state - only runs after language is selected
   useEffect(() => {
@@ -90,19 +86,15 @@ function AppContent() {
       const hasUserData = localStorage.getItem('hasRegistered') === 'true';
       const currentUserId = localStorage.getItem('currentUserId');
       
-      console.log('User flow check:', { hasUserData, userProfile: !!userProfile, currentUserId, location, hasSelectedLanguage });
       
       if (!hasUserData && location !== '/registration') {
         // New user: go to registration 
-        console.log('New user detected, redirecting to registration');
         setLocation('/registration');
       } else if (hasUserData && currentUserId && location === '/registration') {
         // Registered user shouldn't be on registration page
-        console.log('Registered user on registration page, redirecting to dashboard');
         setLocation('/');
       } else if (!hasUserData && !currentUserId && location === '/') {
         // If on dashboard but no user data, go to registration
-        console.log('On dashboard but no user data, redirecting to registration');
         setLocation('/registration');
       }
     }
@@ -137,7 +129,7 @@ function AppContent() {
                    '个性化灾难应对解决方案'}
                 </p>
               </div>
-              {isEmergencyActive && hasUnreadAlert && (
+              {isEmergencyActive && currentAlert?.isActive && (
                 <div className="ml-4 pulse-animation">
                   <div className="w-3 h-3 bg-emergency rounded-full animate-ping"></div>
                 </div>
@@ -223,7 +215,7 @@ function AppContent() {
                        language === 'en' ? 'Emergency' : 
                        language === 'vi' ? 'Khẩn cấp' : 
                        '紧急情况'}
-                    {hasUnreadAlert && (
+                    {currentAlert?.isActive && (
                       <span className="ml-1 w-2 h-2 bg-white rounded-full animate-ping"></span>
                     )}
                   </Button>

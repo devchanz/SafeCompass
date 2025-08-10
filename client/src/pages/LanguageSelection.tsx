@@ -60,7 +60,6 @@ export default function LanguageSelection() {
   const [showAllLanguages, setShowAllLanguages] = useState(false);
 
   const handleLanguageSelect = (langCode: Language) => {
-    console.log('Language selected:', langCode);
     setSelectedLanguage(langCode);
     setLanguage(langCode);
     
@@ -70,7 +69,6 @@ export default function LanguageSelection() {
     
     // Navigate to registration after language selection (removed window.location.href)
     setTimeout(() => {
-      console.log('Navigating to registration...');
       setLocation('/registration');
     }, 800);
   };

@@ -71,7 +71,6 @@ export default function ShelterMapInteractive() {
       const script = document.createElement('script');
       script.src = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
       script.onload = () => {
-        console.log('Leaflet loaded successfully');
         setTmapReady(true);
       };
       script.onerror = () => {
@@ -93,7 +92,6 @@ export default function ShelterMapInteractive() {
   // 지도 초기화
   useEffect(() => {
     if (tmapReady && location && mapRef.current && !map) {
-      console.log('🗺️ Leaflet 지도 초기화 시작:', location);
       
       try {
         // DOM 완전 초기화
@@ -107,7 +105,6 @@ export default function ShelterMapInteractive() {
         setTimeout(() => {
           if (!mapRef.current) return;
           
-          console.log('🗺️ Leaflet 지도 생성 중...');
           
           // Leaflet 지도 생성
           const newMap = window.L.map(mapRef.current, {
@@ -140,13 +137,11 @@ export default function ShelterMapInteractive() {
 
           setMap(newMap);
           setMarkers([userMarker]);
-          console.log('✅ Leaflet 지도 초기화 완료');
           
           // 지도 크기 조정
           setTimeout(() => {
             if (newMap) {
               newMap.invalidateSize();
-              console.log('🗺️ 지도 크기 조정 완료');
             }
           }, 200);
         }, 100);
@@ -160,7 +155,6 @@ export default function ShelterMapInteractive() {
   // 대피소 마커 추가
   useEffect(() => {
     if (map && shelters && shelters.length > 0) {
-      console.log('Adding shelter markers:', shelters.length, 'shelters');
       
       // 기존 대피소 마커들 제거 (사용자 위치 마커는 유지)
       if (markers.length > 1) {
@@ -221,7 +215,6 @@ export default function ShelterMapInteractive() {
   };
 
   const handleShelterSelect = (shelter: Shelter) => {
-    console.log('Shelter selected:', shelter);
     setSelectedShelter(shelter);
     calculateRoute(shelter);
   };
@@ -233,7 +226,6 @@ export default function ShelterMapInteractive() {
     }
 
     try {
-      console.log('Calculating route to:', shelter.name);
       
       // 기존 경로 제거
       if (routePolyline) {
@@ -255,7 +247,6 @@ export default function ShelterMapInteractive() {
       });
 
       const routeData = await response.json();
-      console.log('Route data received:', routeData);
 
       if (routeData.features) {
         const routeCoords: [number, number][] = [];
@@ -286,9 +277,7 @@ export default function ShelterMapInteractive() {
         ]);
         map.fitBounds(bounds, { padding: [20, 20] });
 
-        console.log('Route displayed successfully');
       } else {
-        console.log('No route features found');
       }
     } catch (error) {
       console.error('Route calculation failed:', error);

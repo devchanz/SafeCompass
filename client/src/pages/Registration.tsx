@@ -183,7 +183,6 @@ export default function Registration() {
   
   // Check if this is editing mode (existing registered user) vs new registration
   const isEditMode = localStorage.getItem('hasRegistered') === 'true' && existingProfile;
-  console.log('Registration page - isEditMode:', isEditMode, 'existingProfile:', existingProfile);
   
   const [selectedAccessibility, setSelectedAccessibility] = useState<string[]>(
     isEditMode ? (existingProfile?.accessibility || []) : []

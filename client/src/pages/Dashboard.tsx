@@ -236,7 +236,6 @@ export default function Dashboard() {
   const hasRegistered = localStorage.getItem('hasRegistered') === 'true';
   const currentUserId = localStorage.getItem('currentUserId');
   
-  console.log('Dashboard state:', { 
     userProfile: !!userProfile, 
     isLoading, 
     hasRegistered, 
@@ -276,7 +275,6 @@ export default function Dashboard() {
               <Button 
                 className="bg-yellow-600 hover:bg-yellow-700 w-full"
                 onClick={() => {
-                  console.log('사용자 세션 초기화 시작...');
                   localStorage.removeItem('hasRegistered');
                   localStorage.removeItem('currentUserId');
                   setLocation('/registration');
@@ -450,7 +448,6 @@ export default function Dashboard() {
             variant="ghost" 
             className="mt-4 w-full text-emergency hover:text-emergency-dark"
             onClick={() => {
-              console.log('Profile edit button clicked, navigating to /modify');
               setLocation('/modify');
             }}
           >
@@ -487,10 +484,8 @@ export default function Dashboard() {
               <Button 
                 onClick={() => {
                   if (confirm('모든 데이터를 초기화하고 처음부터 시작하시겠습니까?')) {
-                    console.log('초기화 시작...');
                     localStorage.clear();
                     sessionStorage.clear();
-                    console.log('Storage 클리어 완료');
                     // Force reload to restart app flow
                     setTimeout(() => {
                       window.location.href = window.location.origin;

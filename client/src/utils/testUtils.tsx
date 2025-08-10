@@ -8,14 +8,12 @@ export const TestUtils = {
     localStorage.removeItem('hasRegistered');
     localStorage.removeItem('currentUserId');
     sessionStorage.clear();
-    console.log('🧪 All user data cleared for fresh testing');
   },
 
   // Enable demo mode for quick testing
   enableDemoMode: () => {
     localStorage.setItem('hasRegistered', 'true');
     localStorage.setItem('currentUserId', 'demo-user-1');
-    console.log('🎭 Demo mode enabled - user will see dashboard');
   },
 
   // Get current user state for debugging
@@ -25,7 +23,6 @@ export const TestUtils = {
       hasRegistered: localStorage.getItem('hasRegistered'),
       currentUserId: localStorage.getItem('currentUserId'),
     };
-    console.log('👤 Current user state:', state);
     return state;
   },
 
@@ -37,7 +34,6 @@ export const TestUtils = {
     if (language) {
       localStorage.setItem('selectedLanguage', language);
     }
-    console.log('🆕 Reset to new user state');
   }
 };
 

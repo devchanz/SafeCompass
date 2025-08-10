@@ -117,7 +117,6 @@ export default function SimplePersonalizedGuide() {
       // 가이드 생성 완료시 PUSH 알림 제거
       setTimeout(() => {
         fetch('/api/emergency/mark-completed', { method: 'POST' })
-          .then(() => console.log('✅ PUSH 알림 제거됨 - 사용자가 맞춤형 가이드를 받았습니다'))
           .catch(error => console.error('알림 제거 오류:', error));
       }, 1000);
       

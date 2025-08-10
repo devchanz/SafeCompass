@@ -209,7 +209,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       const guide = await generatePersonalizedGuide({
-        userProfile,
+        userProfile: {
+          ...userProfile,
+          gender: userProfile.gender || undefined,
+          accessibility: userProfile.accessibility || []
+        },
         situation,
         relevantManuals: relevantManuals || [
           "지진 발생 시 행동 요령: 1) 튼튼한 테이블 아래로 대피 2) 출입구 확보 3) 화재 예방",
@@ -420,7 +424,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/emergency/classify-user", async (req, res) => {
     try {
       const { userId, situation } = req.body;
-      const user = await storage.getUserById(userId);
+      const user = await storage.getUser(userId);
       
       if (!user) {
         return res.status(404).json({ error: "사용자를 찾을 수 없습니다" });
