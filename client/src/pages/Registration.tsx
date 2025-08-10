@@ -302,11 +302,13 @@ export default function Registration() {
 
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
         {/* Basic Information */}
-        <Card className="emergency-card">
-          <CardContent className="pt-6">
-            <h3 className="text-lg font-semibold mb-4 flex items-center">
-              <i className="fas fa-user text-emergency mr-2" aria-hidden="true"></i>
-기본 정보
+        <Card className="shadow-lg border-0 bg-white dark:bg-gray-800">
+          <CardContent className="p-8">
+            <h3 className="text-xl font-bold mb-6 flex items-center text-gray-900 dark:text-white">
+              <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-indigo-500 text-white rounded-full flex items-center justify-center mr-3">
+                <i className="fas fa-user text-lg" aria-hidden="true"></i>
+              </div>
+              기본 정보
             </h3>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -370,11 +372,13 @@ export default function Registration() {
         </Card>
 
         {/* Accessibility and Mobility Assessment */}
-        <Card className="emergency-card">
-          <CardContent className="pt-6">
-            <h3 className="text-lg font-semibold mb-6 flex items-center">
-              <i className="fas fa-universal-access text-safety mr-2" aria-hidden="true"></i>
-{getText('accessibility_support')}
+        <Card className="shadow-lg border-0 bg-white dark:bg-gray-800">
+          <CardContent className="p-8">
+            <h3 className="text-xl font-bold mb-6 flex items-center text-gray-900 dark:text-white">
+              <div className="w-10 h-10 bg-gradient-to-r from-green-500 to-emerald-500 text-white rounded-full flex items-center justify-center mr-3">
+                <i className="fas fa-universal-access text-lg" aria-hidden="true"></i>
+              </div>
+              {getText('accessibility_support')}
             </h3>
             
             {/* Accessibility Support Section */}
@@ -384,60 +388,72 @@ export default function Registration() {
                 <Button
                   type="button"
                   variant={selectedAccessibility.length === 0 ? "default" : "outline"}
-                  className={`p-6 h-auto flex-col space-y-3 border-2 transition-all duration-200 ${
+                  className={`p-4 h-auto flex-col space-y-2 rounded-2xl border-0 transition-all duration-300 transform hover:scale-105 ${
                     selectedAccessibility.length === 0 
-                      ? 'bg-gray-100 border-gray-300 shadow-md' 
-                      : 'border-gray-200 hover:border-gray-300'
+                      ? 'bg-gradient-to-r from-gray-100 to-gray-200 shadow-lg' 
+                      : 'bg-white hover:bg-gray-50 shadow-md hover:shadow-lg'
                   }`}
                   onClick={() => setSelectedAccessibility([])}
                   aria-label="일반 사용자 - 특별한 접근성 지원이 필요하지 않습니다"
                 >
-                  <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center">
+                  <div className="w-12 h-12 bg-gray-100 rounded-2xl flex items-center justify-center">
                     <i className="fas fa-user-check text-2xl text-gray-600" aria-hidden="true"></i>
                   </div>
-                  <div className="text-center">
-                    <p className={`text-sm font-semibold ${selectedAccessibility.length === 0 ? 'text-gray-800' : 'text-gray-700'}`}>{getText('accessibility_normal')}</p>
-                    <p className="text-xs text-gray-600">{getText('accessibility_normal_desc')}</p>
+                  <div className="text-center px-2">
+                    <p className={`text-sm font-semibold leading-tight ${selectedAccessibility.length === 0 ? 'text-gray-800' : 'text-gray-700'}`}>
+                      {getText('accessibility_normal')}
+                    </p>
+                    <p className="text-xs text-gray-600 leading-tight mt-1 break-words">
+                      {getText('accessibility_normal_desc')}
+                    </p>
                   </div>
                 </Button>
                 
                 <Button
                   type="button"
                   variant={selectedAccessibility.includes('visual') ? "default" : "outline"}
-                  className={`p-4 h-auto flex-col space-y-2 border-2 transition-all duration-200 min-h-[120px] ${
+                  className={`p-4 h-auto flex-col space-y-2 rounded-2xl border-0 transition-all duration-300 transform hover:scale-105 min-h-[120px] ${
                     selectedAccessibility.includes('visual') 
-                      ? 'bg-blue-50 border-blue-300 shadow-md' 
-                      : 'border-gray-200 hover:border-blue-200'
+                      ? 'bg-gradient-to-r from-blue-100 to-blue-200 shadow-lg' 
+                      : 'bg-white hover:bg-blue-50 shadow-md hover:shadow-lg'
                   }`}
                   onClick={() => toggleAccessibility('visual')}
                   aria-label="시각 지원 필요 - 음성 안내와 큰 글씨를 제공합니다"
                 >
-                  <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+                  <div className="w-12 h-12 bg-blue-100 rounded-2xl flex items-center justify-center">
                     <i className="fas fa-low-vision text-2xl text-blue-600" aria-hidden="true"></i>
                   </div>
-                  <div className="text-center">
-                    <p className={`text-sm font-semibold ${selectedAccessibility.includes('visual') ? 'text-blue-800' : 'text-gray-700'} leading-tight`}>{getText('accessibility_visual')}</p>
-                    <p className="text-xs text-gray-600 leading-tight mt-1 px-2">{getText('accessibility_visual_desc')}</p>
+                  <div className="text-center px-2">
+                    <p className={`text-sm font-semibold leading-tight ${selectedAccessibility.includes('visual') ? 'text-blue-800' : 'text-gray-700'} break-words`}>
+                      {getText('accessibility_visual')}
+                    </p>
+                    <p className="text-xs text-gray-600 leading-tight mt-1 break-words">
+                      {getText('accessibility_visual_desc')}
+                    </p>
                   </div>
                 </Button>
                 
                 <Button
                   type="button"
                   variant={selectedAccessibility.includes('hearing') ? "default" : "outline"}
-                  className={`p-4 h-auto flex-col space-y-2 border-2 transition-all duration-200 min-h-[120px] ${
+                  className={`p-4 h-auto flex-col space-y-2 rounded-2xl border-0 transition-all duration-300 transform hover:scale-105 min-h-[120px] ${
                     selectedAccessibility.includes('hearing') 
-                      ? 'bg-yellow-50 border-yellow-300 shadow-md' 
-                      : 'border-gray-200 hover:border-yellow-200'
+                      ? 'bg-gradient-to-r from-yellow-100 to-yellow-200 shadow-lg' 
+                      : 'bg-white hover:bg-yellow-50 shadow-md hover:shadow-lg'
                   }`}
                   onClick={() => toggleAccessibility('hearing')}
                   aria-label="청각 지원 필요 - 진동 알림과 시각적 신호를 제공합니다"
                 >
-                  <div className="w-12 h-12 bg-yellow-100 rounded-full flex items-center justify-center">
+                  <div className="w-12 h-12 bg-yellow-100 rounded-2xl flex items-center justify-center">
                     <i className="fas fa-assistive-listening-systems text-2xl text-yellow-600" aria-hidden="true"></i>
                   </div>
-                  <div className="text-center">
-                    <p className={`text-sm font-semibold ${selectedAccessibility.includes('hearing') ? 'text-yellow-800' : 'text-gray-700'} leading-tight`}>{getText('accessibility_hearing')}</p>
-                    <p className="text-xs text-gray-600 leading-tight mt-1 px-2">{getText('accessibility_hearing_desc')}</p>
+                  <div className="text-center px-2">
+                    <p className={`text-sm font-semibold leading-tight ${selectedAccessibility.includes('hearing') ? 'text-yellow-800' : 'text-gray-700'} break-words`}>
+                      {getText('accessibility_hearing')}
+                    </p>
+                    <p className="text-xs text-gray-600 leading-tight mt-1 break-words">
+                      {getText('accessibility_hearing_desc')}
+                    </p>
                   </div>
                 </Button>
               </div>
@@ -450,40 +466,48 @@ export default function Registration() {
                 <Button
                   type="button"
                   variant={form.watch("mobility") === "independent" ? "default" : "outline"}
-                  className={`p-6 h-auto flex-col space-y-3 border-2 transition-all duration-200 ${
+                  className={`p-6 h-auto flex-col space-y-3 rounded-2xl border-0 transition-all duration-300 transform hover:scale-105 ${
                     form.watch("mobility") === "independent"
-                      ? 'bg-green-50 border-green-300 shadow-md'
-                      : 'border-gray-200 hover:border-green-200'
+                      ? 'bg-gradient-to-r from-green-100 to-green-200 shadow-lg'
+                      : 'bg-white hover:bg-green-50 shadow-md hover:shadow-lg'
                   }`}
                   onClick={() => form.setValue("mobility", "independent")}
                   aria-label="자력대피 가능 - 혼자서도 안전한 장소로 신속히 이동할 수 있습니다"
                 >
-                  <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
+                  <div className="w-12 h-12 bg-green-100 rounded-2xl flex items-center justify-center">
                     <i className="fas fa-running text-2xl text-green-600" aria-hidden="true"></i>
                   </div>
-                  <div className="text-center">
-                    <p className={`text-sm font-semibold ${form.watch("mobility") === "independent" ? 'text-green-800' : 'text-gray-700'}`}>{getText('independent')}</p>
-                    <p className="text-xs text-gray-600">{language === 'ko' ? '혼자서도 안전하게 이동 가능' : language === 'en' ? 'Can move safely alone' : language === 'vi' ? 'Có thể di chuyển an toàn một mình' : '可以安全地独自行动'}</p>
+                  <div className="text-center px-2">
+                    <p className={`text-sm font-semibold leading-tight ${form.watch("mobility") === "independent" ? 'text-green-800' : 'text-gray-700'} break-words`}>
+                      {getText('independent')}
+                    </p>
+                    <p className="text-xs text-gray-600 leading-tight mt-1 break-words">
+                      {language === 'ko' ? '혼자서도 안전하게 이동 가능' : language === 'en' ? 'Can move safely alone' : language === 'vi' ? 'Có thể di chuyển an toàn một mình' : '可以안전地독자행동'}
+                    </p>
                   </div>
                 </Button>
                 
                 <Button
                   type="button"
                   variant={form.watch("mobility") === "assisted" ? "default" : "outline"}
-                  className={`p-6 h-auto flex-col space-y-3 border-2 transition-all duration-200 ${
+                  className={`p-6 h-auto flex-col space-y-3 rounded-2xl border-0 transition-all duration-300 transform hover:scale-105 ${
                     form.watch("mobility") === "assisted"
-                      ? 'bg-orange-50 border-orange-300 shadow-md'
-                      : 'border-gray-200 hover:border-orange-200'
+                      ? 'bg-gradient-to-r from-orange-100 to-orange-200 shadow-lg'
+                      : 'bg-white hover:bg-orange-50 shadow-md hover:shadow-lg'
                   }`}
                   onClick={() => form.setValue("mobility", "assisted")}
                   aria-label="도움 필요 - 다른 사람의 도움이 있어야 안전하게 대피할 수 있습니다"
                 >
-                  <div className="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center">
+                  <div className="w-12 h-12 bg-orange-100 rounded-2xl flex items-center justify-center">
                     <i className="fas fa-hands-helping text-2xl text-orange-500" aria-hidden="true"></i>
                   </div>
-                  <div className="text-center">
-                    <p className={`text-sm font-semibold ${form.watch("mobility") === "assisted" ? 'text-orange-800' : 'text-gray-700'}`}>{getText('assistance')}</p>
-                    <p className="text-xs text-gray-600">{language === 'ko' ? '다른 사람의 도움이 필요' : language === 'en' ? 'Need assistance from others' : language === 'vi' ? 'Cần sự hỗ trợ từ người khác' : '需要他人帮助'}</p>
+                  <div className="text-center px-2">
+                    <p className={`text-sm font-semibold leading-tight ${form.watch("mobility") === "assisted" ? 'text-orange-800' : 'text-gray-700'} break-words`}>
+                      {getText('assistance')}
+                    </p>
+                    <p className="text-xs text-gray-600 leading-tight mt-1 break-words">
+                      {language === 'ko' ? '다른 사람의 도움이 필요' : language === 'en' ? 'Need assistance from others' : language === 'vi' ? 'Cần sự hỗ trợ từ người khác' : '需要他人帮助'}
+                    </p>
                   </div>
                 </Button>
               </div>
@@ -492,11 +516,13 @@ export default function Registration() {
         </Card>
 
         {/* Emergency Companion */}
-        <Card className="emergency-card">
-          <CardContent className="pt-6">
-            <h3 className="text-lg font-semibold mb-4 flex items-center">
-              <i className="fas fa-user-friends text-emergency mr-2" aria-hidden="true"></i>
-{getText('companion')}
+        <Card className="shadow-lg border-0 bg-white dark:bg-gray-800">
+          <CardContent className="p-8">
+            <h3 className="text-xl font-bold mb-6 flex items-center text-gray-900 dark:text-white">
+              <div className="w-10 h-10 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-full flex items-center justify-center mr-3">
+                <i className="fas fa-user-friends text-lg" aria-hidden="true"></i>
+              </div>
+              {getText('companion')}
             </h3>
             <p className="text-sm text-gray-600 mb-4">
 {getText('companion_subtitle')}
@@ -569,11 +595,13 @@ export default function Registration() {
         </Card>
 
         {/* Language Selection */}
-        <Card className="emergency-card">
-          <CardContent className="pt-6">
-            <h3 className="text-lg font-semibold mb-4 flex items-center">
-              <i className="fas fa-globe text-emergency mr-2" aria-hidden="true"></i>
-{getText('language')}
+        <Card className="shadow-lg border-0 bg-white dark:bg-gray-800">
+          <CardContent className="p-8">
+            <h3 className="text-xl font-bold mb-6 flex items-center text-gray-900 dark:text-white">
+              <div className="w-10 h-10 bg-gradient-to-r from-cyan-500 to-teal-500 text-white rounded-full flex items-center justify-center mr-3">
+                <i className="fas fa-globe text-lg" aria-hidden="true"></i>
+              </div>
+              {getText('language')}
             </h3>
             <Select onValueChange={(value) => form.setValue("language", value)} defaultValue={form.watch("language")}>
               <SelectTrigger>
@@ -593,11 +621,18 @@ export default function Registration() {
         <div className="pt-6">
           <Button 
             type="submit" 
-            className="w-full bg-emergency hover:bg-emergency-dark py-3 text-lg"
+            className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white py-4 text-lg font-semibold rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
             disabled={form.formState.isSubmitting}
           >
-            <i className="fas fa-save mr-2" aria-hidden="true"></i>
-{form.formState.isSubmitting ? "저장 중..." : (isEditMode ? getText('update') : getText('submit'))}
+            <div className="flex items-center justify-center space-x-2">
+              <i className={`fas ${form.formState.isSubmitting ? 'fa-spinner fa-spin' : 'fa-save'}`} aria-hidden="true"></i>
+              <span className="truncate">
+                {form.formState.isSubmitting ? 
+                  (language === 'ko' ? '저장 중...' : language === 'en' ? 'Saving...' : language === 'vi' ? 'Đang lưu...' : '保存中...') : 
+                  (isEditMode ? getText('update') : getText('submit'))
+                }
+              </span>
+            </div>
           </Button>
         </div>
       </form>
