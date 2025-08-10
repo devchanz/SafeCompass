@@ -236,6 +236,7 @@ export default function Dashboard() {
   const hasRegistered = localStorage.getItem('hasRegistered') === 'true';
   const currentUserId = localStorage.getItem('currentUserId');
   
+  console.log('Dashboard state:', {
     userProfile: !!userProfile, 
     isLoading, 
     hasRegistered, 

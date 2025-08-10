@@ -164,6 +164,7 @@ export default function ShelterMapFixed() {
   });
 
   // 디버깅용 로그
+  console.log('🔍 ShelterMapFixed Debug:', {
     userLocation,
     isLoading,
     error: error?.message,
@@ -270,6 +271,7 @@ export default function ShelterMapFixed() {
 
     try {
       // T-Map API로 실제 도보 경로 가져오기
+      console.log('🔍 Route request:', {
         출발: [userLocation.lat, userLocation.lng], 
         도착: [shelter.lat, shelter.lng] 
       });
@@ -326,22 +328,24 @@ export default function ShelterMapFixed() {
       console.error('❌ 경로 표시 오류:', error);
       
       // 오류 시 직선 경로로 대체
-      const routePoints: [number, number][] = [
-        [userLocation.lat, userLocation.lng],
-        [shelter.lat, shelter.lng]
-      ];
+      if (userLocation && mapRef.current) {
+        const routePoints: [number, number][] = [
+          [userLocation.lat, userLocation.lng],
+          [shelter.lat, shelter.lng]
+        ];
 
-      const polyline = L.polyline(routePoints, { 
-        color: '#dc2626', 
-        weight: 4, 
-        opacity: 0.7,
-        dashArray: '10, 10'
-      }).addTo(mapRef.current);
-      
-      routeLayerRef.current = polyline;
+        const polyline = L.polyline(routePoints, { 
+          color: '#dc2626', 
+          weight: 4, 
+          opacity: 0.7,
+          dashArray: '10, 10'
+        }).addTo(mapRef.current);
+        
+        routeLayerRef.current = polyline;
 
-      const group = new L.FeatureGroup([polyline]);
-      mapRef.current.fitBounds(group.getBounds(), { padding: [20, 20] });
+        const group = new L.FeatureGroup([polyline]);
+        mapRef.current.fitBounds(group.getBounds(), { padding: [20, 20] });
+      }
     }
   };
 
