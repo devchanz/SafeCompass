@@ -253,7 +253,7 @@ function AppContent() {
       <SOSButton />
       
       {/* 전역 PUSH 알림 - 단 하나만 렌더링 */}
-      {isEmergencyActive && currentAlert && currentAlert.isActive && (
+      {currentAlert && currentAlert.isActive && (
         <PushNotification
           alert={currentAlert}
           onDismiss={() => console.log('전역 알림 무시됨')}

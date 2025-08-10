@@ -6,30 +6,31 @@ function getMultilingualPrompts(language: string, disasterType: string) {
     ko: {
       systemRole:
         "당신은 재난 안전 전문가입니다. 사용자의 개인 정보와 현재 상황을 고려하여 맞춤형 재난 대응 가이드를 생성합니다. JSON 형식으로만 응답하세요.",
+      responseFormat: "사용자 프로필과 상황에 맞는 구체적이고 실행 가능한 재난 대응 매뉴얼을 JSON 형식으로 생성하세요. 단순한 단계명이 아닌 실제 행동 지침을 제공해야 합니다.",
       jsonFormat: `{
   "guide": {
     "primaryActions": [
-      "1단계: 즉시 실행해야 할 생명보호 행동",
-      "2단계: 안전 확보 후 다음 행동", 
-      "3단계: 대피 또는 구조 요청 행동",
-      "4단계: 추가 안전 확보 조치"
+      "머리와 목을 보호하며 튼튼한 책상 아래로 즉시 피하세요",
+      "진동이 멈추면 가스밸브를 잠그고 전기차단기를 내리세요", 
+      "출입구를 확보하고 계단을 이용해 1층으로 이동하세요",
+      "건물 밖 넓은 공간에서 여진에 대비하세요"
     ],
     "safetyTips": [
-      "위치별 안전 수칙 1",
-      "개인 특성 맞춤 안전 수칙 2",
-      "재난 유형별 주의사항 3"
+      "실제 상황별 구체적 안전 수칙",
+      "사용자 나이와 신체 상황 고려한 맞춤 지침",
+      "지진 특성을 반영한 실행 가능한 주의사항"
     ],
     "specialConsiderations": [
-      "나이 고려사항",
-      "이동능력 특별 고려사항", 
-      "접근성 관련 주의사항"
+      "70세 고령자: 천천히 안전하게 이동",
+      "시청각 장애 고려: 진동과 시각적 신호 활용", 
+      "독립적 이동 가능: 자력 대피 우선 실행"
     ],
     "emergencyContacts": [
       "119 (재난신고센터) - 즉시 연락",
-      "동행파트너 비상연락망 활성화"
+      "가족 및 동행파트너에게 현재 상황 전달"
     ]
   },
-  "audioText": "안전 가이드 음성 텍스트",
+  "audioText": "실제 상황에 맞는 상세한 음성 안내 텍스트",
   "estimatedReadingTime": 180
 }`,
     },
@@ -187,21 +188,29 @@ export async function generatePersonalizedGuide(
       disasterTypeKo,
     );
 
-    const userPrompt = `사용자 프로필:
-- 나이: ${request.userProfile.age}세
-- 성별: ${request.userProfile.gender || "미상"}
-- 언어: ${request.userProfile.language}
-- 접근성 지원: ${request.userProfile.accessibility.join(", ") || "없음"}
-- 대피 능력: ${mobilityKo}
-- 거주지: ${request.userProfile.address}
+    const userPrompt = `🚨 긴급 재난 상황 - 맞춤형 생명보호 가이드 요청
 
-현재 재난 상황:
-- 재난 유형: ${disasterTypeKo}
-- 현재 위치: ${request.situation.locationContext}
-- 이동 가능성: ${request.situation.canMove ? "이동 가능" : "이동 어려움/불가능"}
-- 추가 상황: ${request.situation.additionalInfo || "없음"}
+👤 사용자 정보:
+- 나이: ${request.userProfile.age}세 (고령자/성인/청소년에 맞는 행동능력 고려)
+- 성별: ${request.userProfile.gender || "미상"}  
+- 이동능력: ${mobilityKo} (독립적/제한적/휠체어 등)
+- 접근성 장애: ${request.userProfile.accessibility.join(", ") || "없음"} (시각/청각/신체 장애 고려)
+- 현재 주소: ${request.userProfile.address}
 
-위 정보를 바탕으로 다음 JSON 형식으로 **${request.userProfile.language === "ko" ? "한국어" : request.userProfile.language === "en" ? "영어" : request.userProfile.language === "vi" ? "베트남어" : "중국어"}**로 응답해주세요:
+🌍 재난 상황:
+- 재난 유형: ${disasterTypeKo} (구체적 대응법 적용)
+- 현재 위치: ${request.situation.locationContext} (건물 내부/외부/특수공간)
+- 이동 가능성: ${request.situation.canMove ? "이동 가능" : "이동 제한"} (대피 전략 결정)
+
+⚠️ 생명보호 우선 원칙에 따라 실제 개인화된 재난 대응 매뉴얼을 생성하세요:
+
+✅ primaryActions: 각 단계별로 구체적이고 실행 가능한 행동 지침 (단순 단계명이나 예시 텍스트 절대 금지)
+✅ safetyTips: ${request.userProfile.age}세 + ${request.userProfile.accessibility.join("/")} 장애 + ${mobilityKo} 특성을 반영한 실제적 안전 수칙  
+✅ specialConsiderations: 사용자 개별 특성에 특화된 주의사항 (나이/장애/이동능력 구체적 고려)
+✅ emergencyContacts: 한국 실정에 맞는 응급 연락처
+
+모든 내용은 실제 상황에서 즉시 실행할 수 있는 구체적이고 개인화된 지침이어야 합니다.
+다음 JSON 형식으로 **${request.userProfile.language === "ko" ? "한국어" : request.userProfile.language === "en" ? "영어" : request.userProfile.language === "vi" ? "베트남어" : "중국어"}**로 응답해주세요:
 
 ${prompts.jsonFormat}
 
