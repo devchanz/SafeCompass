@@ -135,27 +135,28 @@ export function useEmergencySystem() {
   });
 
   // 긴급 상황 감지 - 단 한 번만 실행되도록 개선
-  const [processedAlertIds, setProcessedAlertIds] = useState<Set<string>>(new Set());
+  const [processedAlertIds, setProcessedAlertIds] = useState<string[]>([]);
   
   useEffect(() => {
-    if (currentAlert && 'isActive' in currentAlert && currentAlert.isActive && 'id' in currentAlert) {
-      const alertId = currentAlert.id as string;
+    const alert = currentAlert as any;
+    if (alert && alert.isActive && alert.id) {
+      const alertId = alert.id as string;
       
       // 이미 처리된 알림인지 확인
-      if (processedAlertIds.has(alertId)) {
+      if (processedAlertIds.includes(alertId)) {
         return;
       }
       
       console.log('🚨 새로운 긴급 알림 감지:', alertId);
       setIsEmergencyActive(true);
-      setProcessedAlertIds(prev => new Set([...prev, alertId]));
+      setProcessedAlertIds(prev => [...prev, alertId]);
       
       // 브라우저 알림 한 번만 실행
       if ('Notification' in window && Notification.permission !== 'denied') {
         Notification.requestPermission().then(permission => {
-          if (permission === 'granted' && 'title' in currentAlert && 'body' in currentAlert) {
-            new Notification(currentAlert.title as string, {
-              body: currentAlert.body as string,
+          if (permission === 'granted' && alert.title && alert.body) {
+            new Notification(alert.title, {
+              body: alert.body,
               icon: '/favicon.ico',
               tag: alertId,
               requireInteraction: true
@@ -165,15 +166,15 @@ export function useEmergencySystem() {
       }
 
       // 진동 한 번만 실행 
-      if ('vibrate' in navigator && 'vibrationPattern' in currentAlert && currentAlert.vibrationPattern) {
-        console.log('📳 진동 패턴 실행:', currentAlert.vibrationPattern);
-        navigator.vibrate(currentAlert.vibrationPattern as number[]);
+      if ('vibrate' in navigator && alert.vibrationPattern) {
+        console.log('📳 진동 패턴 실행:', alert.vibrationPattern);
+        navigator.vibrate(alert.vibrationPattern);
       }
-    } else if (!currentAlert || !('isActive' in currentAlert) || !currentAlert.isActive) {
+    } else if (!alert || !alert.isActive) {
       console.log('📴 긴급 상황 종료');
       setIsEmergencyActive(false);
     }
-  }, [currentAlert, processedAlertIds]); // 처리된 알림 추적으로 중복 방지
+  }, [currentAlert, processedAlertIds.length]); // 배열 길이로 의존성 최적화
 
   return {
     // 상태
