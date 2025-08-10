@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useUserProfile } from "@/hooks/useUserProfile";
+import { useCompanions } from "@/hooks/useCompanions";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useToast } from "@/hooks/use-toast";
 import { Alert, AlertDescription } from "@/components/ui/alert";
@@ -9,8 +10,12 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 export default function SOSButton() {
   const [isOpen, setIsOpen] = useState(false);
   const { data: userProfile } = useUserProfile();
+  const { data: companions = [] } = useCompanions(userProfile?.id);
   const { language } = useLanguage();
   const { toast } = useToast();
+  
+  // 첫 번째 동행파트너를 기본 파트너로 사용
+  const partner = companions[0];
 
   // 다국어 텍스트
   const getText = (key: string) => {
@@ -73,8 +78,8 @@ export default function SOSButton() {
   };
 
   const handleContactPartner = async () => {
-    // 사용자 프로필에서 파트너 정보 확인
-    if (!userProfile?.partner?.phone) {
+    // 동행파트너 정보 확인
+    if (!partner?.phone) {
       toast({
         title: "⚠️ " + getText('no_partner'),
         variant: "destructive",
@@ -103,12 +108,12 @@ export default function SOSButton() {
           const encodedMessage = encodeURIComponent(emergencyMessage);
           
           // SMS 전송
-          window.location.href = `sms:${userProfile.partner.phone}?body=${encodedMessage}`;
+          window.location.href = `sms:${partner.phone}?body=${encodedMessage}`;
           
           // 성공 토스트
           toast({
             title: "✅ " + getText('location_sent'),
-            description: `${userProfile.partner.name} (${userProfile.partner.phone})`,
+            description: `${partner.name} (${partner.phone})`,
             duration: 5000,
           });
 
@@ -122,7 +127,7 @@ export default function SOSButton() {
           // 위치 없이도 전송
           const basicMessage = getText('emergency_message');
           const encodedMessage = encodeURIComponent(basicMessage + ` 시간: ${new Date().toLocaleString()}`);
-          window.location.href = `sms:${userProfile.partner.phone}?body=${encodedMessage}`;
+          window.location.href = `sms:${partner.phone}?body=${encodedMessage}`;
           
           toast({
             title: "📱 긴급 알림 전송됨",
@@ -177,12 +182,12 @@ export default function SOSButton() {
           
           <div className="space-y-4">
             {/* 파트너 정보 표시 */}
-            {userProfile?.partner?.name && (
+            {partner?.name && (
               <Alert className="bg-blue-50 border-blue-200">
                 <i className="fas fa-user-friends text-blue-600" aria-hidden="true"></i>
                 <AlertDescription>
                   <strong>{language === 'ko' ? '등록된 파트너' : language === 'en' ? 'Registered Partner' : language === 'vi' ? 'Đối tác đã đăng ký' : '已注册伙伴'}:</strong><br />
-                  {userProfile.partner.name} ({userProfile.partner.phone})
+                  {partner.name} ({partner.phone})
                 </AlertDescription>
               </Alert>
             )}
@@ -198,7 +203,7 @@ export default function SOSButton() {
             <Button 
               onClick={handleContactPartner}
               className="w-full bg-safety hover:bg-green-600 py-3 px-4 font-semibold"
-              disabled={!userProfile?.partner?.phone}
+              disabled={!partner?.phone}
             >
               <i className="fas fa-sms mr-2" aria-hidden="true"></i>
               {getText('notify_partner')}
