@@ -32,7 +32,9 @@ export default function ModernDashboard() {
         register_now: '정보 등록하기',
         safety_status: '현재 안전 상태',
         status_safe: '안전',
+        status_danger: '위험',
         status_message: '위험 요소가 감지되지 않았습니다',
+        status_danger_message: '긴급 상황이 감지되었습니다',
         last_updated: '최근 업데이트',
         just_now: '방금 전',
         quick_actions: '빠른 실행',
@@ -71,7 +73,9 @@ export default function ModernDashboard() {
         register_now: 'Register Information',
         safety_status: 'Current Safety Status',
         status_safe: 'Safe',
+        status_danger: 'Danger',
         status_message: 'No risk factors detected',
+        status_danger_message: 'Emergency situation detected',
         last_updated: 'Last Updated',
         just_now: 'Just now',
         quick_actions: 'Quick Actions',
@@ -288,28 +292,32 @@ export default function ModernDashboard() {
               </p>
             </div>
             <div className="hidden md:flex items-center space-x-3">
-              <Badge variant="outline" className="px-4 py-2 text-sm">
-                <i className="fas fa-shield-check mr-2 text-green-600" aria-hidden="true"></i>
-                {getText('status_safe')}
+              <Badge variant="outline" className={`px-4 py-2 text-sm ${currentAlert ? 'border-red-300 text-red-600' : 'border-green-300 text-green-600'}`}>
+                <i className={`fas ${currentAlert ? 'fa-exclamation-triangle' : 'fa-shield-check'} mr-2`} aria-hidden="true"></i>
+                {currentAlert ? getText('status_danger') : getText('status_safe')}
               </Badge>
             </div>
           </div>
           
           {/* Safety Status Card */}
-          <Card className="bg-gradient-to-r from-green-500 to-emerald-600 text-white border-0 shadow-xl">
+          <Card className={`${currentAlert ? 'bg-gradient-to-r from-red-500 to-red-600' : 'bg-gradient-to-r from-green-500 to-emerald-600'} text-white border-0 shadow-xl`}>
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-4">
                   <div className="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center">
-                    <i className="fas fa-shield-alt text-3xl" aria-hidden="true"></i>
+                    <i className={`fas ${currentAlert ? 'fa-exclamation-triangle' : 'fa-shield-alt'} text-3xl`} aria-hidden="true"></i>
                   </div>
                   <div>
                     <h3 className="text-2xl font-bold mb-1">{getText('safety_status')}</h3>
-                    <p className="text-green-100 text-lg">{getText('status_message')}</p>
+                    <p className={`${currentAlert ? 'text-red-100' : 'text-green-100'} text-lg`}>
+                      {currentAlert ? getText('status_danger_message') : getText('status_message')}
+                    </p>
                   </div>
                 </div>
                 <div className="text-right hidden md:block">
-                  <p className="text-green-100 text-sm mb-1">{getText('last_updated')}</p>
+                  <p className={`${currentAlert ? 'text-red-100' : 'text-green-100'} text-sm mb-1`}>
+                    {getText('last_updated')}
+                  </p>
                   <p className="text-white font-medium">{getText('just_now')}</p>
                 </div>
               </div>
