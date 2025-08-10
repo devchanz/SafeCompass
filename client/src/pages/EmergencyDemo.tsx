@@ -145,6 +145,16 @@ export default function EmergencyDemo() {
               // 시뮬레이션 완료 후 대시보드로 이동하여 PUSH 알림 표시
               setTimeout(() => {
                 console.log('🚀 지진 시뮬레이션 완료 - Dashboard로 이동합니다...');
+                
+                // 알림 중복 방지를 위해 현재 알림 ID 기록
+                if (currentAlert?.id) {
+                  const processedAlerts = JSON.parse(sessionStorage.getItem('processedAlerts') || '[]');
+                  if (!processedAlerts.includes(currentAlert.id)) {
+                    processedAlerts.push(currentAlert.id);
+                    sessionStorage.setItem('processedAlerts', JSON.stringify(processedAlerts));
+                  }
+                }
+                
                 setLocation('/');
               }, 1000);
               

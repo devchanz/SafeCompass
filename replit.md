@@ -8,8 +8,9 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes (2025-08-10)
 - **완전한 다국어 OpenAI API 및 PUSH 알림 시스템 통합 (2025-08-10)**:
-  - 새로운 Supabase 프로젝트 생성 중 - DNS 프로비저닝 대기 상태
-  - PUSH 알림 중복 실행 문제 해결 - 처리된 알림 ID 추적 시스템 구현
+  - 새로운 Supabase 프로젝트 생성 중 - DNS 프로비저닝 대기 상태  
+  - PUSH 알림 중복 실행 문제 완전 해결 - SessionStorage 기반 전역 중복 방지 시스템 구현
+  - TypeScript 오류 수정 완료 - useEmergencySystem Hook 안정성 개선
   - OpenAI API 다국어 프롬프트 시스템 완전 구현 (한국어, 영어, 베트남어, 중국어)
   - 사용자 언어 선택에 따른 맞춤형 재난 대응 가이드 생성 
   - PUSH 알림 자동 감지 및 표시 시스템 개선 - 데모 실행 후 실시간 알림 작동

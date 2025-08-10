@@ -134,22 +134,26 @@ export function useEmergencySystem() {
     }
   });
 
-  // 긴급 상황 감지 - 단 한 번만 실행되도록 개선
-  const [processedAlertIds, setProcessedAlertIds] = useState<string[]>([]);
-  
+  // 전역 처리된 알림 ID 저장 (브라우저 세션 스토리지 사용)
   useEffect(() => {
     const alert = currentAlert as any;
     if (alert && alert.isActive && alert.id) {
       const alertId = alert.id as string;
       
-      // 이미 처리된 알림인지 확인
-      if (processedAlertIds.includes(alertId)) {
+      // 전역적으로 처리된 알림인지 확인 (모든 페이지 간 공유)
+      const processedAlerts = JSON.parse(sessionStorage.getItem('processedAlerts') || '[]');
+      if (processedAlerts.includes(alertId)) {
+        console.log('🔄 이미 처리된 알림 ID:', alertId);
+        setIsEmergencyActive(true); // 상태만 동기화
         return;
       }
       
       console.log('🚨 새로운 긴급 알림 감지:', alertId);
       setIsEmergencyActive(true);
-      setProcessedAlertIds(prev => [...prev, alertId]);
+      
+      // 전역 처리 목록에 추가
+      processedAlerts.push(alertId);
+      sessionStorage.setItem('processedAlerts', JSON.stringify(processedAlerts));
       
       // 브라우저 알림 한 번만 실행
       if ('Notification' in window && Notification.permission !== 'denied') {
@@ -173,8 +177,10 @@ export function useEmergencySystem() {
     } else if (!alert || !alert.isActive) {
       console.log('📴 긴급 상황 종료');
       setIsEmergencyActive(false);
+      // 세션 종료시 처리 목록 초기화
+      sessionStorage.removeItem('processedAlerts');
     }
-  }, [currentAlert, processedAlertIds.length]); // 배열 길이로 의존성 최적화
+  }, [currentAlert]); // currentAlert 객체 변경시에만 재실행
 
   return {
     // 상태
