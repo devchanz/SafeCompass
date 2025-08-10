@@ -78,7 +78,7 @@ export class EmergencyNotificationService {
   }
 
   /**
-   * 긴급 알림 발송 (다국어 지원)
+   * 긴급 알림 발송 (다국어 지원) - 수동 트리거만 허용
    */
   private async sendEmergencyAlert(alert: DisasterAlert, userLanguage: string = 'ko'): Promise<void> {
     const notification: EmergencyNotification = {

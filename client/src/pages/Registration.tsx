@@ -405,7 +405,7 @@ export default function Registration() {
                 <Button
                   type="button"
                   variant={selectedAccessibility.includes('visual') ? "default" : "outline"}
-                  className={`p-6 h-auto flex-col space-y-3 border-2 transition-all duration-200 ${
+                  className={`p-4 h-auto flex-col space-y-2 border-2 transition-all duration-200 min-h-[120px] ${
                     selectedAccessibility.includes('visual') 
                       ? 'bg-blue-50 border-blue-300 shadow-md' 
                       : 'border-gray-200 hover:border-blue-200'
@@ -417,15 +417,15 @@ export default function Registration() {
                     <i className="fas fa-low-vision text-2xl text-blue-600" aria-hidden="true"></i>
                   </div>
                   <div className="text-center">
-                    <p className={`text-sm font-semibold ${selectedAccessibility.includes('visual') ? 'text-blue-800' : 'text-gray-700'}`}>{getText('accessibility_visual')}</p>
-                    <p className="text-xs text-gray-600">{getText('accessibility_visual_desc')}</p>
+                    <p className={`text-sm font-semibold ${selectedAccessibility.includes('visual') ? 'text-blue-800' : 'text-gray-700'} leading-tight`}>{getText('accessibility_visual')}</p>
+                    <p className="text-xs text-gray-600 leading-tight mt-1 px-2">{getText('accessibility_visual_desc')}</p>
                   </div>
                 </Button>
                 
                 <Button
                   type="button"
                   variant={selectedAccessibility.includes('hearing') ? "default" : "outline"}
-                  className={`p-6 h-auto flex-col space-y-3 border-2 transition-all duration-200 ${
+                  className={`p-4 h-auto flex-col space-y-2 border-2 transition-all duration-200 min-h-[120px] ${
                     selectedAccessibility.includes('hearing') 
                       ? 'bg-yellow-50 border-yellow-300 shadow-md' 
                       : 'border-gray-200 hover:border-yellow-200'
@@ -437,8 +437,8 @@ export default function Registration() {
                     <i className="fas fa-assistive-listening-systems text-2xl text-yellow-600" aria-hidden="true"></i>
                   </div>
                   <div className="text-center">
-                    <p className={`text-sm font-semibold ${selectedAccessibility.includes('hearing') ? 'text-yellow-800' : 'text-gray-700'}`}>{getText('accessibility_hearing')}</p>
-                    <p className="text-xs text-gray-600">{getText('accessibility_hearing_desc')}</p>
+                    <p className={`text-sm font-semibold ${selectedAccessibility.includes('hearing') ? 'text-yellow-800' : 'text-gray-700'} leading-tight`}>{getText('accessibility_hearing')}</p>
+                    <p className="text-xs text-gray-600 leading-tight mt-1 px-2">{getText('accessibility_hearing_desc')}</p>
                   </div>
                 </Button>
               </div>

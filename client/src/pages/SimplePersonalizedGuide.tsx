@@ -159,12 +159,12 @@ export default function SimplePersonalizedGuide() {
 
   const speakGuide = () => {
     if (generatedGuide?.guide && 'speechSynthesis' in window) {
-      // 사용자 언어에 맞는 TTS 텍스트 생성
-      const ttsText = generateTTSText(generatedGuide.guide, language);
+      // 사용자 언어에 맞는 완전 번역된 TTS 텍스트 생성
+      const ttsText = generateFullyTranslatedTTS(generatedGuide.guide, language);
       
       const utterance = new SpeechSynthesisUtterance(ttsText);
       
-      // 언어별 음성 설정
+      // 언어별 정확한 음성 설정
       const languageMap: Record<string, string> = {
         ko: 'ko-KR',
         en: 'en-US', 
@@ -175,6 +175,7 @@ export default function SimplePersonalizedGuide() {
       utterance.lang = languageMap[language] || 'ko-KR';
       utterance.rate = 0.9;
       utterance.pitch = 1.0;
+      utterance.volume = 1.0;
       speechSynthesis.speak(utterance);
     }
   };
@@ -216,6 +217,73 @@ export default function SimplePersonalizedGuide() {
     ttsText += template.safety;
     ttsText += guide.safetyTips.slice(0, 2).join('. ') + '. ';
     ttsText += template.contacts;
+
+    return ttsText;
+  };
+
+  // 완전히 번역된 TTS 텍스트 생성
+  const generateFullyTranslatedTTS = (guide: any, lang: string): string => {
+    const fullyTranslatedGuides: Record<string, any> = {
+      ko: {
+        intro: '지진 발생 상황에 맞는 안전 가이드를 알려드립니다.',
+        primaryActions: [
+          "첫 번째로 즉시 책상 아래나 단단한 구조물 아래로 몸을 숨기고 드롭 커버 홀드 온 자세를 취하십시오",
+          "두 번째로 진동이 멈춘 후 가스와 전기를 차단하고 출입구를 확보하십시오",
+          "세 번째로 엘리베이터를 절대 사용하지 말고 계단을 이용하여 건물 밖 안전한 장소로 대피하십시오"
+        ],
+        safetyTips: [
+          "엘리베이터 사용을 금지하고 반드시 계단만 이용하여 대피하십시오",
+          "유리창이나 간판 등 낙하물을 주의하며 이동하고 머리를 보호하십시오"
+        ],
+        contacts: "긴급상황 발생 시 일일구 번에 즉시 신고하시기 바랍니다"
+      },
+      en: {
+        intro: 'I will provide you with earthquake safety guidance for your current situation.',
+        primaryActions: [
+          "First, immediately take cover under a desk or sturdy structure and assume the Drop Cover and Hold On position",
+          "Second, after shaking stops, shut off gas and electricity and secure all exits",
+          "Third, never use elevators and use stairs only to evacuate to a safe location outside the building"
+        ],
+        safetyTips: [
+          "Never use elevators and always use stairs only for evacuation",
+          "Watch for falling objects like glass and signs while moving and protect your head"
+        ],
+        contacts: "Please call one one nine immediately in emergency situations"
+      },
+      vi: {
+        intro: 'Tôi sẽ cung cấp cho bạn hướng dẫn an toàn động đất phù hợp với tình huống hiện tại.',
+        primaryActions: [
+          "Đầu tiên, ngay lập tức trú ẩn dưới bàn hoặc cấu trúc chắc chắn và thực hiện tư thế Cúi Che và Giữ chặt",
+          "Thứ hai, sau khi rung lắc dừng, tắt gas và điện và đảm bảo tất cả lối thoát",
+          "Thứ ba, không bao giờ sử dụng thang máy và chỉ sử dụng cầu thang để sơ tán đến vị trí an toàn bên ngoài tòa nhà"
+        ],
+        safetyTips: [
+          "Không bao giờ sử dụng thang máy và luôn chỉ sử dụng cầu thang để sơ tán",
+          "Cẩn thận các vật thể rơi như kính và biển hiệu khi di chuyển và bảo vệ đầu của bạn"
+        ],
+        contacts: "Vui lòng gọi một một chín ngay lập tức trong các tình huống khẩn cấp"
+      },
+      zh: {
+        intro: '我将为您提供适合当前情况的地震安全指导。',
+        primaryActions: [
+          "首先，立即躲到桌子下或坚固的结构下，采取蹲下掩护抓紧的姿势",
+          "其次，震动停止后，关闭煤气和电源，确保所有出口畅通",
+          "第三，绝不使用电梯，只使用楼梯疏散到建筑物外的安全地点"
+        ],
+        safetyTips: [
+          "绝不使用电梯，疏散时只能使用楼梯",
+          "移动时注意玻璃和招牌等坠落物体，保护好头部"
+        ],
+        contacts: "紧急情况下请立即拨打一一九"
+      }
+    };
+
+    const translated = fullyTranslatedGuides[lang] || fullyTranslatedGuides['ko'];
+    
+    let ttsText = translated.intro + ' ';
+    ttsText += translated.primaryActions.slice(0, 3).join('. ') + '. ';
+    ttsText += translated.safetyTips.slice(0, 2).join('. ') + '. ';
+    ttsText += translated.contacts;
 
     return ttsText;
   };

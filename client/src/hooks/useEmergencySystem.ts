@@ -38,11 +38,11 @@ export function useEmergencySystem() {
   const queryClient = useQueryClient();
   const [isEmergencyActive, setIsEmergencyActive] = useState(false);
 
-  // 현재 활성 알림 조회
+  // 현재 활성 알림 조회 - 수동 트리거 후에만 체크
   const { data: currentAlert, isLoading: alertLoading } = useQuery({
     queryKey: ['/api/emergency/current-alert'],
-    refetchInterval: 5000, // 5초마다 체크
-    enabled: true
+    refetchInterval: isEmergencyActive ? 5000 : false, // 긴급 상황일 때만 체크
+    enabled: isEmergencyActive
   });
 
   // 2차 사용자 분류
@@ -110,9 +110,12 @@ export function useEmergencySystem() {
     }
   });
 
-  // 데모 긴급 상황 트리거
+  // 데모 긴급 상황 트리거 - 수동 시뮬레이션만
   const triggerEmergencyDemoMutation = useMutation({
     mutationFn: async (disasterType: 'earthquake' | 'fire' = 'earthquake') => {
+      // 긴급 상황 활성화 (수동 트리거만)
+      setIsEmergencyActive(true);
+      
       const response = await fetch('/api/emergency/demo', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
