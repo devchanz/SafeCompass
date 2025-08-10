@@ -40,7 +40,7 @@ export default function SimplePersonalizedGuide() {
   const getText = (key: string) => {
     const texts: Record<string, Record<string, string>> = {
       ko: {
-        title: '🤖 AI 맞춤형 안전 가이드',
+        title: '🧭 맞춤형 안전 가이드',
         generating: 'AI가 맞춤형 가이드를 생성하고 있습니다...',
         generated_guide: '생성된 맞춤형 안전 가이드',
         primary_actions: '즉시 행동사항',
@@ -69,7 +69,7 @@ export default function SimplePersonalizedGuide() {
         quick_actions: '빠른 실행'
       },
       en: {
-        title: '🤖 AI Personalized Safety Guide',
+        title: '🧭 Personalized Safety Guide',
         generating: 'AI is generating your personalized guide...',
         generated_guide: 'Generated Personalized Safety Guide',
         primary_actions: 'Immediate Actions',
@@ -98,7 +98,7 @@ export default function SimplePersonalizedGuide() {
         quick_actions: 'Quick Actions'
       },
       vi: {
-        title: '🤖 Hướng dẫn An toàn Cá nhân hóa AI',
+        title: '🧭 Hướng dẫn An toàn Cá nhân hóa',
         generating: 'AI đang tạo hướng dẫn cá nhân hóa...',
         generated_guide: 'Hướng dẫn An toàn Cá nhân hóa Đã Tạo',
         primary_actions: 'Hành động Ngay lập tức',
@@ -127,7 +127,7 @@ export default function SimplePersonalizedGuide() {
         quick_actions: 'Hành động Nhanh'
       },
       zh: {
-        title: '🤖 AI个性化安全指南',
+        title: '🧭 个性化安全指南',
         generating: 'AI正在生成您的个性化指南...',
         generated_guide: '生成的个性化安全指南',
         primary_actions: '立即行动',
