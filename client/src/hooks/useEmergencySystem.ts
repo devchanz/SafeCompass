@@ -38,11 +38,11 @@ export function useEmergencySystem() {
   const queryClient = useQueryClient();
   const [isEmergencyActive, setIsEmergencyActive] = useState(false);
 
-  // 현재 활성 알림 조회 - 수동 트리거 후에만 체크
+  // 현재 활성 알림 조회 - 항상 체크하되 데모 실행 후에만 알림 활성화
   const { data: currentAlert, isLoading: alertLoading } = useQuery({
     queryKey: ['/api/emergency/current-alert'],
-    refetchInterval: isEmergencyActive ? 5000 : false, // 긴급 상황일 때만 체크
-    enabled: isEmergencyActive
+    refetchInterval: 5000, // 항상 5초마다 체크
+    enabled: true
   });
 
   // 2차 사용자 분류
@@ -134,9 +134,10 @@ export function useEmergencySystem() {
     }
   });
 
-  // 긴급 상황 감지
+  // 긴급 상황 감지 - 수동 데모 실행 후에만 활성화
   useEffect(() => {
     if (currentAlert && currentAlert.isActive) {
+      console.log('🚨 긴급 알림 감지:', currentAlert);
       setIsEmergencyActive(true);
       
       // 브라우저 알림 권한 요청 및 진동
@@ -145,7 +146,9 @@ export function useEmergencySystem() {
           if (permission === 'granted') {
             new Notification(currentAlert.title, {
               body: currentAlert.body,
-              icon: '/favicon.ico'
+              icon: '/favicon.ico',
+              tag: currentAlert.id,
+              requireInteraction: true
             });
           }
         });
@@ -153,9 +156,11 @@ export function useEmergencySystem() {
 
       // 진동 실행
       if ('vibrate' in navigator && currentAlert.vibrationPattern) {
+        console.log('📳 진동 패턴 실행:', currentAlert.vibrationPattern);
         navigator.vibrate(currentAlert.vibrationPattern);
       }
-    } else {
+    } else if (!currentAlert || !currentAlert.isActive) {
+      console.log('📴 긴급 상황 종료');
       setIsEmergencyActive(false);
     }
   }, [currentAlert]);

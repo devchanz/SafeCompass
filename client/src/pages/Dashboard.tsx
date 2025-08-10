@@ -1,4 +1,5 @@
 import { useState } from "react";
+import * as React from "react";
 import { Link, useLocation } from "wouter";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -16,6 +17,13 @@ export default function Dashboard() {
   const [, setLocation] = useLocation();
   const { currentAlert, triggerEmergencyDemo } = useEmergencySystem();
   const [showNotification, setShowNotification] = useState(false);
+
+  // 알림 자동 표시
+  React.useEffect(() => {
+    if (currentAlert && currentAlert.isActive) {
+      setShowNotification(true);
+    }
+  }, [currentAlert]);
 
   const handleDismissAlert = () => {
     setShowNotification(false);
@@ -500,6 +508,14 @@ export default function Dashboard() {
           </div>
         </CardContent>
       </Card>
+      {/* Push Notification - 조건부 렌더링 개선 */}
+      {(currentAlert && currentAlert.isActive) || showNotification ? (
+        <PushNotification 
+          alert={currentAlert} 
+          onDismiss={handleDismissAlert}
+          onOpen={handleOpenAlert}
+        />
+      ) : null}
     </div>
   );
 }
