@@ -11,6 +11,7 @@ Preferred communication style: Simple, everyday language.
   - 새로운 Supabase 프로젝트 생성 중 - DNS 프로비저닝 대기 상태  
   - PUSH 알림 중복 실행 문제 완전 해결 - SessionStorage 기반 전역 중복 방지 시스템 구현
   - TypeScript 오류 수정 완료 - useEmergencySystem Hook 안정성 개선
+  - Supabase RLS 정책 설정 파일 생성 - `supabase_rls_setup.sql`로 보안 설정 준비
   - OpenAI API 다국어 프롬프트 시스템 완전 구현 (한국어, 영어, 베트남어, 중국어)
   - 사용자 언어 선택에 따른 맞춤형 재난 대응 가이드 생성 
   - PUSH 알림 자동 감지 및 표시 시스템 개선 - 데모 실행 후 실시간 알림 작동
