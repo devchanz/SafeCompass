@@ -137,92 +137,117 @@ export default function EmergencyAlert() {
       </Card>
 
       {/* Current Status Input */}
-      <Card className="emergency-card mb-6">
-        <CardHeader>
-          <CardTitle className="text-xl font-bold text-emergency">
-{getText('title')}
+      <Card className="shadow-xl border-0 bg-white dark:bg-gray-800 mb-8">
+        <CardHeader className="bg-gradient-to-r from-red-500 to-red-600 text-white rounded-t-xl">
+          <CardTitle className="text-2xl font-bold text-center">
+            <i className="fas fa-map-marker-alt mr-3"></i>
+            {getText('title')}
           </CardTitle>
         </CardHeader>
-        <CardContent className="space-y-6">
+        <CardContent className="p-8 space-y-8">
           <div>
-            <Label className="text-lg font-semibold mb-3 block">
-{getText('location_question')}
+            <Label className="text-xl font-bold mb-6 block text-gray-900 dark:text-white">
+              {getText('location_question')}
             </Label>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-2 gap-4">
               <Button
                 variant={locationContext === "집 안 (거실/침실)" ? "default" : "outline"}
-                className="h-16 flex flex-col items-center justify-center text-sm"
+                className={`h-20 flex flex-col items-center justify-center text-sm rounded-2xl shadow-lg transition-all duration-300 transform hover:scale-105 ${
+                  locationContext === "집 안 (거실/침실)" 
+                    ? "bg-gradient-to-r from-blue-600 to-blue-700 text-white" 
+                    : "border-2 hover:bg-blue-50 dark:hover:bg-blue-900/20"
+                }`}
                 onClick={() => setLocationContext("집 안 (거실/침실)")}
               >
-                <i className="fas fa-home text-xl mb-1" aria-hidden="true"></i>
-{getText('location_home')}
+                <i className="fas fa-home text-2xl mb-2" aria-hidden="true"></i>
+                <span className="truncate text-center">{getText('location_home')}</span>
               </Button>
               <Button
                 variant={locationContext === "사무실/학교" ? "default" : "outline"}
-                className="h-16 flex flex-col items-center justify-center text-sm"
+                className={`h-20 flex flex-col items-center justify-center text-sm rounded-2xl shadow-lg transition-all duration-300 transform hover:scale-105 ${
+                  locationContext === "사무실/학교" 
+                    ? "bg-gradient-to-r from-blue-600 to-blue-700 text-white" 
+                    : "border-2 hover:bg-blue-50 dark:hover:bg-blue-900/20"
+                }`}
                 onClick={() => setLocationContext("사무실/학교")}
               >
-                <i className="fas fa-building text-xl mb-1" aria-hidden="true"></i>
-{getText('location_office')}
+                <i className="fas fa-building text-2xl mb-2" aria-hidden="true"></i>
+                <span className="truncate text-center">{getText('location_office')}</span>
               </Button>
               <Button
                 variant={locationContext === "길거리/야외" ? "default" : "outline"}
-                className="h-16 flex flex-col items-center justify-center text-sm"
+                className={`h-20 flex flex-col items-center justify-center text-sm rounded-2xl shadow-lg transition-all duration-300 transform hover:scale-105 ${
+                  locationContext === "길거리/야외" 
+                    ? "bg-gradient-to-r from-blue-600 to-blue-700 text-white" 
+                    : "border-2 hover:bg-blue-50 dark:hover:bg-blue-900/20"
+                }`}
                 onClick={() => setLocationContext("길거리/야외")}
               >
-                <i className="fas fa-road text-xl mb-1" aria-hidden="true"></i>
-{getText('location_outdoor')}
+                <i className="fas fa-road text-2xl mb-2" aria-hidden="true"></i>
+                <span className="truncate text-center">{getText('location_outdoor')}</span>
               </Button>
               <Button
                 variant={locationContext === "지하철/버스" ? "default" : "outline"}
-                className="h-16 flex flex-col items-center justify-center text-sm"
+                className={`h-20 flex flex-col items-center justify-center text-sm rounded-2xl shadow-lg transition-all duration-300 transform hover:scale-105 ${
+                  locationContext === "지하철/버스" 
+                    ? "bg-gradient-to-r from-blue-600 to-blue-700 text-white" 
+                    : "border-2 hover:bg-blue-50 dark:hover:bg-blue-900/20"
+                }`}
                 onClick={() => setLocationContext("지하철/버스")}
               >
-                <i className="fas fa-subway text-xl mb-1" aria-hidden="true"></i>
-{getText('location_transport')}
+                <i className="fas fa-subway text-2xl mb-2" aria-hidden="true"></i>
+                <span className="truncate text-center">{getText('location_transport')}</span>
               </Button>
             </div>
           </div>
 
           <div>
-            <Label className="text-lg font-semibold mb-3 block">
-{getText('mobility_question')}
+            <Label className="text-xl font-bold mb-6 block text-gray-900 dark:text-white">
+              {getText('mobility_question')}
             </Label>
-            <div className="grid grid-cols-1 gap-3">
+            <div className="grid grid-cols-1 gap-4">
               <Button
                 variant={canMove ? "default" : "outline"}
-                className="h-16 flex items-center justify-center text-base"
+                className={`h-16 flex items-center justify-center text-base rounded-2xl shadow-lg transition-all duration-300 transform hover:scale-105 ${
+                  canMove 
+                    ? "bg-gradient-to-r from-green-600 to-emerald-600 text-white" 
+                    : "border-2 hover:bg-green-50 dark:hover:bg-green-900/20"
+                }`}
                 onClick={() => setCanMove(true)}
               >
-                <i className="fas fa-walking text-xl mr-3 text-green-600" aria-hidden="true"></i>
-{getText('mobility_yes')}
+                <i className="fas fa-walking text-xl mr-3" aria-hidden="true"></i>
+                <span className="truncate">{getText('mobility_yes')}</span>
               </Button>
               <Button
                 variant={!canMove ? "default" : "outline"}
-                className="h-16 flex items-center justify-center text-base"
+                className={`h-16 flex items-center justify-center text-base rounded-2xl shadow-lg transition-all duration-300 transform hover:scale-105 ${
+                  !canMove 
+                    ? "bg-gradient-to-r from-orange-600 to-red-600 text-white" 
+                    : "border-2 hover:bg-orange-50 dark:hover:bg-orange-900/20"
+                }`}
                 onClick={() => setCanMove(false)}
               >
-                <i className="fas fa-wheelchair text-xl mr-3 text-red-600" aria-hidden="true"></i>
-{getText('mobility_no')}
+                <i className="fas fa-wheelchair text-xl mr-3" aria-hidden="true"></i>
+                <span className="truncate">{getText('mobility_no')}</span>
               </Button>
             </div>
           </div>
 
           <Button 
             onClick={handleGenerateGuide}
-            className="w-full bg-emergency hover:bg-emergency/90 text-white text-lg py-3"
+            className="w-full bg-gradient-to-r from-red-600 to-pink-600 hover:from-red-700 hover:to-pink-700 text-white text-lg py-6 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
             disabled={generateGuide.isPending}
           >
             {generateGuide.isPending ? (
-              <>
-                <i className="fas fa-spinner fa-spin mr-2" aria-hidden="true"></i>
-{getText('loading')}
-              </>
+              <div className="flex items-center justify-center space-x-2">
+                <i className="fas fa-spinner fa-spin text-xl" aria-hidden="true"></i>
+                <span className="truncate">{getText('loading')}</span>
+              </div>
             ) : (
-              <>
-                <i className="fas fa-compass mr-2" aria-hidden="true"></i>
-{getText('generate_guide')}
-              </>
+              <div className="flex items-center justify-center space-x-2">
+                <i className="fas fa-compass text-xl" aria-hidden="true"></i>
+                <span className="truncate">{getText('generate_guide')}</span>
+              </div>
             )}
           </Button>
         </CardContent>
