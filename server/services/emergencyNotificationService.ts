@@ -29,17 +29,18 @@ export class EmergencyNotificationService {
 
   /**
    * 재난 모니터링 시작 (실제로는 정부 API 주기적 호출)
+   * 현재는 수동 시뮬레이션만 지원 - 자동 모니터링 비활성화
    */
   startMonitoring(): void {
-    console.log('🔍 재난 모니터링 시작');
+    console.log('🔍 재난 모니터링 시작 (수동 모드)');
     
-    // 데모용: 30초마다 정부 재난 문자 시뮬레이션
-    this.monitoringInterval = setInterval(async () => {
-      await this.checkForDisasters();
-    }, 30000); // 30초 간격
+    // 자동 모니터링 비활성화 - 지진 시뮬레이션 버튼 클릭시에만 동작
+    // this.monitoringInterval = setInterval(async () => {
+    //   await this.checkForDisasters();
+    // }, 30000); // 30초 간격
 
-    // 즉시 한 번 실행
-    this.checkForDisasters();
+    // 즉시 실행도 비활성화 - 수동 트리거만 허용
+    // this.checkForDisasters();
   }
 
   /**

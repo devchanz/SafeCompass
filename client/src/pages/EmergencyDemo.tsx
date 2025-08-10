@@ -142,10 +142,10 @@ export default function EmergencyDemo() {
               updateStepStatus(3, 'completed');
               setProgress(100);
               
-              // 실제 Emergency 페이지로 자동 이동
+              // 시뮬레이션 완료 후 대시보드로 이동하여 PUSH 알림 표시
               setTimeout(() => {
-                console.log('🚀 자동으로 Emergency 페이지로 이동합니다...');
-                setLocation('/emergency');
+                console.log('🚀 지진 시뮬레이션 완료 - Dashboard로 이동합니다...');
+                setLocation('/');
               }, 1000);
               
             }, 1500);
@@ -175,12 +175,13 @@ export default function EmergencyDemo() {
       <Card className="emergency-card">
         <CardContent className="pt-6">
           <div className="text-center space-y-4">
-            <Button
-              onClick={simulateSystemFlow}
-              disabled={isRunning}
-              className="bg-red-600 hover:bg-red-700 text-white px-8 py-3 text-lg"
-              size="lg"
-            >
+            <div className="space-y-3">
+              <Button
+                onClick={simulateSystemFlow}
+                disabled={isRunning}
+                className="bg-red-600 hover:bg-red-700 text-white px-8 py-3 text-lg"
+                size="lg"
+              >
               {isRunning ? (
                 <>
                   <i className="fas fa-spinner fa-spin mr-2" aria-hidden="true"></i>
@@ -192,7 +193,31 @@ export default function EmergencyDemo() {
                   {getText('start_demo')}
                 </>
               )}
-            </Button>
+              </Button>
+              
+              <div className="text-center">
+                <p className="text-xs text-gray-500 mb-2">또는 간단한 지진 시뮬레이션만</p>
+                <Button
+                  onClick={async () => {
+                    try {
+                      await fetch('/api/emergency/demo', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ disasterType: 'earthquake' })
+                      });
+                      setLocation('/');
+                    } catch (error) {
+                      console.error('지진 시뮬레이션 오류:', error);
+                    }
+                  }}
+                  variant="outline"
+                  className="text-sm px-4 py-2"
+                >
+                  <i className="fas fa-bolt mr-2" aria-hidden="true"></i>
+                  바로 지진 시뮬레이션
+                </Button>
+              </div>
+            </div>
             
             {isRunning && (
               <div className="space-y-2">
@@ -274,14 +299,14 @@ export default function EmergencyDemo() {
                   {getText('demo_completed')}
                 </div>
                 <p className="text-sm text-green-600 mb-4">
-                  Emergency 페이지에서 상황을 입력하고 개인화된 가이드를 받아보세요.
+                  Dashboard에서 PUSH 알림을 확인하고 Emergency 페이지로 진행하세요.
                 </p>
                 <Button 
-                  onClick={() => setLocation('/emergency')}
-                  className="bg-green-600 hover:bg-green-700 text-white"
+                  onClick={() => setLocation('/')}
+                  className="bg-blue-600 hover:bg-blue-700 text-white"
                 >
-                  <i className="fas fa-arrow-right mr-2" aria-hidden="true"></i>
-                  Emergency 페이지로 이동
+                  <i className="fas fa-home mr-2" aria-hidden="true"></i>
+                  Dashboard로 이동
                 </Button>
               </div>
             )}
