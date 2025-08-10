@@ -12,6 +12,7 @@ Preferred communication style: Simple, everyday language.
   - 사용자 언어 선택에 따른 맞춤형 재난 대응 가이드 생성 
   - PUSH 알림 자동 감지 및 표시 시스템 개선 - 데모 실행 후 실시간 알림 작동
   - 중복 토스트 알림 문제 완전 해결 - 단일 알림 시스템으로 통합
+  - Supabase RLS 정책 설정으로 완전한 데이터베이스 연결 해결
   - 새로운 Supabase PostgreSQL 데이터베이스 스키마 적용 완료 (Transaction pooling)
   - OpenAI gpt-4o 모델 활용한 언어별 안전 가이드 실시간 생성 시스템
 - **PUSH 알림 다국어화 및 완료 시 제거 구현 (2025-08-10)**:
