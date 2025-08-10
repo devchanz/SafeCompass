@@ -1,223 +1,293 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Progress } from "@/components/ui/progress";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useEmergencySystem } from "@/hooks/useEmergencySystem";
+import { useLocation } from "wouter";
+
+interface DemoStep {
+  id: number;
+  title: string;
+  description: string;
+  status: 'pending' | 'running' | 'completed' | 'error';
+  data?: any;
+}
 
 export default function EmergencyDemo() {
   const { language } = useLanguage();
   const { triggerEmergencyDemo, isTriggeringDemo, currentAlert } = useEmergencySystem();
-  const [lastTriggered, setLastTriggered] = useState<string>('');
+  const [, setLocation] = useLocation();
+  
+  const [isRunning, setIsRunning] = useState(false);
+  const [currentStep, setCurrentStep] = useState(0);
+  const [steps, setSteps] = useState<DemoStep[]>([]);
+  const [progress, setProgress] = useState(0);
 
   const getText = (key: string) => {
     const texts: Record<string, Record<string, string>> = {
       ko: {
-        title: '🚨 긴급 재난 시스템 데모',
-        description: '초개인화 재난 대응 시스템을 체험해보세요',
-        trigger_earthquake: '지진 발생 시뮬레이션',
-        trigger_fire: '화재 발생 시뮬레이션',
-        triggering: '시뮬레이션 실행 중...',
-        current_status: '현재 상태',
-        no_active_alert: '활성 알림 없음',
-        alert_info: '알림 정보',
-        classification: '분류',
-        severity: '심각도',
-        location: '발생 위치',
-        timestamp: '발생 시간',
-        last_demo: '마지막 데모',
-        instructions: '시스템 작동 방식',
-        step1: '1. 정부 재난 문자 수신 (API 모니터링)',
-        step2: '2. Rule-Based + LLM 재난 분류',
-        step3: '3. 위급/긴급 재난일 경우 PUSH 알림',
-        step4: '4. 사용자가 앱 실행 시 2차 상황 입력',
-        step5: '5. 1차(DB) + 2차(현장) 정보 통합 분류',
-        step6: '6. 초개인화 맞춤형 안전 가이드 생성',
-        step7: '7. 단계별 TTS, 진동, 대피소, SOS 기능'
+        title: '🚨 재난 대응 시스템 실제 작동 데모',
+        description: '지진 발생부터 개인화된 안전 가이드까지 전체 플로우를 직접 체험하세요',
+        start_demo: '🚨 지진 시뮬레이션 시작',
+        demo_running: '시스템 작동 중...',
+        step_progress: '진행 단계',
+        disaster_detection: '재난 감지 및 분류',
+        alert_system: '긴급 알림 발송',
+        user_redirect: '사용자 앱 자동 이동',
+        situation_input: '현장 상황 입력',
+        guide_generation: '맞춤형 가이드 생성',
+        demo_complete: '데모 완료',
+        view_guide: '개인화된 가이드 보기',
+        restart_demo: '데모 다시 시작',
+        demo_completed: '✅ 전체 시스템 작동 완료!'
       },
       en: {
-        title: '🚨 Emergency Disaster System Demo',
-        description: 'Experience the ultra-personalized disaster response system',
-        trigger_earthquake: 'Earthquake Simulation',
-        trigger_fire: 'Fire Simulation',
-        triggering: 'Running simulation...',
-        current_status: 'Current Status',
-        no_active_alert: 'No active alerts',
-        alert_info: 'Alert Information',
-        classification: 'Classification',
-        severity: 'Severity',
-        location: 'Location',
-        timestamp: 'Timestamp',
-        last_demo: 'Last Demo',
-        instructions: 'System Operation',
-        step1: '1. Receive government disaster alerts (API monitoring)',
-        step2: '2. Rule-Based + LLM disaster classification',
-        step3: '3. Push notifications for critical/urgent disasters',
-        step4: '4. Secondary situation input when user opens app',
-        step5: '5. Integrate primary (DB) + secondary (field) information',
-        step6: '6. Generate ultra-personalized safety guides',
-        step7: '7. Step-by-step TTS, vibration, shelters, SOS features'
+        title: '🚨 Disaster Response System Live Demo',
+        description: 'Experience the complete flow from earthquake detection to personalized safety guides',
+        start_demo: '🚨 Start Earthquake Simulation',
+        demo_running: 'System Operating...',
+        step_progress: 'Step Progress',
+        disaster_detection: 'Disaster Detection & Classification',
+        alert_system: 'Emergency Alert Dispatch',
+        user_redirect: 'Auto User App Redirect',
+        situation_input: 'Field Situation Input',
+        guide_generation: 'Personalized Guide Generation',
+        demo_complete: 'Demo Complete',
+        view_guide: 'View Personalized Guide',
+        restart_demo: 'Restart Demo',
+        demo_completed: '✅ Complete System Operation Finished!'
       }
     };
     return texts[language]?.[key] || texts['ko'][key] || key;
   };
 
-  const handleTriggerDemo = async (disasterType: 'earthquake' | 'fire') => {
+  const initializeSteps = (): DemoStep[] => [
+    {
+      id: 1,
+      title: getText('disaster_detection'),
+      description: '정부 재난 API 모니터링 → Rule-Based + LLM 분류',
+      status: 'pending'
+    },
+    {
+      id: 2,
+      title: getText('alert_system'),
+      description: '위급재난 판별 → PUSH 알림 + 진동 발송',
+      status: 'pending'
+    },
+    {
+      id: 3,
+      title: getText('user_redirect'),
+      description: '사용자 앱 자동 실행 → Emergency 페이지 이동',
+      status: 'pending'
+    },
+    {
+      id: 4,
+      title: getText('situation_input'),
+      description: '현재 위치 + 상황 정보 입력 → 2차 분류',
+      status: 'pending'
+    },
+    {
+      id: 5,
+      title: getText('guide_generation'),
+      description: '1차+2차 정보 통합 → OpenAI 개인화 가이드 생성',
+      status: 'pending'
+    }
+  ];
+
+  const updateStepStatus = (stepId: number, status: 'pending' | 'running' | 'completed' | 'error', data?: any) => {
+    setSteps(prev => prev.map(step => 
+      step.id === stepId ? { ...step, status, data } : step
+    ));
+  };
+
+  const simulateSystemFlow = async () => {
+    setIsRunning(true);
+    setSteps(initializeSteps());
+    setCurrentStep(1);
+    setProgress(0);
+
     try {
-      await triggerEmergencyDemo(disasterType);
-      setLastTriggered(`${disasterType} - ${new Date().toLocaleTimeString()}`);
+      // Step 1: 재난 감지 및 분류
+      updateStepStatus(1, 'running');
+      setProgress(10);
+      
+      console.log('🔥 Step 1: 재난 감지 시작...');
+      const demoResponse = await fetch('/api/emergency/demo', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ disasterType: 'earthquake' })
+      });
+      const demoData = await demoResponse.json();
+      
+      updateStepStatus(1, 'completed', demoData);
+      setProgress(20);
+      
+      // Step 2: 알림 발송 (자동으로 이미 발송됨)
+      setTimeout(() => {
+        updateStepStatus(2, 'running');
+        setProgress(40);
+        
+        setTimeout(() => {
+          updateStepStatus(2, 'completed', { alert: 'PUSH 알림 발송됨' });
+          setProgress(60);
+          
+          // Step 3: 자동 페이지 이동
+          setTimeout(() => {
+            updateStepStatus(3, 'running');
+            setProgress(80);
+            
+            setTimeout(() => {
+              updateStepStatus(3, 'completed');
+              setProgress(100);
+              
+              // 실제 Emergency 페이지로 자동 이동
+              setTimeout(() => {
+                console.log('🚀 자동으로 Emergency 페이지로 이동합니다...');
+                setLocation('/emergency');
+              }, 1000);
+              
+            }, 1500);
+          }, 1000);
+        }, 2000);
+      }, 1500);
+      
     } catch (error) {
       console.error('데모 실행 오류:', error);
-      alert('데모 실행 중 오류가 발생했습니다.');
+      updateStepStatus(currentStep, 'error');
     }
   };
 
   return (
-    <div className="max-w-4xl mx-auto space-y-6">
-      {/* 헤더 */}
-      <Card className="bg-gradient-to-r from-red-500 to-orange-500 text-white">
-        <CardHeader>
-          <CardTitle className="text-center text-2xl">
+    <div className="max-w-4xl mx-auto space-y-6 p-4">
+      {/* Demo Header */}
+      <Card className="emergency-card bg-gradient-to-r from-red-50 to-orange-50 border-red-200">
+        <CardHeader className="text-center">
+          <CardTitle className="text-2xl font-bold text-red-700">
             {getText('title')}
           </CardTitle>
-          <p className="text-center text-lg opacity-90">
-            {getText('description')}
-          </p>
+          <p className="text-gray-600 mt-2">{getText('description')}</p>
         </CardHeader>
       </Card>
 
-      {/* 시뮬레이션 버튼 */}
-      <Card>
-        <CardHeader>
-          <CardTitle>데모 실행</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      {/* Demo Control */}
+      <Card className="emergency-card">
+        <CardContent className="pt-6">
+          <div className="text-center space-y-4">
             <Button
+              onClick={simulateSystemFlow}
+              disabled={isRunning}
+              className="bg-red-600 hover:bg-red-700 text-white px-8 py-3 text-lg"
               size="lg"
-              className="h-16 bg-red-600 hover:bg-red-700 text-white"
-              onClick={() => handleTriggerDemo('earthquake')}
-              disabled={isTriggeringDemo}
             >
-              <i className="fas fa-mountain mr-3 text-xl" aria-hidden="true"></i>
-              <div className="flex flex-col">
-                <span className="font-bold">{getText('trigger_earthquake')}</span>
-                <span className="text-sm opacity-80">규모 5.8 대전 유성구</span>
-              </div>
+              {isRunning ? (
+                <>
+                  <i className="fas fa-spinner fa-spin mr-2" aria-hidden="true"></i>
+                  {getText('demo_running')}
+                </>
+              ) : (
+                <>
+                  <i className="fas fa-play mr-2" aria-hidden="true"></i>
+                  {getText('start_demo')}
+                </>
+              )}
             </Button>
-
-            <Button
-              size="lg"
-              className="h-16 bg-orange-600 hover:bg-orange-700 text-white"
-              onClick={() => handleTriggerDemo('fire')}
-              disabled={isTriggeringDemo}
-            >
-              <i className="fas fa-fire mr-3 text-xl" aria-hidden="true"></i>
-              <div className="flex flex-col">
-                <span className="font-bold">{getText('trigger_fire')}</span>
-                <span className="text-sm opacity-80">대형화재 대전 중구</span>
+            
+            {isRunning && (
+              <div className="space-y-2">
+                <p className="text-sm text-gray-600">{getText('step_progress')}</p>
+                <Progress value={progress} className="w-full" />
+                <p className="text-xs text-gray-500">{progress}% 완료</p>
               </div>
-            </Button>
+            )}
           </div>
-
-          {isTriggeringDemo && (
-            <div className="text-center text-blue-600 font-medium">
-              <i className="fas fa-spinner fa-spin mr-2" aria-hidden="true"></i>
-              {getText('triggering')}
-            </div>
-          )}
-
-          {lastTriggered && (
-            <div className="text-center text-green-600">
-              {getText('last_demo')}: {lastTriggered}
-            </div>
-          )}
         </CardContent>
       </Card>
 
-      {/* 현재 상태 */}
-      <Card>
-        <CardHeader>
-          <CardTitle>{getText('current_status')}</CardTitle>
-        </CardHeader>
-        <CardContent>
-          {currentAlert ? (
-            <div className="space-y-3">
-              <div className="flex items-center gap-2">
-                <span className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></span>
-                <span className="font-bold text-red-600">활성 알림 있음</span>
-              </div>
-              
-              <div className="bg-red-50 p-4 rounded-lg">
-                <h3 className="font-bold text-red-800 mb-2">{currentAlert.title}</h3>
-                <p className="text-red-700 mb-3">{currentAlert.body}</p>
-                
-                <div className="grid grid-cols-2 gap-4 text-sm">
-                  <div>
-                    <span className="font-semibold">{getText('classification')}:</span>
-                    <span className="ml-2">{currentAlert.data.classification}</span>
+      {/* Step Progress */}
+      {steps.length > 0 && (
+        <Card className="emergency-card">
+          <CardHeader>
+            <CardTitle className="flex items-center">
+              <i className="fas fa-tasks mr-2 text-blue-600" aria-hidden="true"></i>
+              시스템 작동 단계
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              {steps.map((step, index) => (
+                <div key={step.id} className="flex items-start space-x-4 p-4 rounded-lg border">
+                  <div className="flex-shrink-0">
+                    {step.status === 'pending' && (
+                      <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center">
+                        <span className="text-sm text-gray-500">{step.id}</span>
+                      </div>
+                    )}
+                    {step.status === 'running' && (
+                      <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center">
+                        <i className="fas fa-spinner fa-spin text-blue-600" aria-hidden="true"></i>
+                      </div>
+                    )}
+                    {step.status === 'completed' && (
+                      <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center">
+                        <i className="fas fa-check text-green-600" aria-hidden="true"></i>
+                      </div>
+                    )}
+                    {step.status === 'error' && (
+                      <div className="w-8 h-8 rounded-full bg-red-100 flex items-center justify-center">
+                        <i className="fas fa-times text-red-600" aria-hidden="true"></i>
+                      </div>
+                    )}
                   </div>
-                  <div>
-                    <span className="font-semibold">{getText('severity')}:</span>
-                    <span className="ml-2">{currentAlert.data.severity}</span>
-                  </div>
-                  <div>
-                    <span className="font-semibold">{getText('location')}:</span>
-                    <span className="ml-2">{currentAlert.data.location}</span>
-                  </div>
-                  <div>
-                    <span className="font-semibold">{getText('timestamp')}:</span>
-                    <span className="ml-2">{new Date(currentAlert.timestamp).toLocaleTimeString()}</span>
+                  
+                  <div className="flex-grow">
+                    <div className="flex items-center space-x-2 mb-1">
+                      <h4 className="font-semibold">{step.title}</h4>
+                      <Badge variant={
+                        step.status === 'completed' ? 'default' :
+                        step.status === 'running' ? 'secondary' :
+                        step.status === 'error' ? 'destructive' : 'outline'
+                      }>
+                        {step.status === 'pending' ? '대기중' :
+                         step.status === 'running' ? '실행중' :
+                         step.status === 'completed' ? '완료' : '오류'}
+                      </Badge>
+                    </div>
+                    <p className="text-sm text-gray-600">{step.description}</p>
+                    
+                    {step.data && step.status === 'completed' && (
+                      <div className="mt-2 p-2 bg-green-50 rounded text-xs text-green-700">
+                        {step.id === 1 && `✅ 재난 분류: ${step.data.data?.classification} (${step.data.data?.disasterType})`}
+                        {step.id === 2 && `✅ ${step.data.alert}`}
+                        {step.id === 3 && `✅ Emergency 페이지로 자동 이동`}
+                      </div>
+                    )}
                   </div>
                 </div>
+              ))}
+            </div>
+            
+            {progress === 100 && (
+              <div className="mt-6 p-4 bg-green-50 border border-green-200 rounded-lg text-center">
+                <div className="text-green-700 font-semibold mb-2">
+                  {getText('demo_completed')}
+                </div>
+                <p className="text-sm text-green-600 mb-4">
+                  Emergency 페이지에서 상황을 입력하고 개인화된 가이드를 받아보세요.
+                </p>
+                <Button 
+                  onClick={() => setLocation('/emergency')}
+                  className="bg-green-600 hover:bg-green-700 text-white"
+                >
+                  <i className="fas fa-arrow-right mr-2" aria-hidden="true"></i>
+                  Emergency 페이지로 이동
+                </Button>
               </div>
-            </div>
-          ) : (
-            <div className="text-center text-gray-500">
-              <i className="fas fa-check-circle text-3xl mb-2" aria-hidden="true"></i>
-              <p>{getText('no_active_alert')}</p>
-            </div>
-          )}
-        </CardContent>
-      </Card>
-
-      {/* 시스템 작동 방식 */}
-      <Card>
-        <CardHeader>
-          <CardTitle>{getText('instructions')}</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <ol className="space-y-3">
-            <li className="flex items-start gap-3">
-              <span className="w-8 h-8 bg-blue-500 text-white rounded-full flex items-center justify-center font-bold text-sm">1</span>
-              <span>{getText('step1')}</span>
-            </li>
-            <li className="flex items-start gap-3">
-              <span className="w-8 h-8 bg-blue-500 text-white rounded-full flex items-center justify-center font-bold text-sm">2</span>
-              <span>{getText('step2')}</span>
-            </li>
-            <li className="flex items-start gap-3">
-              <span className="w-8 h-8 bg-red-500 text-white rounded-full flex items-center justify-center font-bold text-sm">3</span>
-              <span>{getText('step3')}</span>
-            </li>
-            <li className="flex items-start gap-3">
-              <span className="w-8 h-8 bg-orange-500 text-white rounded-full flex items-center justify-center font-bold text-sm">4</span>
-              <span>{getText('step4')}</span>
-            </li>
-            <li className="flex items-start gap-3">
-              <span className="w-8 h-8 bg-purple-500 text-white rounded-full flex items-center justify-center font-bold text-sm">5</span>
-              <span>{getText('step5')}</span>
-            </li>
-            <li className="flex items-start gap-3">
-              <span className="w-8 h-8 bg-green-500 text-white rounded-full flex items-center justify-center font-bold text-sm">6</span>
-              <span>{getText('step6')}</span>
-            </li>
-            <li className="flex items-start gap-3">
-              <span className="w-8 h-8 bg-indigo-500 text-white rounded-full flex items-center justify-center font-bold text-sm">7</span>
-              <span>{getText('step7')}</span>
-            </li>
-          </ol>
-        </CardContent>
-      </Card>
+            )}
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 }
