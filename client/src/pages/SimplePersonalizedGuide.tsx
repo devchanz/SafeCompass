@@ -3,9 +3,12 @@ import { useLocation } from "wouter";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useUserProfile } from "@/hooks/useUserProfile";
 import { useEmergencySystem } from "@/hooks/useEmergencySystem";
+import { useToast } from "@/hooks/use-toast";
 
 interface PersonalizedGuide {
   guide: {
@@ -23,9 +26,11 @@ export default function SimplePersonalizedGuide() {
   const [, setLocation] = useLocation();
   const { data: userProfile } = useUserProfile();
   const { currentAlert } = useEmergencySystem();
+  const { toast } = useToast();
   
   const [isGenerating, setIsGenerating] = useState(true);
   const [generatedGuide, setGeneratedGuide] = useState<PersonalizedGuide | null>(null);
+  const [isSOSOpen, setIsSOSOpen] = useState(false);
 
   const getText = (key: string) => {
     const texts: Record<string, Record<string, string>> = {
@@ -44,7 +49,17 @@ export default function SimplePersonalizedGuide() {
         speak_guide: '음성으로 듣기',
         back_to_emergency: '응급 페이지로 돌아가기',
         disaster_info: '재난 정보',
-        user_profile: '사용자 프로필'
+        user_profile: '사용자 프로필',
+        emergency_sos: '긴급 SOS',
+        need_help: '도움이 필요한 상황을 알려주세요',
+        call_119: '119 신고',
+        notify_partner: '동행 파트너에게 알리기',
+        cancel: '취소',
+        emergency_message: '긴급상황! 현재 위치에서 도움이 필요합니다.',
+        location_sent: '위치 정보와 함께 긴급 알림을 전송했습니다',
+        no_partner: '등록된 동행 파트너가 없습니다. 프로필에서 추가하세요.',
+        gps_getting: 'GPS 위치 확인 중...',
+        registered_partner: '등록된 파트너'
       },
       en: {
         title: '🤖 AI Personalized Safety Guide',
@@ -61,7 +76,71 @@ export default function SimplePersonalizedGuide() {
         speak_guide: 'Listen with Voice',
         back_to_emergency: 'Back to Emergency',
         disaster_info: 'Disaster Information',
-        user_profile: 'User Profile'
+        user_profile: 'User Profile',
+        emergency_sos: 'Emergency SOS',
+        need_help: 'Report emergency situation',
+        call_119: 'Call 119',
+        notify_partner: 'Notify Emergency Partner',
+        cancel: 'Cancel',
+        emergency_message: 'EMERGENCY! Need help at my current location.',
+        location_sent: 'Emergency alert sent with location information',
+        no_partner: 'No emergency partner registered. Add one in your profile.',
+        gps_getting: 'Getting GPS location...',
+        registered_partner: 'Registered Partner'
+      },
+      vi: {
+        title: '🤖 Hướng dẫn An toàn Cá nhân hóa AI',
+        generating: 'AI đang tạo hướng dẫn cá nhân hóa...',
+        generated_guide: 'Hướng dẫn An toàn Cá nhân hóa Đã Tạo',
+        primary_actions: 'Hành động Ngay lập tức',
+        safety_tips: 'Mẹo An toàn',
+        special_considerations: 'Lưu ý Đặc biệt',
+        emergency_contacts: 'Liên lạc Khẩn cấp',
+        reading_time: 'Thời gian Đọc Dự kiến',
+        minutes: 'phút',
+        view_shelters: 'Xem Nơi Trú ẩn Gần đây',
+        call_sos: 'Gọi SOS Khẩn cấp',
+        speak_guide: 'Nghe bằng Giọng nói',
+        back_to_emergency: 'Quay lại Khẩn cấp',
+        disaster_info: 'Thông tin Thảm họa',
+        user_profile: 'Hồ sơ Người dùng',
+        emergency_sos: 'SOS Khẩn cấp',
+        need_help: 'Báo cáo tình huống khẩn cấp',
+        call_119: 'Gọi 119',
+        notify_partner: 'Thông báo Đối tác Khẩn cấp',
+        cancel: 'Hủy',
+        emergency_message: 'KHẨN CẤP! Cần trợ giúp tại vị trí hiện tại.',
+        location_sent: 'Cảnh báo khẩn cấp đã được gửi cùng thông tin vị trí',
+        no_partner: 'Chưa đăng ký đối tác khẩn cấp. Thêm trong hồ sơ của bạn.',
+        gps_getting: 'Đang lấy vị trí GPS...',
+        registered_partner: 'Đối tác Đã đăng ký'
+      },
+      zh: {
+        title: '🤖 AI个性化安全指南',
+        generating: 'AI正在生成您的个性化指南...',
+        generated_guide: '生成的个性化安全指南',
+        primary_actions: '立即行动',
+        safety_tips: '安全提示',
+        special_considerations: '特别注意事项',
+        emergency_contacts: '紧急联系方式',
+        reading_time: '预计阅读时间',
+        minutes: '分钟',
+        view_shelters: '查看附近避难所',
+        call_sos: 'SOS紧急呼叫',
+        speak_guide: '语音播放',
+        back_to_emergency: '返回紧急页面',
+        disaster_info: '灾难信息',
+        user_profile: '用户资料',
+        emergency_sos: '紧急SOS',
+        need_help: '报告紧急情况',
+        call_119: '拨打119',
+        notify_partner: '通知紧急联系人',
+        cancel: '取消',
+        emergency_message: '紧急情况！当前位置需要帮助。',
+        location_sent: '已发送紧急警报和位置信息',
+        no_partner: '未注册紧急联系人。请在个人资料中添加。',
+        gps_getting: '正在获取GPS位置...',
+        registered_partner: '已注册联系人'
       }
     };
     return texts[language]?.[key] || texts['ko'][key] || key;
@@ -299,9 +378,93 @@ export default function SimplePersonalizedGuide() {
     return fallbackTexts[lang] || fallbackTexts['ko'];
   };
 
-  const callSOS = () => {
-    if (confirm('119에 연결하시겠습니까?')) {
-      window.open('tel:119');
+  const handleCall119 = () => {
+    // 진동과 함께 119 연결
+    if (navigator.vibrate) {
+      navigator.vibrate([300, 100, 300, 100, 300]);
+    }
+    window.location.href = 'tel:119';
+    setIsSOSOpen(false);
+  };
+
+  const handleContactPartner = async () => {
+    // 사용자 프로필에서 파트너 정보 확인
+    if (!userProfile?.partner?.phone) {
+      toast({
+        title: "⚠️ " + getText('no_partner'),
+        variant: "destructive",
+        duration: 4000,
+      });
+      return;
+    }
+
+    try {
+      // GPS 위치 가져오기
+      toast({
+        title: "📍 " + getText('gps_getting'),
+      });
+
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const lat = position.coords.latitude;
+          const lng = position.coords.longitude;
+          
+          // 위치 정보 포함한 긴급 메시지
+          const emergencyMessage = `${getText('emergency_message')} 
+위치: https://maps.google.com/maps?q=${lat},${lng}
+좌표: ${lat.toFixed(6)}, ${lng.toFixed(6)}
+시간: ${new Date().toLocaleString()}`;
+
+          const encodedMessage = encodeURIComponent(emergencyMessage);
+          
+          // SMS 전송
+          window.location.href = `sms:${userProfile.partner.phone}?body=${encodedMessage}`;
+          
+          // 성공 토스트
+          toast({
+            title: "✅ " + getText('location_sent'),
+            description: `${userProfile.partner.name} (${userProfile.partner.phone})`,
+            duration: 5000,
+          });
+
+          // 진동 피드백
+          if (navigator.vibrate) {
+            navigator.vibrate([200, 100, 200]);
+          }
+        },
+        (error) => {
+          console.error('위치 정보 오류:', error);
+          // 위치 없이도 전송
+          const basicMessage = getText('emergency_message');
+          const encodedMessage = encodeURIComponent(basicMessage + ` 시간: ${new Date().toLocaleString()}`);
+          window.location.href = `sms:${userProfile.partner.phone}?body=${encodedMessage}`;
+          
+          toast({
+            title: "📱 긴급 알림 전송됨",
+            description: "위치 정보 없이 전송되었습니다",
+            duration: 3000,
+          });
+        }
+      );
+    } catch (error) {
+      console.error('파트너 연락 오류:', error);
+      toast({
+        title: "❌ 전송 실패",
+        description: "다시 시도해주세요",
+        variant: "destructive",
+        duration: 3000,
+      });
+    }
+    
+    setIsSOSOpen(false);
+  };
+
+  const openSOSDialog = () => {
+    setIsSOSOpen(true);
+    
+    // Trigger strong vibration for attention
+    if (navigator.vibrate) {
+      navigator.vibrate([200, 100, 200, 100, 200]);
     }
   };
 
@@ -347,7 +510,7 @@ export default function SimplePersonalizedGuide() {
               <i className="fas fa-map-marked-alt mr-2"></i>
               {getText('view_shelters')}
             </Button>
-            <Button onClick={callSOS} className="bg-red-600 hover:bg-red-700 text-white h-14">
+            <Button onClick={openSOSDialog} className="bg-red-600 hover:bg-red-700 text-white h-14">
               <i className="fas fa-phone-alt mr-2"></i>
               {getText('call_sos')}
             </Button>
@@ -460,6 +623,59 @@ export default function SimplePersonalizedGuide() {
           </Button>
         </div>
       </div>
+
+      {/* SOS Dialog */}
+      <Dialog open={isSOSOpen} onOpenChange={setIsSOSOpen}>
+        <DialogContent className="max-w-md w-full mx-4">
+          <DialogHeader>
+            <div className="text-center">
+              <div className="w-16 h-16 bg-red-600 text-white rounded-full flex items-center justify-center mx-auto mb-4 animate-pulse">
+                <i className="fas fa-exclamation-triangle text-2xl" aria-hidden="true"></i>
+              </div>
+              <DialogTitle className="text-2xl font-bold text-red-600 mb-2">{getText('emergency_sos')}</DialogTitle>
+              <p className="text-gray-600 mb-6">{getText('need_help')}</p>
+            </div>
+          </DialogHeader>
+          
+          <div className="space-y-4">
+            {/* 파트너 정보 표시 */}
+            {userProfile?.partner?.name && (
+              <Alert className="bg-blue-50 border-blue-200">
+                <i className="fas fa-user-friends text-blue-600" aria-hidden="true"></i>
+                <AlertDescription>
+                  <strong>{getText('registered_partner')}:</strong><br />
+                  {userProfile.partner.name} ({userProfile.partner.phone})
+                </AlertDescription>
+              </Alert>
+            )}
+            
+            <Button 
+              onClick={handleCall119}
+              className="w-full bg-red-600 hover:bg-red-700 py-3 px-4 font-semibold"
+            >
+              <i className="fas fa-phone mr-2" aria-hidden="true"></i>
+              {getText('call_119')}
+            </Button>
+            
+            <Button 
+              onClick={handleContactPartner}
+              className="w-full bg-green-600 hover:bg-green-700 py-3 px-4 font-semibold"
+              disabled={!userProfile?.partner?.phone}
+            >
+              <i className="fas fa-sms mr-2" aria-hidden="true"></i>
+              {getText('notify_partner')}
+            </Button>
+            
+            <Button 
+              onClick={() => setIsSOSOpen(false)}
+              variant="outline"
+              className="w-full py-3 px-4 font-semibold"
+            >
+              {getText('cancel')}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
