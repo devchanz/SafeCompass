@@ -27,13 +27,16 @@ export const emergencyEvents = pgTable("emergency_events", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
   userId: varchar("user_id").references(() => users.id).notNull(),
   type: text("type").notNull(), // 'earthquake', 'fire', etc.
-  severity: text("severity").notNull(),
+  severity: text("severity").notNull(), // 'critical', 'urgent', 'moderate'
+  classification: text("classification").notNull(), // '위급재난', '긴급재난'  
+  magnitude: text("magnitude"), // 지진 규모
   location: jsonb("location").$type<{lat: number, lng: number}>(),
   situation: jsonb("situation").$type<{
-    locationContext: string,
+    locationContext: string, // '집안', '사무실', '길거리', '지하철'
     canMove: boolean,
     additionalInfo?: string
   }>(),
+  userClassification: text("user_classification"), // 2차 사용자 분류 결과
   personalizedGuide: text("personalized_guide"),
   createdAt: timestamp("created_at").defaultNow(),
 });

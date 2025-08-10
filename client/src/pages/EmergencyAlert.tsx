@@ -14,6 +14,7 @@ export default function EmergencyAlert() {
   const [canMove, setCanMove] = useState<boolean>(true);
   const { generateGuide } = useEmergency();
   const { currentAlert, markAlertAsRead } = useEmergencyNotification();
+  const [isGenerating, setIsGenerating] = useState(false);
   const { language } = useLanguage();
 
   // 하드코딩된 다국어 텍스트

@@ -2,6 +2,9 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage.js";
 import { ragService } from "./services/ragService.js";
+import { DisasterClassificationService } from "./services/disasterClassificationService.js";
+import { UserClassificationService } from "./services/userClassificationService.js";
+import { EmergencyNotificationService } from "./services/emergencyNotificationService.js";
 import { insertUserSchema, insertCompanionSchema, insertEmergencyEventSchema } from "@shared/schema";
 import { z } from "zod";
 
@@ -356,5 +359,76 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   const httpServer = createServer(app);
+  // 서비스 인스턴스 생성
+  const disasterService = new DisasterClassificationService();
+  const userClassificationService = new UserClassificationService();
+  const emergencyService = new EmergencyNotificationService();
+
+  // 재난 모니터링 시작
+  emergencyService.startMonitoring();
+
+  // Enhanced Emergency System API
+  
+  // 재난 분류 및 알림
+  app.post("/api/disaster/classify", async (req, res) => {
+    try {
+      const { disasterText, location, userLocation } = req.body;
+      const result = await disasterService.classifyDisaster(disasterText, location, userLocation);
+      res.json(result);
+    } catch (error) {
+      res.status(500).json({ error: (error as Error).message });
+    }
+  });
+
+  // 2차 사용자 분류
+  app.post("/api/emergency/classify-user", async (req, res) => {
+    try {
+      const { userId, situation } = req.body;
+      const user = await storage.getUserById(userId);
+      
+      if (!user) {
+        return res.status(404).json({ error: "사용자를 찾을 수 없습니다" });
+      }
+
+      const classification = userClassificationService.classifyUser(user, situation);
+      res.json(classification);
+    } catch (error) {
+      res.status(500).json({ error: (error as Error).message });
+    }
+  });
+
+  // 현재 활성 알림 가져오기
+  app.get("/api/emergency/current-alert", (req, res) => {
+    const alert = emergencyService.getActiveAlert();
+    res.json(alert);
+  });
+
+  // 알림 읽음 처리
+  app.post("/api/emergency/mark-read", (req, res) => {
+    emergencyService.markAlertAsRead();
+    res.json({ success: true });
+  });
+
+  // 재난 상황 종료
+  app.post("/api/emergency/all-clear", async (req, res) => {
+    try {
+      await emergencyService.sendAllClearNotification();
+      res.json({ success: true });
+    } catch (error) {
+      res.status(500).json({ error: (error as Error).message });
+    }
+  });
+
+  // 데모용 긴급 상황 트리거
+  app.post("/api/emergency/demo", async (req, res) => {
+    try {
+      const { disasterType = 'earthquake' } = req.body;
+      const notification = await emergencyService.triggerEmergencyDemo(disasterType);
+      res.json(notification);
+    } catch (error) {
+      res.status(500).json({ error: (error as Error).message });
+    }
+  });
+
   return httpServer;
 }
