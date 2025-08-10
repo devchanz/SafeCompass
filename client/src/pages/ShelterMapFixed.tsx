@@ -54,7 +54,17 @@ export default function ShelterMapFixed() {
         select_shelter: '대피소 선택',
         route_calculation: '경로 계산',
         back_to_list: '목록으로',
-        refresh_location: '위치 새로고침'
+        refresh_location: '위치 새로고침',
+        legend: '범례',
+        walking_route: '보행자 경로',
+        straight_distance: '직선 거리',
+        tmap_route: 'T-Map 실제 경로',
+        fallback_route: '대체 직선 경로',
+        location_map: '위치 지도',
+        shelter_details: '대피소 상세정보',
+        meters: 'm',
+        people: '명',
+        select_for_route: '경로 확인'
       },
       en: {
         shelter_map: 'Shelter Map',
@@ -74,7 +84,17 @@ export default function ShelterMapFixed() {
         select_shelter: 'Select Shelter',
         route_calculation: 'Route Calculation',
         back_to_list: 'Back to List',
-        refresh_location: 'Refresh Location'
+        refresh_location: 'Refresh Location',
+        legend: 'Legend',
+        walking_route: 'Walking Route',
+        straight_distance: 'Straight Distance',
+        tmap_route: 'T-Map Actual Route',
+        fallback_route: 'Fallback Straight Route',
+        location_map: 'Location Map',
+        shelter_details: 'Shelter Details',
+        meters: 'm',
+        people: 'people',
+        select_for_route: 'View Route'
       },
       vi: {
         shelter_map: 'Bản đồ nơi trú ẩn',
@@ -94,7 +114,17 @@ export default function ShelterMapFixed() {
         select_shelter: 'Chọn nơi trú ẩn',
         route_calculation: 'Tính toán lộ trình',
         back_to_list: 'Quay lại danh sách',
-        refresh_location: 'Làm mới vị trí'
+        refresh_location: 'Làm mới vị trí',
+        legend: 'Chú giải',
+        walking_route: 'Lộ trình đi bộ',
+        straight_distance: 'Khoảng cách thẳng',
+        tmap_route: 'Tuyến đường thực tế T-Map',
+        fallback_route: 'Tuyến đường thẳng dự phòng',
+        location_map: 'Bản đồ vị trí',
+        shelter_details: 'Chi tiết nơi trú ẩn',
+        meters: 'm',
+        people: 'người',
+        select_for_route: 'Xem lộ trình'
       },
       zh: {
         shelter_map: '避难所地图',
@@ -114,7 +144,17 @@ export default function ShelterMapFixed() {
         select_shelter: '选择避难所',
         route_calculation: '路线计算',
         back_to_list: '返回列表',
-        refresh_location: '刷新位置'
+        refresh_location: '刷新位置',
+        legend: '图例',
+        walking_route: '步行路线',
+        straight_distance: '直线距离',
+        tmap_route: 'T-Map实际路线',
+        fallback_route: '备用直线路线',
+        location_map: '位置地图',
+        shelter_details: '避难所详情',
+        meters: '米',
+        people: '人',
+        select_for_route: '查看路线'
       }
     };
     return texts[language]?.[key] || texts['ko'][key] || key;
@@ -357,7 +397,10 @@ export default function ShelterMapFixed() {
             🏢 {getText('shelter_map')}
           </h1>
           <p className="text-gray-600">
-            대피소 위치와 실시간 경로를 확인하세요
+            {language === 'ko' ? '대피소 위치와 실시간 경로를 확인하세요' : 
+             language === 'en' ? 'Check shelter locations and real-time routes' : 
+             language === 'vi' ? 'Kiểm tra vị trí nơi trú ẩn và tuyến đường thời gian thực' : 
+             '查看避难所位置和实时路线'}
           </p>
         </div>
 
@@ -375,7 +418,7 @@ export default function ShelterMapFixed() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <i className="fas fa-map text-blue-600" aria-hidden="true"></i>
-위치 지도
+                  {getText('location_map')}
                   {isLoading && (
                     <div className="w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
                   )}
@@ -405,19 +448,19 @@ export default function ShelterMapFixed() {
                   </div>
                   <div className="flex items-center gap-2">
                     <div className="w-4 h-4 bg-green-500 rounded-full"></div>
-                    <span>{getText('outdoor')} 대피소</span>
+                    <span>{getText('outdoor')}</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <div className="w-4 h-1 bg-blue-600"></div>
-                    <span>보행자 대피 경로</span>
+                    <span>{getText('tmap_route')}</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <div className="w-4 h-1 bg-red-600" style={{ background: 'repeating-linear-gradient(to right, #dc2626 0, #dc2626 4px, transparent 4px, transparent 8px)' }}></div>
-                    <span>직선 거리</span>
+                    <span>{getText('fallback_route')}</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <div className="w-4 h-4 bg-blue-500 rounded-full"></div>
-                    <span>{getText('indoor')} 대피소</span>
+                    <span>{getText('indoor')}</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <div className="w-4 h-4 bg-purple-500 rounded-full"></div>
@@ -435,7 +478,10 @@ export default function ShelterMapFixed() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <i className="fas fa-list text-green-600" aria-hidden="true"></i>
-                  주변 대피소 ({(shelters as Shelter[]).length}{getText('shelter_found')})
+                  {language === 'ko' ? '주변 대피소' : 
+                   language === 'en' ? 'Nearby Shelters' : 
+                   language === 'vi' ? 'Nơi trú ẩn gần đây' : 
+                   '附近避难所'} ({(shelters as Shelter[]).length}{getText('shelter_found')})
                 </CardTitle>
               </CardHeader>
               <CardContent>

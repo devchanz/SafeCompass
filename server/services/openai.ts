@@ -144,7 +144,7 @@ export interface PersonalizedGuideRequest {
     gender?: string;
     language: string;
     accessibility: string[];
-    mobility: string;
+    mobility: "independent" | "assisted" | "unable";
     address: string;
   };
   situation: {
