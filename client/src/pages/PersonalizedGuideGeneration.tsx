@@ -139,7 +139,35 @@ export default function PersonalizedGuideGeneration() {
   };
 
   const speakGuide = () => {
-    if (generatedGuide?.audioText && 'speechSynthesis' in window) {
+    if (generatedGuide?.guide && 'speechSynthesis' in window) {
+      // OpenAI에서 실제 생성된 맞춤형 가이드 텍스트를 TTS로 읽기
+      const fullGuideText = [
+        getText('generated_guide') + '를 안내드리겠습니다.',
+        getText('primary_actions') + ':',
+        ...generatedGuide.guide.primaryActions,
+        getText('safety_tips') + ':',
+        ...generatedGuide.guide.safetyTips,
+        getText('special_considerations') + ':',
+        ...generatedGuide.guide.specialConsiderations
+      ].join(' ');
+      
+      const utterance = new SpeechSynthesisUtterance(fullGuideText);
+      
+      // 언어별 정확한 음성 설정
+      const languageMap: Record<string, string> = {
+        ko: 'ko-KR',
+        en: 'en-US', 
+        vi: 'vi-VN',
+        zh: 'zh-CN'
+      };
+      
+      utterance.lang = languageMap[language] || 'ko-KR';
+      utterance.rate = 0.9;
+      utterance.pitch = 1.0;
+      utterance.volume = 1.0;
+      speechSynthesis.speak(utterance);
+    } else if (generatedGuide?.audioText && 'speechSynthesis' in window) {
+      // fallback to audioText if guide structure is not available
       const utterance = new SpeechSynthesisUtterance(generatedGuide.audioText);
       utterance.lang = language === 'ko' ? 'ko-KR' : 'en-US';
       utterance.rate = 0.9;

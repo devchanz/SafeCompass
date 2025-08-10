@@ -250,10 +250,18 @@ export default function SimplePersonalizedGuide() {
 
   const speakGuide = () => {
     if (generatedGuide?.guide && 'speechSynthesis' in window) {
-      // 사용자 언어에 맞는 완전 번역된 TTS 텍스트 생성
-      const ttsText = generateFullyTranslatedTTS(generatedGuide.guide, language);
+      // OpenAI에서 실제 생성된 맞춤형 가이드 텍스트를 TTS로 읽기
+      const fullGuideText = [
+        getText('generated_guide') + '를 안내드리겠습니다.',
+        getText('primary_actions') + ':',
+        ...generatedGuide.guide.primaryActions,
+        getText('safety_tips') + ':',
+        ...generatedGuide.guide.safetyTips,
+        getText('special_considerations') + ':',
+        ...generatedGuide.guide.specialConsiderations
+      ].join(' ');
       
-      const utterance = new SpeechSynthesisUtterance(ttsText);
+      const utterance = new SpeechSynthesisUtterance(fullGuideText);
       
       // 언어별 정확한 음성 설정
       const languageMap: Record<string, string> = {

@@ -74,7 +74,23 @@ export default function PersonalizedGuide() {
   }
 
   const handlePlayAudio = () => {
-    speak(generatedGuide.audioText);
+    // OpenAI에서 생성된 실제 맞춤형 가이드 텍스트를 TTS로 읽기
+    if (generatedGuide?.guide) {
+      const fullGuideText = [
+        '맞춤 안전 가이드를 안내드리겠습니다.',
+        '즉시 행동 사항:',
+        ...generatedGuide.guide.primaryActions,
+        '안전 수칙:',
+        ...generatedGuide.guide.safetyTips,
+        '특별 주의사항:',
+        ...generatedGuide.guide.specialConsiderations
+      ].join(' ');
+      
+      speak(fullGuideText);
+    } else if (generatedGuide?.audioText) {
+      // fallback to audioText if guide structure is not available
+      speak(generatedGuide.audioText);
+    }
   };
 
   const handleTriggerHaptic = () => {
