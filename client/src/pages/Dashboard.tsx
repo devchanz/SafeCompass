@@ -7,7 +7,7 @@ import { useUserProfile } from "@/hooks/useUserProfile";
 import { useEmergency } from "@/hooks/useEmergency";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useEmergencySystem } from "@/hooks/useEmergencySystem";
-import PushNotification from "@/components/PushNotification";
+// import PushNotification from "@/components/PushNotification"; // 사용 안 함 - App.tsx에서 전역 처리
 import { clearBrowserCache, forcePageReload, resetUserSession, debugStorageState } from "@/utils/cacheUtils";
 
 export default function Dashboard() {
@@ -18,26 +18,13 @@ export default function Dashboard() {
   const { currentAlert, triggerEmergencyDemo } = useEmergencySystem();
   const [showNotification, setShowNotification] = useState(false);
 
-  // 알림 자동 표시
-  React.useEffect(() => {
-    const shouldShowAlert = sessionStorage.getItem('showEmergencyAlert');
-    
-    if (shouldShowAlert === 'true' && currentAlert && currentAlert.isActive) {
-      console.log('✅ Dashboard에서 Emergency Alert 표시');
-      setShowNotification(true);
-      // 플래그 제거하여 다시 표시되지 않도록 함
-      sessionStorage.removeItem('showEmergencyAlert');
-    } else if (currentAlert && currentAlert.isActive) {
-      setShowNotification(true);
-    }
-  }, [currentAlert?.id, currentAlert?.isActive]); // 특정 속성만 의존성으로 설정
-
+  // Dashboard에서는 전역 알림이 이미 App.tsx에서 처리되므로 별도 처리 불필요
   const handleDismissAlert = () => {
-    setShowNotification(false);
+    console.log('Dashboard 알림 무시됨 - 전역 알림으로 처리됨');
   };
 
   const handleOpenAlert = () => {
-    setShowNotification(false);
+    console.log('Dashboard 알림 열기됨 - 전역 알림으로 처리됨');  
   };
 
   // 하드코딩된 다국어 텍스트
@@ -335,11 +322,7 @@ export default function Dashboard() {
   return (
     <div className="space-y-6">
       {/* Push Notification */}
-      <PushNotification 
-        alert={currentAlert}
-        onDismiss={handleDismissAlert}
-        onOpen={handleOpenAlert}
-      />
+      {/* 🚫 중복 알림 제거됨 - App.tsx에서 전역으로 처리 */}
       {/* Emergency Status Card */}
       <Card className="emergency-card">
         <CardContent className="pt-6">
@@ -511,14 +494,7 @@ export default function Dashboard() {
           </div>
         </CardContent>
       </Card>
-      {/* Push Notification - 조건부 렌더링 개선 */}
-      {(currentAlert && currentAlert.isActive) || showNotification ? (
-        <PushNotification 
-          alert={currentAlert} 
-          onDismiss={handleDismissAlert}
-          onOpen={handleOpenAlert}
-        />
-      ) : null}
+      {/* 🚫 중복 PUSH 알림 완전 제거됨 - App.tsx에서 전역 처리 */}
     </div>
   );
 }

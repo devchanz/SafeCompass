@@ -21,6 +21,7 @@ import { AccessibilityProvider } from "@/components/AccessibilityProvider";
 import { LanguageProvider, useLanguage, Language } from "@/contexts/LanguageContext";
 import { useUserProfile } from "@/hooks/useUserProfile";
 import { useEmergencySystem } from "@/hooks/useEmergencySystem";
+import PushNotification from "@/components/PushNotification";
 import AccessibilityTest from "@/components/AccessibilityTest";
 
 function AppContent() {
@@ -250,6 +251,15 @@ function AppContent() {
 
       {/* SOS Floating Button */}
       <SOSButton />
+      
+      {/* 전역 PUSH 알림 - 단 하나만 렌더링 */}
+      {isEmergencyActive && currentAlert && currentAlert.isActive && (
+        <PushNotification
+          alert={currentAlert}
+          onDismiss={() => console.log('전역 알림 무시됨')}
+          onOpen={() => setLocation('/emergency')}
+        />
+      )}
       
       <Toaster />
     </div>
