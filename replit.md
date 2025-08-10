@@ -7,6 +7,12 @@
 Preferred communication style: Simple, everyday language.
 
 ## Recent Changes (2025-08-10)
+- **PUSH 알림 완전 다국어화 구현 (2025-08-10)**:
+  - 재난 데모 시뮬레이션 PUSH 알림을 사용자 언어에 맞춰 완전 다국어화
+  - 4개 언어 지원: 한국어/영어/베트남어/중국어 알림 제목 및 내용
+  - API 호출 시 language 파라미터 전달하여 개별 언어별 알림 생성
+  - 영어: "🚨 Earthquake Alert", 베트남어: "🚨 Cảnh báo động đất", 중국어: "🚨 地震警报"
+  - 사용자 선택 언어에 따른 재난 정보 및 행동 지침 메시지 완전 현지화
 - **SOS 기능 통합 개선 및 OpenAI API 완전 개인화 구현 (2025-08-10)**:
   - 맞춤형 가이드 페이지 SOS 버튼 완전 개선: 동행파트너와 119 두 선택지 모두 제공
   - 우측하단 SOS 버튼과 동일한 기능: GPS 위치, Google Maps 링크, SMS 전송

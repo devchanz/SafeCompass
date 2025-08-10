@@ -257,7 +257,7 @@ export class EmergencyNotificationService {
   /**
    * 수동 재난 상황 시뮬레이션 (데모용)
    */
-  async triggerEmergencyDemo(disasterType: 'earthquake' | 'fire' = 'earthquake'): Promise<EmergencyNotification> {
+  async triggerEmergencyDemo(disasterType: 'earthquake' | 'fire' = 'earthquake', userLanguage: string = 'ko'): Promise<EmergencyNotification> {
     const mockAlert: DisasterAlert = {
       type: disasterType,
       severity: 'critical',
@@ -271,7 +271,7 @@ export class EmergencyNotificationService {
       confidence: 0.95
     };
 
-    await this.sendEmergencyAlert(mockAlert);
+    await this.sendEmergencyAlert(mockAlert, userLanguage);
     return this.activeAlert!;
   }
 }

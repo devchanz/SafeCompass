@@ -110,16 +110,19 @@ export function useEmergencySystem() {
     }
   });
 
-  // 데모 긴급 상황 트리거 - 수동 시뮬레이션만
+  // 데모 긴급 상황 트리거 - 수동 시뮬레이션만 (다국어 지원)
   const triggerEmergencyDemoMutation = useMutation({
-    mutationFn: async (disasterType: 'earthquake' | 'fire' = 'earthquake') => {
+    mutationFn: async ({ disasterType = 'earthquake', language = 'ko' }: { 
+      disasterType?: 'earthquake' | 'fire';
+      language?: string;
+    }) => {
       // 긴급 상황 활성화 (수동 트리거만)
       setIsEmergencyActive(true);
       
       const response = await fetch('/api/emergency/demo', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ disasterType })
+        body: JSON.stringify({ disasterType, language })
       });
       
       if (!response.ok) {

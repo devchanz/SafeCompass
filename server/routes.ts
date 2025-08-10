@@ -471,11 +471,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // 데모용 긴급 상황 트리거
+  // 데모용 긴급 상황 트리거 (다국어 지원)
   app.post("/api/emergency/demo", async (req, res) => {
     try {
-      const { disasterType = 'earthquake' } = req.body;
-      const notification = await emergencyService.triggerEmergencyDemo(disasterType);
+      const { disasterType = 'earthquake', language = 'ko' } = req.body;
+      const notification = await emergencyService.triggerEmergencyDemo(disasterType, language);
       res.json(notification);
     } catch (error) {
       res.status(500).json({ error: (error as Error).message });

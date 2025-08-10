@@ -116,7 +116,7 @@ export default function EmergencyDemo() {
       const demoResponse = await fetch('/api/emergency/demo', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ disasterType: 'earthquake' })
+        body: JSON.stringify({ disasterType: 'earthquake', language })
       });
       const demoData = await demoResponse.json();
       
