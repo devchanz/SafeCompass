@@ -348,7 +348,7 @@ export default function Dashboard() {
       <div className="mb-6">
         <h3 className="text-lg font-semibold mb-4">{getText('quick_actions')}</h3>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <Link href="/guide">
+          <Link href="/emergency-manuals">
             <Card className="emergency-card hover:shadow-lg transition-shadow cursor-pointer">
               <CardContent className="text-center pt-6">
                 <i className="fas fa-book text-2xl text-emergency mb-2" aria-hidden="true"></i>

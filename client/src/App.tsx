@@ -16,6 +16,7 @@ import PersonalizedGuideGeneration from "@/pages/PersonalizedGuideGeneration";
 import SimplePersonalizedGuide from "@/pages/SimplePersonalizedGuide";
 import ShelterMapFixed from "@/pages/ShelterMapFixed";
 import LanguageSelection from "@/pages/LanguageSelection";
+import EmergencyManuals from "@/pages/EmergencyManuals";
 import SOSButton from "@/components/SOSButton";
 import { AccessibilityProvider } from "@/components/AccessibilityProvider";
 import { LanguageProvider, useLanguage, Language } from "@/contexts/LanguageContext";
@@ -242,6 +243,7 @@ function AppContent() {
           <Route path="/test" component={AccessibilityTest} />
           <Route path="/accessibility-test" component={AccessibilityTest} />
           <Route path="/emergency-demo" component={EmergencyDemo} />
+          <Route path="/emergency-manuals" component={EmergencyManuals} />
           <Route component={NotFound} />
         </Switch>
       </main>
