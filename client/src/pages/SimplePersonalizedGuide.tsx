@@ -114,6 +114,13 @@ export default function SimplePersonalizedGuide() {
       const result = await response.json();
       setGeneratedGuide(result);
       
+      // 가이드 생성 완료시 PUSH 알림 제거
+      setTimeout(() => {
+        fetch('/api/emergency/mark-completed', { method: 'POST' })
+          .then(() => console.log('✅ PUSH 알림 제거됨 - 사용자가 맞춤형 가이드를 받았습니다'))
+          .catch(error => console.error('알림 제거 오류:', error));
+      }, 1000);
+      
     } catch (error) {
       console.error('가이드 생성 오류:', error);
       // 더미 데이터로 대체
@@ -142,7 +149,7 @@ export default function SimplePersonalizedGuide() {
             "가족 비상연락망 활성화"
           ]
         },
-        audioText: "지진이 발생했습니다. 침착하게 안전수칙을 따라주세요.",
+        audioText: generateTTSTextFallback(language),
         estimatedReadingTime: 180
       });
     } finally {
@@ -151,12 +158,78 @@ export default function SimplePersonalizedGuide() {
   };
 
   const speakGuide = () => {
-    if (generatedGuide?.audioText && 'speechSynthesis' in window) {
-      const utterance = new SpeechSynthesisUtterance(generatedGuide.audioText);
-      utterance.lang = language === 'ko' ? 'ko-KR' : 'en-US';
+    if (generatedGuide?.guide && 'speechSynthesis' in window) {
+      // 사용자 언어에 맞는 TTS 텍스트 생성
+      const ttsText = generateTTSText(generatedGuide.guide, language);
+      
+      const utterance = new SpeechSynthesisUtterance(ttsText);
+      
+      // 언어별 음성 설정
+      const languageMap: Record<string, string> = {
+        ko: 'ko-KR',
+        en: 'en-US', 
+        vi: 'vi-VN',
+        zh: 'zh-CN'
+      };
+      
+      utterance.lang = languageMap[language] || 'ko-KR';
       utterance.rate = 0.9;
+      utterance.pitch = 1.0;
       speechSynthesis.speak(utterance);
     }
+  };
+
+  // 언어별 TTS 텍스트 생성
+  const generateTTSText = (guide: any, lang: string): string => {
+    const ttsTemplates: Record<string, Record<string, string>> = {
+      ko: {
+        intro: '지진 발생 시 안전 가이드를 안내합니다.',
+        actions: '즉시 행동사항: ',
+        safety: '안전 수칙: ',
+        contacts: '긴급연락처는 119입니다.'
+      },
+      en: {
+        intro: 'Emergency earthquake safety guide.',
+        actions: 'Immediate actions: ',
+        safety: 'Safety tips: ',
+        contacts: 'Emergency contact: 119.'
+      },
+      vi: {
+        intro: 'Hướng dẫn an toàn động đất khẩn cấp.',
+        actions: 'Hành động ngay lập tức: ',
+        safety: 'Lời khuyên an toàn: ',
+        contacts: 'Liên hệ khẩn cấp: 119.'
+      },
+      zh: {
+        intro: '地震应急安全指南。',
+        actions: '立即行动: ',
+        safety: '安全提示: ',
+        contacts: '紧急联系电话：119。'
+      }
+    };
+
+    const template = ttsTemplates[lang] || ttsTemplates['ko'];
+    
+    let ttsText = template.intro + ' ';
+    ttsText += template.actions;
+    ttsText += guide.primaryActions.slice(0, 2).join('. ') + '. ';
+    ttsText += template.safety;
+    ttsText += guide.safetyTips.slice(0, 2).join('. ') + '. ';
+    ttsText += template.contacts;
+
+    return ttsText;
+  };
+
+  // fallback TTS 텍스트 생성
+  const generateTTSTextFallback = (lang: string): string => {
+    const fallbackTexts: Record<string, string> = {
+      ko: '지진이 발생했습니다. 침착하게 안전수칙을 따라주세요. 즉시 안전한 곳으로 대피하세요.',
+      en: 'Earthquake detected. Please stay calm and follow safety procedures. Evacuate to safety immediately.',
+      vi: 'Phát hiện động đất. Hãy bình tĩnh và tuân theo quy trình an toàn. Sơ tán đến nơi an toàn ngay lập tức.',
+      zh: '检测到地震。请保持冷静并遵循安全程序。立即疏散到安全地点。'
+    };
+    
+    return fallbackTexts[lang] || fallbackTexts['ko'];
   };
 
   const callSOS = () => {

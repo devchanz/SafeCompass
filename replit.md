@@ -7,6 +7,12 @@
 Preferred communication style: Simple, everyday language.
 
 ## Recent Changes (2025-08-10)
+- **PUSH 알림 다국어화 및 완료 시 제거 구현 (2025-08-10)**:
+  - PUSH 알림 제목/내용을 4개 언어(한국어, 영어, 베트남어, 중국어)로 다국어화
+  - 사용자가 맞춤형 가이드 페이지 완료 시 PUSH 알림 자동 제거 기능 추가
+  - TTS 음성 안내를 하드코딩된 한국어에서 사용자 선택 언어로 개선
+  - 언어별 정확한 음성 설정 (ko-KR, en-US, vi-VN, zh-CN)
+  - 자동 재난 모니터링 시스템 비활성화하여 수동 시뮬레이션만 허용
 - **완전한 재난 대응 워크플로우 구현 (2025-08-10)**:
   - 개발 모드 → 재난 시스템 데모 → 지진 시뮬레이션 → Dashboard PUSH 알림 순차 진행
   - 중복 사용자 정보 입력 제거: Emergency에서 바로 OpenAI API 호출하는 /simple-guide 페이지 구현

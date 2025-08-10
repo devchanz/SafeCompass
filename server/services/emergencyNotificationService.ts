@@ -12,6 +12,7 @@ export interface EmergencyNotification {
     magnitude?: string;
     location?: string;
     action?: string;
+    language?: string;
   };
   vibrationPattern?: number[];
   isActive: boolean;
@@ -77,21 +78,22 @@ export class EmergencyNotificationService {
   }
 
   /**
-   * 긴급 알림 발송
+   * 긴급 알림 발송 (다국어 지원)
    */
-  private async sendEmergencyAlert(alert: DisasterAlert): Promise<void> {
+  private async sendEmergencyAlert(alert: DisasterAlert, userLanguage: string = 'ko'): Promise<void> {
     const notification: EmergencyNotification = {
       id: `emergency_${Date.now()}`,
       type: 'emergency_alert',
-      title: this.getAlertTitle(alert),
-      body: this.getAlertBody(alert),
+      title: this.getAlertTitle(alert, userLanguage),
+      body: this.getAlertBody(alert, userLanguage),
       data: {
         disasterType: alert.type,
         severity: alert.severity,
         classification: alert.classification,
         magnitude: alert.magnitude,
         location: alert.location,
-        action: 'open_emergency_page'
+        action: 'open_emergency_page',
+        language: userLanguage
       },
       vibrationPattern: this.getVibrationPattern(alert.classification),
       isActive: true,
@@ -131,41 +133,81 @@ export class EmergencyNotificationService {
   }
 
   /**
-   * 알림 제목 생성
+   * 알림 제목 생성 (다국어 지원)
    */
-  private getAlertTitle(alert: DisasterAlert): string {
-    const typeNames: Record<string, string> = {
-      earthquake: '지진 발생',
-      fire: '화재 발생',
-      flood: '홍수 발생',
-      typhoon: '태풍 접근'
+  private getAlertTitle(alert: DisasterAlert, language: string = 'ko'): string {
+    const typeNames: Record<string, Record<string, string>> = {
+      earthquake: {
+        ko: '지진 발생',
+        en: 'Earthquake Alert',
+        vi: 'Cảnh báo động đất',
+        zh: '地震警报'
+      },
+      fire: {
+        ko: '화재 발생',
+        en: 'Fire Alert',
+        vi: 'Cảnh báo hỏa hoạn',
+        zh: '火灾警报'
+      },
+      flood: {
+        ko: '홍수 발생',
+        en: 'Flood Alert',
+        vi: 'Cảnh báo lũ lụt',
+        zh: '洪水警报'
+      },
+      typhoon: {
+        ko: '태풍 접근',
+        en: 'Typhoon Alert',
+        vi: 'Cảnh báo bão',
+        zh: '台风警报'
+      }
     };
 
-    const typeName = typeNames[alert.type] || '재난 발생';
+    const typeName = typeNames[alert.type]?.[language] || typeNames[alert.type]?.['ko'] || '재난 발생';
     const urgencyMark = alert.classification === '위급재난' ? '🚨' : '⚠️';
     
     return `${urgencyMark} ${typeName}`;
   }
 
   /**
-   * 알림 내용 생성
+   * 알림 내용 생성 (다국어 지원)
    */
-  private getAlertBody(alert: DisasterAlert): string {
-    let body = `${alert.location}에서 `;
-    
-    if (alert.type === 'earthquake' && alert.magnitude) {
-      body += `규모 ${alert.magnitude} 지진이 발생했습니다.`;
-    } else {
-      body += `${alert.description}`;
+  private getAlertBody(alert: DisasterAlert, language: string = 'ko'): string {
+    const templates: Record<string, Record<string, string>> = {
+      earthquake: {
+        ko: `규모 ${alert.magnitude} 지진이 발생했습니다. 즉시 안전한 곳으로 대피하세요.`,
+        en: `Magnitude ${alert.magnitude} earthquake detected. Seek shelter immediately.`,
+        vi: `Phát hiện động đất cường độ ${alert.magnitude}. Hãy tìm nơi trú ẩn ngay lập tức.`,
+        zh: `检测到${alert.magnitude}级地震。请立即寻找安全地点。`
+      },
+      fire: {
+        ko: '대형 화재가 발생했습니다. 긴급히 대피하시기 바랍니다.',
+        en: 'Major fire detected. Please evacuate immediately.',
+        vi: 'Phát hiện hỏa hoạn lớn. Hãy sơ tán ngay lập tức.',
+        zh: '检测到大火。请立即疏散。'
+      }
+    };
+
+    const locationText: Record<string, string> = {
+      ko: `${alert.location}에서 `,
+      en: `In ${alert.location} - `,
+      vi: `Tại ${alert.location} - `,
+      zh: `在${alert.location} - `
+    };
+
+    const actionText: Record<string, string> = {
+      ko: alert.classification === '위급재난' ? '즉시 안전한 곳으로 대피하세요.' : '신속히 대피 준비를 하세요.',
+      en: alert.classification === '위급재난' ? 'Evacuate to safety immediately.' : 'Prepare for evacuation quickly.',
+      vi: alert.classification === '위급재난' ? 'Sơ tán đến nơi an toàn ngay lập tức.' : 'Chuẩn bị sơ tán nhanh chóng.',
+      zh: alert.classification === '위급재난' ? '立即撤离到安全地点。' : '迅速准备撤离。'
+    };
+
+    const template = templates[alert.type]?.[language] || templates[alert.type]?.['ko'];
+    if (template) {
+      return locationText[language] + template;
     }
 
-    if (alert.classification === '위급재난') {
-      body += ' 즉시 안전한 곳으로 대피하세요.';
-    } else {
-      body += ' 신속히 대피 준비를 하세요.';
-    }
-
-    return body;
+    return locationText[language] + actionText[language];
   }
 
   /**
@@ -199,6 +241,16 @@ export class EmergencyNotificationService {
     if (this.activeAlert) {
       console.log('📖 알림 읽음 처리:', this.activeAlert.id);
       // 읽음 처리는 하되 알림은 유지 (재난 상황이 계속되므로)
+    }
+  }
+
+  /**
+   * 사용자가 대응 완료 시 알림 제거
+   */
+  markEmergencyCompleted(): void {
+    if (this.activeAlert) {
+      console.log('✅ 재난 대응 완료 - 알림 제거:', this.activeAlert.id);
+      this.activeAlert = null;
     }
   }
 

@@ -435,6 +435,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
     res.json({ success: true });
   });
 
+  // 사용자 대응 완료시 알림 제거
+  app.post("/api/emergency/mark-completed", (req, res) => {
+    emergencyService.markEmergencyCompleted();
+    res.json({ success: true, message: "재난 대응 완료 - 알림 제거됨" });
+  });
+
   // 재난 상황 종료
   app.post("/api/emergency/all-clear", async (req, res) => {
     try {
