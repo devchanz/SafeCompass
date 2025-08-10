@@ -123,6 +123,7 @@ export class MemStorage implements IStorage {
         canMove: insertEvent.situation.canMove,
         additionalInfo: typeof insertEvent.situation.additionalInfo === 'string' ? insertEvent.situation.additionalInfo : undefined
       } : null,
+      magnitude: insertEvent.magnitude || null,
       personalizedGuide: insertEvent.personalizedGuide || null,
       createdAt: new Date()
     };
@@ -250,12 +251,15 @@ class SmartStorage implements IStorage {
     }
 
     try {
-      return await operation();
+      const result = await operation.call(this.primaryStorage);
+      return result;
     } catch (error) {
       console.error('Database operation failed, falling back to MemStorage:', error);
+      // DB 실패 시 완전히 메모리 저장소로 전환
       this.useDatabase = false;
       this.primaryStorage = this.fallbackStorage;
-      return operation();
+      // 폴백 저장소로 다시 실행
+      return operation.call(this.fallbackStorage);
     }
   }
 
