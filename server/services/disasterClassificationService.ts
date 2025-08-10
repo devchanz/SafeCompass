@@ -31,6 +31,21 @@ export interface DisasterAlert {
 }
 
 export class DisasterClassificationService {
+  private disasterAPI: any;
+
+  constructor() {
+    // Dynamic import to avoid circular dependencies
+    this.initializeDisasterAPI();
+  }
+
+  private async initializeDisasterAPI() {
+    try {
+      const { disasterMessageAPI } = await import('./disasterMessageAPI.js');
+      this.disasterAPI = disasterMessageAPI;
+    } catch (error) {
+      console.error('재난API 초기화 실패:', error);
+    }
+  }
   
   /**
    * Rule-Based 1차 재난 분류
@@ -124,6 +139,62 @@ JSON 형식으로 응답해주세요:
         urgencyScore: 5
       };
     }
+  }
+
+  /**
+   * 실제 정부 재난안전데이터 API 확인
+   */
+  async checkRealDisasterAPI(): Promise<DisasterAlert> {
+    if (!this.disasterAPI) {
+      console.log('🔄 재난API 미초기화 상태 - 시뮬레이션 모드');
+      return this.simulateGovernmentAlert();
+    }
+
+    try {
+      // 실제 긴급재난문자 API 호출
+      const activeDisaster = await this.disasterAPI.hasActiveDisaster();
+      
+      if (activeDisaster.active && activeDisaster.latestMessage) {
+        const message = activeDisaster.latestMessage;
+        console.log('🚨 실제 재난상황 감지:', message.disaster_name, message.location_name);
+        
+        // 실제 재난문자를 분석하여 DisasterAlert로 변환
+        const typeAnalysis = this.classifyDisasterType(message.msg);
+        const severityAnalysis = this.classifySeverity(message.msg);
+        const llmAnalysis = await this.analyzeSeverityWithLLM(message.msg, message.location_name);
+        
+        return {
+          type: typeAnalysis.type,
+          severity: severityAnalysis.severity as 'critical' | 'urgent' | 'moderate',
+          classification: llmAnalysis.classification,
+          magnitude: this.extractMagnitude(message.msg),
+          location: message.location_name,
+          description: message.msg,
+          isRelevant: true,
+          confidence: Math.max(typeAnalysis.confidence, severityAnalysis.confidence)
+        };
+      } else {
+        console.log('📋 현재 활성 재난 없음 - 정상 상태');
+        return {
+          type: 'none',
+          severity: 'moderate',
+          classification: '일반재난',
+          location: '전국',
+          description: '현재 활성화된 재난 상황이 없습니다.',
+          isRelevant: false,
+          confidence: 1.0
+        };
+      }
+    } catch (error) {
+      console.error('❌ 실제 재난API 호출 실패:', error);
+      console.log('🔄 시뮬레이션 모드로 fallback');
+      return this.simulateGovernmentAlert();
+    }
+  }
+
+  private extractMagnitude(text: string): string | undefined {
+    const magnitudeMatch = text.match(/규모\s*(\d+\.?\d*)/);
+    return magnitudeMatch ? magnitudeMatch[1] : undefined;
   }
 
   /**

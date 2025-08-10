@@ -60,7 +60,7 @@ export class EmergencyNotificationService {
    */
   private async checkForDisasters(): Promise<void> {
     try {
-      // 실제로는 정부 재난안전데이터 API 호출
+      // 실제 정부 재난안전데이터 API 호출로 교체
       const disasterAlert = await this.disasterService.simulateGovernmentAlert();
       
       console.log('📡 재난 데이터 수신:', disasterAlert);

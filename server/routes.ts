@@ -216,11 +216,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (finalUserProfile) {
         console.log("✅ 최종 사용자 프로필:", finalUserProfile);
         
-        const guide = await generatePersonalizedGuide({
+        // RAG 서비스 사용으로 변경하여 신뢰성 높은 정보 제공
+        const { RAGService } = await import('./services/ragService.js');
+        const ragService = new RAGService();
+        const guide = await ragService.generatePersonalizedGuide({
           userProfile: {
             ...finalUserProfile,
             gender: finalUserProfile.gender || undefined,
-            accessibility: finalUserProfile.accessibility || []
+            accessibility: finalUserProfile.accessibility || [],
+            mobility: finalUserProfile.mobility as "independent" | "assisted" | "unable"
           },
           situation
         });

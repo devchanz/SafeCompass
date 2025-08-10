@@ -13,7 +13,7 @@ export class RAGService {
   private manuals: DisasterManual[] = manuals;
   private fallbackService: any;
 
-  // Simple keyword-based retrieval (in production, this would use vector embeddings)
+  // Enhanced retrieval with reliability scoring and context matching
   private retrieveRelevantManuals(
     disasterType: string,
     locationContext: string,
@@ -27,27 +27,56 @@ export class RAGService {
       ...accessibility
     ].map(term => term.toLowerCase());
 
+    console.log(`🔍 RAG 검색: ${disasterType}, ${locationContext}, ${mobility}, ${accessibility.join(',')}`);
+
     const relevantManuals = this.manuals
       .filter(manual => {
+        // 재난 유형 반드시 일치
+        if (!manual.type.toLowerCase().includes(disasterType.toLowerCase())) {
+          return false;
+        }
+        
         const manualText = (manual.content + ' ' + manual.keywords.join(' ')).toLowerCase();
         return searchTerms.some(term => manualText.includes(term));
       })
       .sort((a, b) => {
-        // Score based on keyword matches
-        const scoreA = searchTerms.reduce((score, term) => {
-          const content = (a.content + ' ' + a.keywords.join(' ')).toLowerCase();
-          return score + (content.includes(term) ? 1 : 0);
-        }, 0);
-        const scoreB = searchTerms.reduce((score, term) => {
-          const content = (b.content + ' ' + b.keywords.join(' ')).toLowerCase();
-          return score + (content.includes(term) ? 1 : 0);
-        }, 0);
+        // 향상된 스코어링 시스템
+        const scoreA = this.calculateRelevanceScore(a, searchTerms, accessibility);
+        const scoreB = this.calculateRelevanceScore(b, searchTerms, accessibility);
         return scoreB - scoreA;
       })
-      .slice(0, 3)
-      .map(manual => manual.content);
+      .slice(0, 4) // 더 많은 관련 매뉴얼 포함
+      .map(manual => {
+        console.log(`✅ 선택된 매뉴얼: ${manual.id} (출처: ${(manual as any).source || '내부'})`);
+        return `[신뢰도: ${(manual as any).reliability || 'verified'}] [출처: ${(manual as any).source || '내부 매뉴얼'}]\n${manual.content}`;
+      });
 
+    console.log(`📚 총 ${relevantManuals.length}개 신뢰성 높은 매뉴얼 검색됨`);
     return relevantManuals;
+  }
+
+  private calculateRelevanceScore(manual: any, searchTerms: string[], accessibility: string[]): number {
+    let score = 0;
+    const content = (manual.content + ' ' + manual.keywords.join(' ')).toLowerCase();
+    
+    // 기본 키워드 매칭
+    searchTerms.forEach(term => {
+      if (content.includes(term)) score += 1;
+    });
+    
+    // 접근성 특화 매뉴얼 우선순위 (시각/청각/이동 장애)
+    accessibility.forEach(disability => {
+      if (content.includes(disability.toLowerCase()) || 
+          manual.keywords.some((k: string) => k.toLowerCase().includes(disability.toLowerCase()))) {
+        score += 3; // 높은 가중치
+      }
+    });
+    
+    // 신뢰도 가중치
+    if ((manual as any).reliability === 'official') score += 2;
+    if ((manual as any).reliability === 'verified') score += 1;
+    
+    return score;
   }
 
   constructor() {
@@ -68,7 +97,7 @@ export class RAGService {
     try {
       // Retrieve relevant manuals based on context
       const relevantManuals = this.retrieveRelevantManuals(
-        request.situation.disasterType,
+        "earthquake", // 현재는 지진으로 고정
         request.situation.locationContext,
         request.userProfile.mobility,
         request.userProfile.accessibility
@@ -84,7 +113,7 @@ export class RAGService {
       return await generatePersonalizedGuide(enhancedRequest);
       
     } catch (openaiError) {
-      console.log('OpenAI API unavailable, using fallback guide generation:', openaiError.message);
+      console.log('OpenAI API unavailable, using fallback guide generation:', (openaiError as Error).message);
       
       // Use fallback service when OpenAI is not available
       if (this.fallbackService) {

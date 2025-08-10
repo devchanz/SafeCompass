@@ -60,7 +60,7 @@ export interface PersonalizedGuideResponse {
  * OpenAI를 사용하여 사용자 맞춤형 재난 대응 가이드 생성
  */
 export async function generatePersonalizedGuide(
-  request: PersonalizedGuideRequest,
+  request: PersonalizedGuideRequest & { relevantManuals?: string[] },
 ): Promise<PersonalizedGuideResponse> {
   try {
     const disasterTypeKo = "지진";
@@ -97,6 +97,9 @@ export async function generatePersonalizedGuide(
 ✅ safetyTips: ${request.userProfile.age}세 + ${request.userProfile.accessibility.join("/")} 장애 + ${mobilityKo} 특성을 반영한 실제적 안전 수칙  
 ✅ specialConsiderations: 사용자 개별 특성에 특화된 주의사항 (나이/장애/이동능력 구체적 고려)
 ✅ emergencyContacts: 한국 실정에 맞는 응급 연락처
+
+📚 신뢰성 높은 정부기관 매뉴얼 기반 정보:
+${request.relevantManuals?.map((manual, idx) => `${idx + 1}. ${manual}`).join('\n') || '기본 매뉴얼 적용'}
 
 모든 내용은 실제 상황에서 즉시 실행할 수 있는 구체적이고 개인화된 지침이어야 합니다.
 다음 JSON 형식으로 **${request.userProfile.language === "ko" ? "한국어" : request.userProfile.language === "en" ? "영어" : request.userProfile.language === "vi" ? "베트남어" : "중국어"}**로 응답해주세요:
