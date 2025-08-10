@@ -180,10 +180,7 @@ function AppContent() {
                   }}
                 >
                   <i className="fas fa-tachometer-alt mr-2" aria-hidden="true"></i>
-                  {language === 'ko' ? '대시보드' : 
-                     language === 'en' ? 'Dashboard' : 
-                     language === 'vi' ? 'Bảng điều khiển' : 
-                     '仪表板'}
+                  {getText('nav.dashboard')}
                 </Button>
                 
                 <Button

@@ -7,6 +7,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useUserProfile } from "@/hooks/useUserProfile";
+import { useCompanions } from "@/hooks/useCompanions";
 import { useEmergencySystem } from "@/hooks/useEmergencySystem";
 import { useToast } from "@/hooks/use-toast";
 
@@ -25,6 +26,10 @@ export default function SimplePersonalizedGuide() {
   const { language } = useLanguage();
   const [, setLocation] = useLocation();
   const { data: userProfile } = useUserProfile();
+  const { data: companions = [] } = useCompanions(userProfile?.id);
+  
+  // 첫 번째 동행파트너를 기본 파트너로 사용
+  const partner = companions[0];
   const { currentAlert } = useEmergencySystem();
   const { toast } = useToast();
   
@@ -59,7 +64,8 @@ export default function SimplePersonalizedGuide() {
         location_sent: '위치 정보와 함께 긴급 알림을 전송했습니다',
         no_partner: '등록된 동행 파트너가 없습니다. 프로필에서 추가하세요.',
         gps_getting: 'GPS 위치 확인 중...',
-        registered_partner: '등록된 파트너'
+        registered_partner: '등록된 파트너',
+        home_dashboard: '홈 대시보드'
       },
       en: {
         title: '🤖 AI Personalized Safety Guide',
@@ -86,7 +92,8 @@ export default function SimplePersonalizedGuide() {
         location_sent: 'Emergency alert sent with location information',
         no_partner: 'No emergency partner registered. Add one in your profile.',
         gps_getting: 'Getting GPS location...',
-        registered_partner: 'Registered Partner'
+        registered_partner: 'Registered Partner',
+        home_dashboard: 'Home Dashboard'
       },
       vi: {
         title: '🤖 Hướng dẫn An toàn Cá nhân hóa AI',
@@ -113,7 +120,8 @@ export default function SimplePersonalizedGuide() {
         location_sent: 'Cảnh báo khẩn cấp đã được gửi cùng thông tin vị trí',
         no_partner: 'Chưa đăng ký đối tác khẩn cấp. Thêm trong hồ sơ của bạn.',
         gps_getting: 'Đang lấy vị trí GPS...',
-        registered_partner: 'Đối tác Đã đăng ký'
+        registered_partner: 'Đối tác Đã đăng ký',
+        home_dashboard: 'Bảng điều khiển Chính'
       },
       zh: {
         title: '🤖 AI个性化安全指南',
@@ -140,7 +148,8 @@ export default function SimplePersonalizedGuide() {
         location_sent: '已发送紧急警报和位置信息',
         no_partner: '未注册紧急联系人。请在个人资料中添加。',
         gps_getting: '正在获取GPS位置...',
-        registered_partner: '已注册联系人'
+        registered_partner: '已注册联系人',
+        home_dashboard: '主仪表板'
       }
     };
     return texts[language]?.[key] || texts['ko'][key] || key;
@@ -388,8 +397,8 @@ export default function SimplePersonalizedGuide() {
   };
 
   const handleContactPartner = async () => {
-    // 사용자 프로필에서 파트너 정보 확인
-    if (!userProfile?.partner?.phone) {
+    // 동행파트너 정보 확인
+    if (!partner?.phone) {
       toast({
         title: "⚠️ " + getText('no_partner'),
         variant: "destructive",
@@ -418,12 +427,12 @@ export default function SimplePersonalizedGuide() {
           const encodedMessage = encodeURIComponent(emergencyMessage);
           
           // SMS 전송
-          window.location.href = `sms:${userProfile.partner.phone}?body=${encodedMessage}`;
+          window.location.href = `sms:${partner.phone}?body=${encodedMessage}`;
           
           // 성공 토스트
           toast({
             title: "✅ " + getText('location_sent'),
-            description: `${userProfile.partner.name} (${userProfile.partner.phone})`,
+            description: `${partner.name} (${partner.phone})`,
             duration: 5000,
           });
 
@@ -437,7 +446,7 @@ export default function SimplePersonalizedGuide() {
           // 위치 없이도 전송
           const basicMessage = getText('emergency_message');
           const encodedMessage = encodeURIComponent(basicMessage + ` 시간: ${new Date().toLocaleString()}`);
-          window.location.href = `sms:${userProfile.partner.phone}?body=${encodedMessage}`;
+          window.location.href = `sms:${partner.phone}?body=${encodedMessage}`;
           
           toast({
             title: "📱 긴급 알림 전송됨",
@@ -611,7 +620,7 @@ export default function SimplePersonalizedGuide() {
             className="bg-green-600 hover:bg-green-700 text-white px-8"
           >
             <i className="fas fa-home mr-2"></i>
-            홈 대시보드
+{getText('home_dashboard')}
           </Button>
           <Button 
             onClick={() => setLocation('/emergency')}
@@ -639,12 +648,12 @@ export default function SimplePersonalizedGuide() {
           
           <div className="space-y-4">
             {/* 파트너 정보 표시 */}
-            {userProfile?.partner?.name && (
+            {partner?.name && (
               <Alert className="bg-blue-50 border-blue-200">
                 <i className="fas fa-user-friends text-blue-600" aria-hidden="true"></i>
                 <AlertDescription>
                   <strong>{getText('registered_partner')}:</strong><br />
-                  {userProfile.partner.name} ({userProfile.partner.phone})
+                  {partner.name} ({partner.phone})
                 </AlertDescription>
               </Alert>
             )}
@@ -660,7 +669,7 @@ export default function SimplePersonalizedGuide() {
             <Button 
               onClick={handleContactPartner}
               className="w-full bg-green-600 hover:bg-green-700 py-3 px-4 font-semibold"
-              disabled={!userProfile?.partner?.phone}
+              disabled={!partner?.phone}
             >
               <i className="fas fa-sms mr-2" aria-hidden="true"></i>
               {getText('notify_partner')}
