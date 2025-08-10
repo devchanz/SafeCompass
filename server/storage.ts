@@ -149,9 +149,16 @@ export class DatabaseStorage implements IStorage {
     }
     
     // DATABASE_URL 유효성 검사 및 정리
-    const dbUrl = process.env.DATABASE_URL.trim();
-    if (dbUrl.includes('pospostgresql') || !dbUrl.startsWith('postgresql://')) {
-      console.error('⚠️ DATABASE_URL이 손상되었습니다. 메모리 저장소를 사용하세요.');
+    let dbUrl = process.env.DATABASE_URL.trim();
+    
+    // 중복된 postgresql:// 제거
+    if (dbUrl.includes('pospostgresql')) {
+      dbUrl = dbUrl.replace('postgresql://pospostgresql://', 'postgresql://');
+      console.log('✅ DATABASE_URL 중복 제거 완료');
+    }
+    
+    if (!dbUrl.startsWith('postgresql://')) {
+      console.error('⚠️ DATABASE_URL 형식이 올바르지 않습니다.');
       throw new Error('DATABASE_URL format is invalid');
     }
     
