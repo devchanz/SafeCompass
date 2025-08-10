@@ -380,7 +380,7 @@ export default function ModernDashboard() {
               className="group hover:shadow-2xl transition-all duration-300 cursor-pointer border-0 bg-white dark:bg-gray-800 shadow-lg hover:scale-105"
               onClick={async () => {
                 try {
-                  await triggerEmergencyDemo();
+                  await triggerEmergencyDemo('earthquake', language);
                   if (navigator.vibrate) {
                     navigator.vibrate([200, 100, 200]);
                   }
@@ -501,6 +501,31 @@ export default function ModernDashboard() {
               <CardContent className="space-y-3">
                 <Button 
                   variant="outline" 
+                  className="w-full justify-start rounded-xl text-orange-600 border-orange-200 hover:bg-orange-50"
+                  onClick={async () => {
+                    try {
+                      await triggerEmergencyDemo('earthquake', language);
+                      if (navigator.vibrate) {
+                        navigator.vibrate([200, 100, 200]);
+                      }
+                    } catch (error) {
+                      console.error('재난 시뮬레이션 오류:', error);
+                    }
+                  }}
+                >
+                  <i className="fas fa-exclamation-triangle mr-2" aria-hidden="true"></i>
+                  재난 시뮬레이션
+                </Button>
+                <Button 
+                  variant="outline" 
+                  className="w-full justify-start rounded-xl text-blue-600 border-blue-200 hover:bg-blue-50"
+                  onClick={() => setLocation('/registration')}
+                >
+                  <i className="fas fa-user-plus mr-2" aria-hidden="true"></i>
+                  새 사용자 등록
+                </Button>
+                <Button 
+                  variant="outline" 
                   className="w-full justify-start rounded-xl"
                   onClick={() => {
                     clearBrowserCache();
@@ -515,7 +540,7 @@ export default function ModernDashboard() {
                   className="w-full justify-start rounded-xl"
                   onClick={() => {
                     debugStorageState();
-                    forcePageReload();
+                    forcePageReload('/');
                   }}
                 >
                   <i className="fas fa-refresh mr-2" aria-hidden="true"></i>
