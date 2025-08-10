@@ -441,13 +441,12 @@ export default function Dashboard() {
             <strong>{getText('development_mode')}:</strong> {getText('development_desc')}
           </p>
           <div className="grid gap-2">
-            <Button 
-              onClick={simulateEarthquake}
-              className="bg-warning hover:bg-orange-600"
-            >
-              <i className="fas fa-exclamation-triangle mr-2" aria-hidden="true"></i>
-{getText('simulate_earthquake')}
-            </Button>
+            <Link href="/emergency-demo">
+              <Button className="w-full bg-red-600 hover:bg-red-700 text-white">
+                <i className="fas fa-exclamation-triangle mr-2" aria-hidden="true"></i>
+                재난 시스템 데모
+              </Button>
+            </Link>
             <div className="grid grid-cols-2 gap-2">
               <Button 
                 onClick={() => window.open('/clear-cache.html', '_blank')}

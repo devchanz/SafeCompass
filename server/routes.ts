@@ -430,5 +430,49 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // OpenAI API 테스트 엔드포인트
+  app.post("/api/test/openai", async (req, res) => {
+    try {
+      console.log('🔧 OpenAI API 테스트 시작...');
+      
+      // 직접 OpenAI API 호출 테스트
+      const OpenAI = await import('openai');
+      const openai = new OpenAI.default({ 
+        apiKey: process.env.OPENAI_API_KEY 
+      });
+
+      console.log('🔧 API Key 존재 여부:', !!process.env.OPENAI_API_KEY);
+      console.log('🔧 API Key 앞 10자리:', process.env.OPENAI_API_KEY?.substring(0, 10));
+
+      const response = await openai.chat.completions.create({
+        model: "gpt-4o",
+        messages: [
+          {
+            role: "user",
+            content: "안녕하세요! 간단한 테스트입니다. '테스트 성공'이라고 답해주세요."
+          }
+        ],
+        max_tokens: 50
+      });
+
+      console.log('🔧 OpenAI 응답 받음:', response.choices[0].message.content);
+
+      res.json({
+        success: true,
+        message: "OpenAI API 호출 성공",
+        result: response.choices[0].message.content,
+        usage: response.usage
+      });
+    } catch (error) {
+      console.error('❌ OpenAI API 테스트 실패:', error);
+      res.status(500).json({
+        success: false,
+        error: (error as Error).message,
+        type: (error as any).type,
+        code: (error as any).code
+      });
+    }
+  });
+
   return httpServer;
 }

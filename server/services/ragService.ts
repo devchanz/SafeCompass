@@ -1,5 +1,5 @@
 import { generatePersonalizedGuide, type PersonalizedGuideRequest } from './openai.js';
-import manuals from '../data/manuals.json' assert { type: 'json' };
+import manuals from '../data/manuals.json' with { type: 'json' };
 
 interface DisasterManual {
   id: string;
