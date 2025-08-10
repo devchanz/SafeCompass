@@ -4,7 +4,8 @@ import OpenAI from "openai";
 function getMultilingualPrompts(language: string, disasterType: string) {
   const prompts: Record<string, any> = {
     ko: {
-      systemRole: "당신은 재난 안전 전문가입니다. 사용자의 개인 정보와 현재 상황을 고려하여 맞춤형 재난 대응 가이드를 생성합니다. JSON 형식으로만 응답하세요.",
+      systemRole:
+        "당신은 재난 안전 전문가입니다. 사용자의 개인 정보와 현재 상황을 고려하여 맞춤형 재난 대응 가이드를 생성합니다. JSON 형식으로만 응답하세요.",
       jsonFormat: `{
   "guide": {
     "primaryActions": [
@@ -25,17 +26,16 @@ function getMultilingualPrompts(language: string, disasterType: string) {
     ],
     "emergencyContacts": [
       "119 (재난신고센터) - 즉시 연락",
-      "지역 재난관리본부: 042-270-4119",
-      "대전시 통합상황실: 042-270-2500",
-      "가족 비상연락망 활성화"
+      "동행파트너 비상연락망 활성화"
     ]
   },
   "audioText": "안전 가이드 음성 텍스트",
   "estimatedReadingTime": 180
-}`
+}`,
     },
     en: {
-      systemRole: "You are a disaster safety expert. Generate customized disaster response guides considering user's personal information and current situation. Respond only in JSON format.",
+      systemRole:
+        "You are a disaster safety expert. Generate customized disaster response guides considering user's personal information and current situation. Respond only in JSON format.",
       jsonFormat: `{
   "guide": {
     "primaryActions": [
@@ -56,17 +56,16 @@ function getMultilingualPrompts(language: string, disasterType: string) {
     ],
     "emergencyContacts": [
       "119 (Disaster Report Center) - Call immediately", 
-      "Regional Disaster Management: 042-270-4119",
-      "Daejeon Integrated Situation Room: 042-270-2500",
       "Activate family emergency contacts"
     ]
   },
   "audioText": "Safety guide audio text",
   "estimatedReadingTime": 180
-}`
+}`,
     },
     vi: {
-      systemRole: "Bạn là chuyên gia an toàn thảm họa. Tạo hướng dẫn ứng phó thảm họa tùy chỉnh dựa trên thông tin cá nhân và tình huống hiện tại của người dùng. Chỉ trả lời bằng định dạng JSON.",
+      systemRole:
+        "Bạn là chuyên gia an toàn thảm họa. Tạo hướng dẫn ứng phó thảm họa tùy chỉnh dựa trên thông tin cá nhân và tình huống hiện tại của người dùng. Chỉ trả lời bằng định dạng JSON.",
       jsonFormat: `{
   "guide": {
     "primaryActions": [
@@ -94,10 +93,11 @@ function getMultilingualPrompts(language: string, disasterType: string) {
   },
   "audioText": "Văn bản âm thanh hướng dẫn an toàn", 
   "estimatedReadingTime": 180
-}`
+}`,
     },
     zh: {
-      systemRole: "您是灾难安全专家。根据用户的个人信息和当前情况生成定制化的灾难应对指南。仅以JSON格式回复。",
+      systemRole:
+        "您是灾难安全专家。根据用户的个人信息和当前情况生成定制化的灾难应对指南。仅以JSON格式回复。",
       jsonFormat: `{
   "guide": {
     "primaryActions": [
@@ -118,23 +118,24 @@ function getMultilingualPrompts(language: string, disasterType: string) {
     ],
     "emergencyContacts": [
       "119（灾难报告中心）- 立即拨打",
-      "区域灾难管理：042-270-4119",
-      "大田综合情况室：042-270-2500", 
       "启动家庭紧急联系网络"
     ]
   },
   "audioText": "安全指南音频文本",
   "estimatedReadingTime": 180
-}`
-    }
+}`,
+    },
   };
 
-  return prompts[language] || prompts['ko'];
+  return prompts[language] || prompts["ko"];
 }
 
 // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
 const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY || process.env.OPENAI_API_KEY_ENV_VAR || "default_key",
+  apiKey:
+    process.env.OPENAI_API_KEY ||
+    process.env.OPENAI_API_KEY_ENV_VAR ||
+    "default_key",
 });
 
 export interface PersonalizedGuideRequest {
@@ -169,11 +170,11 @@ export interface PersonalizedGuideResponse {
  * OpenAI를 사용하여 사용자 맞춤형 재난 대응 가이드 생성
  */
 export async function generatePersonalizedGuide(
-  request: PersonalizedGuideRequest
+  request: PersonalizedGuideRequest,
 ): Promise<PersonalizedGuideResponse> {
   try {
     const disasterTypeKo = "지진";
-    const mobilityKo = 
+    const mobilityKo =
       request.userProfile.mobility === "assisted"
         ? "이동 지원 필요"
         : request.userProfile.mobility === "unable"
@@ -181,8 +182,11 @@ export async function generatePersonalizedGuide(
           : "독립적 이동 가능";
 
     // 사용자 언어에 맞는 프롬프트 생성
-    const prompts = getMultilingualPrompts(request.userProfile.language, disasterTypeKo);
-    
+    const prompts = getMultilingualPrompts(
+      request.userProfile.language,
+      disasterTypeKo,
+    );
+
     const userPrompt = `사용자 프로필:
 - 나이: ${request.userProfile.age}세
 - 성별: ${request.userProfile.gender || "미상"}
@@ -197,7 +201,7 @@ export async function generatePersonalizedGuide(
 - 이동 가능성: ${request.situation.canMove ? "이동 가능" : "이동 어려움/불가능"}
 - 추가 상황: ${request.situation.additionalInfo || "없음"}
 
-위 정보를 바탕으로 다음 JSON 형식으로 **${request.userProfile.language === 'ko' ? '한국어' : request.userProfile.language === 'en' ? '영어' : request.userProfile.language === 'vi' ? '베트남어' : '중국어'}**로 응답해주세요:
+위 정보를 바탕으로 다음 JSON 형식으로 **${request.userProfile.language === "ko" ? "한국어" : request.userProfile.language === "en" ? "영어" : request.userProfile.language === "vi" ? "베트남어" : "중국어"}**로 응답해주세요:
 
 ${prompts.jsonFormat}
 
@@ -212,7 +216,7 @@ ${prompts.jsonFormat}
     });
 
     const response = await openai.chat.completions.create({
-      model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
+      model: "gpt-3.5-turbo", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
       messages: [
         {
           role: "system",
@@ -267,7 +271,10 @@ export async function testOpenAIConnection(): Promise<{
   try {
     console.log("🔧 OpenAI API 테스트 시작...");
     console.log("🔧 API Key 존재 여부:", !!process.env.OPENAI_API_KEY);
-    console.log("🔧 API Key 앞 10자리:", process.env.OPENAI_API_KEY?.substring(0, 10));
+    console.log(
+      "🔧 API Key 앞 10자리:",
+      process.env.OPENAI_API_KEY?.substring(0, 10),
+    );
 
     const response = await openai.chat.completions.create({
       model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
