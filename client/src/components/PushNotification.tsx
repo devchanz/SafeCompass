@@ -54,11 +54,7 @@ export default function PushNotification({ alert, onDismiss, onOpen }: PushNotif
     if (alert && alert.isActive) {
       setIsVisible(true);
       
-      // 진동 시뮬레이션
-      if (alert.vibrationPattern && 'vibrate' in navigator) {
-        navigator.vibrate(alert.vibrationPattern);
-      }
-      
+      // 진동은 useEmergencySystem에서 처리하므로 여기서는 제거
       // 자동 숨김 (15초 후)
       const timer = setTimeout(() => {
         setIsVisible(false);

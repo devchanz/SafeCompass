@@ -134,36 +134,36 @@ export function useEmergencySystem() {
     }
   });
 
-  // 긴급 상황 감지 - 수동 데모 실행 후에만 활성화
+  // 긴급 상황 감지 - 수동 데모 실행 후에만 활성화 (중복 제거)
   useEffect(() => {
-    if (currentAlert && currentAlert.isActive) {
+    if (currentAlert && 'isActive' in currentAlert && currentAlert.isActive) {
       console.log('🚨 긴급 알림 감지:', currentAlert);
       setIsEmergencyActive(true);
       
-      // 브라우저 알림 권한 요청 및 진동
+      // 브라우저 알림 한 번만 실행
       if ('Notification' in window && Notification.permission !== 'denied') {
         Notification.requestPermission().then(permission => {
-          if (permission === 'granted') {
-            new Notification(currentAlert.title, {
-              body: currentAlert.body,
+          if (permission === 'granted' && 'title' in currentAlert && 'body' in currentAlert && 'id' in currentAlert) {
+            new Notification(currentAlert.title as string, {
+              body: currentAlert.body as string,
               icon: '/favicon.ico',
-              tag: currentAlert.id,
+              tag: currentAlert.id as string, // 같은 ID로 중복 방지
               requireInteraction: true
             });
           }
         });
       }
 
-      // 진동 실행
-      if ('vibrate' in navigator && currentAlert.vibrationPattern) {
+      // 진동 한 번만 실행 
+      if ('vibrate' in navigator && 'vibrationPattern' in currentAlert && currentAlert.vibrationPattern) {
         console.log('📳 진동 패턴 실행:', currentAlert.vibrationPattern);
-        navigator.vibrate(currentAlert.vibrationPattern);
+        navigator.vibrate(currentAlert.vibrationPattern as number[]);
       }
-    } else if (!currentAlert || !currentAlert.isActive) {
+    } else if (!currentAlert || !('isActive' in currentAlert) || !currentAlert.isActive) {
       console.log('📴 긴급 상황 종료');
       setIsEmergencyActive(false);
     }
-  }, [currentAlert]);
+  }, [currentAlert && 'id' in currentAlert ? currentAlert.id : null]); // ID 기반으로 의존성 변경하여 중복 실행 방지
 
   return {
     // 상태
