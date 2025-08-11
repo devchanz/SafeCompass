@@ -4,38 +4,32 @@
  */
 
 interface DisasterMessage {
-  md101_sn: string;           // 일련번호
-  create_date: string;        // 발령시각
-  disaster_name: string;      // 재난유형
-  location_id: string;        // 지역코드
-  location_name: string;      // 발령지역
-  msg: string;               // 재난문자내용
+  SN: string;                 // 일련번호
+  CRT_DT: string;            // 생성일시
+  MSG_CN: string;            // 메시지내용
+  RCPTN_RGN_NM: string;      // 수신지역명
+  EMRG_STEP_NM: string;      // 긴급단계명 (긴급재난, 안전안내, 위급재난)
+  DST_SE_NM: string;         // 재해구분명
+  REG_YMD: string;           // 등록일자
+  MDFCN_YMD: string;         // 수정일자
 }
 
 interface DisasterAPIResponse {
-  DisasterMsg4: [
-    {
-      head: [
-        {
-          list_total_count: number;
-          RESULT: {
-            resultCode: string;
-            resultMsg: string;
-          };
-        }
-      ];
-    },
-    {
-      row: DisasterMessage[];
-    }
-  ];
+  body: DisasterMessage[];
+  header: {
+    resultCode: string;
+    resultMsg: string;
+    totalCount: number;
+  };
 }
 
 export class DisasterMessageAPI {
   private serviceKey: string;
-  private baseUrl = 'http://apis.data.go.kr/1741000/DisasterMsg4/getDisasterMsg1List';
+  private baseUrl = 'https://www.safetydata.go.kr/V2/api/DSSP-IF-00247';
   private lastCheckedTime: Date | null = null;
   private cachedMessages: DisasterMessage[] = [];
+  private callCount: number = 0;
+  private maxCallsPerHour: number = 100; // 일일 호출량 제한 고려
 
   constructor() {
     this.serviceKey = process.env.EMERGENCY_MSG_API_KEY || '';
@@ -47,7 +41,7 @@ export class DisasterMessageAPI {
   }
 
   /**
-   * 실시간 긴급재난문자 조회
+   * 실시간 긴급재난문자 조회 - 재난안전데이터공유플랫폼 API
    */
   async getRecentMessages(pageNo: number = 1, numOfRows: number = 20): Promise<DisasterMessage[]> {
     if (!this.serviceKey) {
@@ -55,15 +49,22 @@ export class DisasterMessageAPI {
       return this.getSimulatedMessages();
     }
 
+    // 일일 호출량 제한 체크
+    if (this.callCount >= this.maxCallsPerHour) {
+      console.warn('⚠️ 일일 호출량 제한 도달. 캐시된 데이터를 사용합니다.');
+      return this.cachedMessages.length > 0 ? this.cachedMessages : this.getSimulatedMessages();
+    }
+
     try {
       const params = new URLSearchParams({
-        ServiceKey: this.serviceKey,
+        serviceKey: this.serviceKey,
         pageNo: pageNo.toString(),
         numOfRows: numOfRows.toString(),
-        type: 'json'
+        returnType: 'json'
       });
 
-      console.log(`🌐 긴급재난문자 API 호출: ${this.baseUrl}?${params.toString()}`);
+      console.log(`🌐 재난안전데이터공유플랫폼 API 호출: ${this.baseUrl}?${params.toString()}`);
+      this.callCount++;
 
       const response = await fetch(`${this.baseUrl}?${params.toString()}`, {
         method: 'GET',
@@ -78,15 +79,20 @@ export class DisasterMessageAPI {
       }
 
       const data: DisasterAPIResponse = await response.json();
+      console.log('📄 API 응답 받음:', { 
+        resultCode: data.header?.resultCode,
+        totalCount: data.header?.totalCount,
+        bodyLength: data.body?.length
+      });
       
       // API 응답 검증
-      if (!data.DisasterMsg4 || !data.DisasterMsg4[1] || !data.DisasterMsg4[1].row) {
+      if (!data.body || !Array.isArray(data.body)) {
         console.warn('⚠️ API 응답 형식이 예상과 다릅니다:', data);
-        return [];
+        return this.cachedMessages.length > 0 ? this.cachedMessages : this.getSimulatedMessages();
       }
 
-      const messages = data.DisasterMsg4[1].row;
-      console.log(`✅ 긴급재난문자 ${messages.length}건 수신`);
+      const messages = data.body;
+      console.log(`✅ 긴급재난문자 ${messages.length}건 수신 (API 호출: ${this.callCount}/${this.maxCallsPerHour})`);
       
       this.cachedMessages = messages;
       this.lastCheckedTime = new Date();
@@ -94,7 +100,7 @@ export class DisasterMessageAPI {
       return messages;
 
     } catch (error) {
-      console.error('❌ 긴급재난문자 API 호출 실패:', error);
+      console.error('❌ 재난안전데이터공유플랫폼 API 호출 실패:', error);
       console.log('🔄 캐시된 데이터 또는 시뮬레이션 데이터를 반환합니다.');
       return this.cachedMessages.length > 0 ? this.cachedMessages : this.getSimulatedMessages();
     }
@@ -107,8 +113,8 @@ export class DisasterMessageAPI {
     const allMessages = await this.getRecentMessages(1, 50);
     
     return allMessages.filter(message => 
-      message.location_name.includes(locationName) ||
-      locationName.includes(message.location_name.replace('특별시', '').replace('광역시', '').trim())
+      message.RCPTN_RGN_NM.includes(locationName) ||
+      locationName.includes(message.RCPTN_RGN_NM.replace('특별시', '').replace('광역시', '').trim())
     );
   }
 
@@ -119,10 +125,10 @@ export class DisasterMessageAPI {
     const allMessages = await this.getRecentMessages(1, 100);
     
     return allMessages.filter(message => 
-      message.disaster_name.includes('지진') ||
-      message.msg.includes('지진') ||
-      message.msg.includes('진동') ||
-      message.msg.includes('흔들림')
+      message.DST_SE_NM.includes('지진') ||
+      message.MSG_CN.includes('지진') ||
+      message.MSG_CN.includes('진동') ||
+      message.MSG_CN.includes('흔들림')
     );
   }
 
@@ -139,10 +145,10 @@ export class DisasterMessageAPI {
     // 최근 1시간 이내 메시지 확인
     const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);
     const latestMessage = recentMessages[0];
-    const messageTime = new Date(latestMessage.create_date);
+    const messageTime = new Date(latestMessage.CRT_DT);
 
     if (messageTime > oneHourAgo) {
-      console.log('🚨 활성 재난 상황 감지:', latestMessage.disaster_name, latestMessage.location_name);
+      console.log('🚨 활성 재난 상황 감지:', latestMessage.DST_SE_NM, latestMessage.RCPTN_RGN_NM);
       return { active: true, latestMessage };
     }
 
@@ -156,16 +162,18 @@ export class DisasterMessageAPI {
     const now = new Date();
     const messages: DisasterMessage[] = [
       {
-        md101_sn: `sim_${Date.now()}`,
-        create_date: now.toISOString().replace('T', ' ').substring(0, 19),
-        disaster_name: '지진',
-        location_id: '4817000000',
-        location_name: '대전광역시',
-        msg: '[지진발생] 대전광역시 일대에 규모 4.2 지진이 발생했습니다. 추가 여진에 주의하시고 안전한 곳으로 대피하시기 바랍니다.'
+        SN: `sim_${Date.now()}`,
+        CRT_DT: now.toISOString().replace('T', ' ').substring(0, 19),
+        MSG_CN: '[지진발생] 대전광역시 일대에 규모 4.2 지진이 발생했습니다. 추가 여진에 주의하시고 안전한 곳으로 대피하시기 바랍니다.',
+        RCPTN_RGN_NM: '대전광역시',
+        EMRG_STEP_NM: '긴급재난',
+        DST_SE_NM: '지진',
+        REG_YMD: now.toISOString().split('T')[0],
+        MDFCN_YMD: now.toISOString().split('T')[0]
       }
     ];
 
-    console.log('🔄 시뮬레이션 재난문자 생성:', messages[0].disaster_name);
+    console.log('🔄 시뮬레이션 재난문자 생성:', messages[0].DST_SE_NM);
     return messages;
   }
 

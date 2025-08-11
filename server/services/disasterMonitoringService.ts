@@ -86,16 +86,16 @@ export class DisasterMonitoringService {
         if (activeDisaster.active && activeDisaster.latestMessage) {
           const message = activeDisaster.latestMessage;
           console.log('🚨 실제 재난 감지:', {
-            disaster: message.disaster_name,
-            location: message.location_name,
-            time: message.create_date,
-            content: message.msg.substring(0, 100) + '...'
+            disaster: message.DST_SE_NM,
+            location: message.RCPTN_RGN_NM,
+            time: message.CRT_DT,
+            content: message.MSG_CN.substring(0, 100) + '...'
           });
 
           // 재난 분류 및 분석
           const disasterAlert = await this.disasterClassifier.classifyDisaster(
-            message.msg,
-            message.location_name
+            message.MSG_CN,
+            message.RCPTN_RGN_NM
           );
 
           // 푸시 알림 발송 (실제 구현에서는 웹푸시 서비스 연동)
