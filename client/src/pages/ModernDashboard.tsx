@@ -576,6 +576,39 @@ export default function ModernDashboard() {
                   <i className="fas fa-lightbulb mr-2" aria-hidden="true"></i>
                   🔦 플래시라이트 테스트 도구
                 </Button>
+                <Button 
+                  variant="outline" 
+                  className="w-full justify-start rounded-xl text-green-600 border-green-200 hover:bg-green-50"
+                  onClick={async () => {
+                    try {
+                      console.log('🧪 실제 재난 API 테스트 시작');
+                      const response = await fetch('/api/emergency/test-real-api', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ testMode: true })
+                      });
+                      
+                      const result = await response.json();
+                      console.log('📊 실제 재난 API 테스트 결과:', result);
+                      
+                      if (result.success) {
+                        if (result.realData.found) {
+                          alert('🚨 실제 재난 발견! ' + result.realData.message);
+                        } else {
+                          alert('✅ API 연동 성공! 현재 위급 재난 없음');
+                        }
+                      } else {
+                        alert('❌ API 테스트 실패: ' + result.error);
+                      }
+                    } catch (error) {
+                      console.error('API 테스트 오류:', error);
+                      alert('❌ API 테스트 실행 실패');
+                    }
+                  }}
+                >
+                  <i className="fas fa-satellite-dish mr-2" aria-hidden="true"></i>
+                  📡 실제 재난 API 테스트
+                </Button>
                 
                 {/* 접근성 알림 데모 버튼들 */}
                 <div className="border-t pt-3">

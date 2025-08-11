@@ -178,6 +178,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // 실제 재난 API 테스트
+  app.post('/api/emergency/test-real-api', async (req, res) => {
+    try {
+      console.log('🧪 실제 재난 API 테스트 요청됨');
+      
+      const realAlert = await notificationService.testRealDisasterAPI();
+      
+      res.json({
+        success: true,
+        message: '실제 재난 API 테스트 완료',
+        realData: realAlert,
+        timestamp: new Date().toISOString()
+      });
+      
+    } catch (error) {
+      console.error('실제 API 테스트 오류:', error);
+      res.status(500).json({
+        success: false,
+        error: error instanceof Error ? error.message : '알 수 없는 오류'
+      });
+    }
+  });
+
   // Emergency guidance generation
   app.post("/api/manual/generate", async (req, res) => {
     try {

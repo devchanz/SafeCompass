@@ -46,6 +46,38 @@ export class EmergencyNotificationService {
   }
 
   /**
+   * 실제 재난 API 테스트
+   */
+  async testRealDisasterAPI(): Promise<any> {
+    try {
+      console.log('🧪 실제 재난 API 직접 호출 테스트');
+      const realAlert = await this.disasterService.checkRealGovernmentAlert();
+      
+      if (realAlert) {
+        console.log('✅ 실제 재난 데이터 발견:', realAlert);
+        return {
+          found: true,
+          alert: realAlert,
+          message: '실제 정부 재난 데이터 사용 가능'
+        };
+      } else {
+        console.log('📄 현재 위급 재난 없음');
+        return {
+          found: false,
+          message: '현재 위급/긴급 재난 없음 - 시뮬레이션 모드 사용'
+        };
+      }
+    } catch (error) {
+      console.error('❌ 실제 API 테스트 오류:', error);
+      return {
+        found: false,
+        error: error instanceof Error ? error.message : '알 수 없는 오류',
+        message: 'API 테스트 실패'
+      };
+    }
+  }
+
+  /**
    * 재난 모니터링 중지
    */
   stopMonitoring(): void {
@@ -61,8 +93,17 @@ export class EmergencyNotificationService {
    */
   private async checkForDisasters(): Promise<void> {
     try {
-      // 실제 정부 재난안전데이터 API 호출로 교체
-      const disasterAlert = await this.disasterService.simulateGovernmentAlert();
+      // 실제 정부 재난안전데이터 API 호출
+      const realAlert = await this.disasterService.checkRealGovernmentAlert();
+      
+      let disasterAlert;
+      if (realAlert) {
+        console.log('📡 실제 정부 재난 데이터 사용');
+        disasterAlert = realAlert;
+      } else {
+        console.log('🎭 시뮬레이션 데이터 사용');
+        disasterAlert = await this.disasterService.simulateGovernmentAlert();
+      }
       
       console.log('📡 재난 데이터 수신:', disasterAlert);
 

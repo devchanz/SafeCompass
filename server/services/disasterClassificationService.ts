@@ -354,6 +354,105 @@ JSON 형식으로 응답해주세요:
   }
 
   /**
+   * 실제 정부 긴급재난문자 API 호출
+   */
+  async checkRealGovernmentAlert(): Promise<DisasterAlert | null> {
+    try {
+      const serviceKey = process.env.EMERGENCY_MSG_API_KEY;
+      if (!serviceKey) {
+        console.log('⚠️ EMERGENCY_MSG_API_KEY가 설정되지 않음 - 시뮬레이션 모드');
+        return null;
+      }
+
+      console.log('📡 실제 정부 재난문자 API 호출 중...');
+      
+      const fetch = (await import('node-fetch')).default as any;
+      const apiUrl = 'https://www.safetydata.go.kr/V2/api/DSSP-IF-00247';
+      const params = new URLSearchParams({
+        serviceKey: serviceKey,
+        returnType: 'json',
+        pageNo: '1',
+        numOfRows: '10'
+      });
+
+      const response = await fetch(`${apiUrl}?${params}`);
+      
+      if (!response.ok) {
+        console.log('❌ API 호출 실패:', response.status);
+        return null;
+      }
+
+      const data = await response.json() as any;
+      
+      if (data.header?.resultCode !== '00' || !data.body?.length) {
+        console.log('❌ API 응답 오류 또는 데이터 없음');
+        return null;
+      }
+
+      console.log(`📨 총 ${data.totalCount}개의 재난문자 중 최신 ${data.body.length}개 확인`);
+
+      // 위험한 재난만 필터링
+      for (const msg of data.body) {
+        const disasterType = this.mapDisasterType(msg.DST_SE_NM);
+        const severity = this.analyzeSeverityFromMessage(msg.MSG_CN);
+        const classification = this.classifyFromMessage(msg.MSG_CN);
+        
+        if (classification === '긴급재난' || classification === '위급재난') {
+          console.log(`🚨 실제 ${msg.DST_SE_NM} 재난 발견:`, msg.MSG_CN.substring(0, 50));
+          
+          return {
+            type: disasterType,
+            severity: severity,
+            classification: classification,
+            location: msg.RCPTN_RGN_NM.trim(),
+            description: msg.MSG_CN,
+            isRelevant: true,
+            confidence: 0.95
+          };
+        }
+      }
+
+      console.log('📄 현재 위급/긴급 재난 없음');
+      return null;
+
+    } catch (error) {
+      console.error('❌ 실제 API 호출 오류:', error);
+      return null;
+    }
+  }
+
+  private mapDisasterType(koreanType: string): string {
+    const typeMap: Record<string, string> = {
+      '지진': 'earthquake',
+      '화재': 'fire', 
+      '홍수': 'flood',
+      '호우': 'flood',
+      '태풍': 'typhoon',
+      '쓰나미': 'tsunami',
+      '산사태': 'landslide'
+    };
+    return typeMap[koreanType] || 'unknown';
+  }
+
+  private analyzeSeverityFromMessage(message: string): 'critical' | 'urgent' | 'moderate' {
+    if (message.includes('위급') || message.includes('즉시') || message.includes('대피')) {
+      return 'critical';
+    } else if (message.includes('경보') || message.includes('긴급') || message.includes('주의보')) {
+      return 'urgent';
+    }
+    return 'moderate';
+  }
+
+  private classifyFromMessage(message: string): '위급재난' | '긴급재난' | '일반재난' {
+    if (message.includes('위급') || message.includes('즉시 대피') || message.includes('대규모')) {
+      return '위급재난';
+    } else if (message.includes('경보') || message.includes('긴급') || message.includes('주의보')) {
+      return '긴급재난';
+    }
+    return '일반재난';
+  }
+
+  /**
    * 정부 재난 문자 시뮬레이션
    */
   async simulateGovernmentAlert(): Promise<DisasterAlert> {
