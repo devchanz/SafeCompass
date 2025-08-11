@@ -27,6 +27,7 @@ import PushNotification from "@/components/PushNotification";
 import AccessibilityTest from "@/components/AccessibilityTest";
 import VibrationTestTool from "@/components/VibrationTestTool";
 import FlashlightTestTool from "@/components/FlashlightTestTool";
+import RAGManagement from "@/pages/RAGManagement";
 
 function AppContent() {
   const { language, setLanguage } = useLanguage();
@@ -252,6 +253,7 @@ function AppContent() {
           <Route path="/flashlight-test" component={FlashlightTestTool} />
           <Route path="/emergency-demo" component={EmergencyDemo} />
           <Route path="/emergency-manuals" component={EmergencyManuals} />
+          <Route path="/rag-management" component={RAGManagement} />
           <Route component={NotFound} />
         </Switch>
       </main>

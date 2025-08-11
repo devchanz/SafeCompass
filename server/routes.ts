@@ -9,6 +9,7 @@ import { insertUserSchema, insertCompanionSchema, insertEmergencyEventSchema } f
 import { generatePersonalizedGuide } from "./services/openai";
 import { disasterMonitoring } from "./services/disasterMonitoringService.js";
 import disasterRoutes from "./routes/disaster.js";
+import pdfRoutes from "./routes/pdf.js";
 import { z } from "zod";
 
 const generateManualSchema = z.object({
@@ -66,6 +67,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   // 재난 API 라우트 등록
   app.use('/api/disaster', disasterRoutes);
+  
+  // PDF 업로드 및 RAG 처리 라우트 등록
+  app.use('/api/pdf', pdfRoutes);
 
   // 재난 모니터링 상태 확인 API
   app.get('/api/disaster-monitoring/status', (req, res) => {

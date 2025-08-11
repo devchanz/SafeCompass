@@ -331,7 +331,7 @@ export default function ModernDashboard() {
           <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
             {getText('quick_actions')}
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
             
             {/* Emergency Manual */}
             <Link href="/emergency-manuals">
@@ -411,6 +411,23 @@ export default function ModernDashboard() {
                 </p>
               </CardContent>
             </Card>
+
+            {/* RAG Management (Admin) */}
+            <Link href="/rag-management">
+              <Card className="group hover:shadow-2xl transition-all duration-300 cursor-pointer border-0 bg-white dark:bg-gray-800 shadow-lg hover:scale-105">
+                <CardContent className="p-6 text-center">
+                  <div className="w-16 h-16 bg-gradient-to-r from-green-500 to-emerald-500 text-white rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
+                    <i className="fas fa-database text-2xl" aria-hidden="true"></i>
+                  </div>
+                  <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2">
+                    매뉴얼 관리
+                  </h3>
+                  <p className="text-gray-600 dark:text-gray-400 text-sm">
+                    PDF 매뉴얼 업로드 및 지식베이스 관리
+                  </p>
+                </CardContent>
+              </Card>
+            </Link>
 
           </div>
         </div>
