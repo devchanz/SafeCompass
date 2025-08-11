@@ -38,9 +38,11 @@ export class DisasterMessageAPI {
   private cachedMessages: DisasterMessage[] = [];
 
   constructor() {
-    this.serviceKey = process.env.DISASTER_API_KEY || '';
+    this.serviceKey = process.env.EMERGENCY_MSG_API_KEY || '';
     if (!this.serviceKey) {
-      console.warn('⚠️ DISASTER_API_KEY가 설정되지 않았습니다. 시뮬레이션 모드로 동작합니다.');
+      console.warn('⚠️ EMERGENCY_MSG_API_KEY가 설정되지 않았습니다. 시뮬레이션 모드로 동작합니다.');
+    } else {
+      console.log('✅ EMERGENCY_MSG_API_KEY 확인 완료 - 실제 긴급재난문자 API 연동 활성화');
     }
   }
 
