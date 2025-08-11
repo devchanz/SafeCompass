@@ -287,6 +287,11 @@ export class EmergencyNotificationService {
     this.setAccessibilityAlert(accessibilityAlert);
     console.log('🔔 데모 접근성 알림 생성됨:', accessibilityAlert);
     
+    // 접근성 알림이 즉시 감지되도록 약간의 지연 후 강제 업데이트
+    setTimeout(() => {
+      console.log('🔄 접근성 알림 강제 업데이트 트리거');
+    }, 100);
+    
     return this.activeAlert!;
   }
 

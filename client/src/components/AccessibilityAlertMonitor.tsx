@@ -50,7 +50,7 @@ export default function AccessibilityAlertMonitor() {
   const { data: alertResponse } = useQuery<{ success: boolean; alert: AccessibilityAlertData | null }>({
     queryKey: ['/api/accessibility/latest-alert'],
     enabled: needsAccessibilitySupport && !isLanguagePage, // 언어 설정 페이지에서는 비활성화
-    refetchInterval: 3000, // 3초마다 확인
+    refetchInterval: 1000, // 1초마다 확인 (빠른 반응을 위해)
     staleTime: 0, // 항상 fresh 체크
   });
 
@@ -64,10 +64,12 @@ export default function AccessibilityAlertMonitor() {
     
     // 이미 처리한 알림인지 확인
     if (alert.timestamp === lastProcessedTimestamp.current) {
+      console.log('🔄 이미 처리된 접근성 알림:', alert.timestamp);
       return;
     }
 
     console.log('🚨 새로운 접근성 알림 감지:', alert);
+    console.log('🎯 사용자 접근성 설정:', { hasVisualSupport, hasHearingSupport });
     
     // 자동 접근성 알림 실행
     const accessibilityType = hasVisualSupport && hasHearingSupport 
@@ -76,6 +78,8 @@ export default function AccessibilityAlertMonitor() {
       ? 'visual' 
       : 'hearing';
 
+    console.log('🔥 접근성 알림 실행:', accessibilityType);
+    
     triggerAutomaticAlert({
       type: accessibilityType,
       severity: alert.severity as 'critical' | 'high' | 'moderate',
@@ -84,6 +88,8 @@ export default function AccessibilityAlertMonitor() {
       message: alert.message,
       language: language
     });
+
+    console.log('✅ 접근성 알림 트리거 완료');
 
     // 처리 완료 표시
     lastProcessedTimestamp.current = alert.timestamp;
