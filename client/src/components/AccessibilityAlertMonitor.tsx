@@ -89,14 +89,19 @@ export default function AccessibilityAlertMonitor() {
 
   // 디버그 정보 (개발 모드에서만)
   useEffect(() => {
-    if (process.env.NODE_ENV === 'development' && needsAccessibilitySupport) {
-      console.log('🔍 접근성 알림 모니터링 활성화:', {
+    if (process.env.NODE_ENV === 'development') {
+      console.log('🔍 접근성 알림 모니터링 상태:', {
+        needsSupport: needsAccessibilitySupport,
         visual: hasVisualSupport,
         hearing: hasHearingSupport,
-        language: language
+        language: language,
+        location: location,
+        isLanguagePage: isLanguagePage,
+        enabled: needsAccessibilitySupport && !isLanguagePage,
+        alertResponse: alertResponse
       });
     }
-  }, [needsAccessibilitySupport, hasVisualSupport, hasHearingSupport, language]);
+  }, [needsAccessibilitySupport, hasVisualSupport, hasHearingSupport, language, location, isLanguagePage, alertResponse]);
 
   // 이 컴포넌트는 UI를 렌더링하지 않음 (백그라운드 모니터링)
   return null;

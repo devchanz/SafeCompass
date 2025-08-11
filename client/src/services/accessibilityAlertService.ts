@@ -405,6 +405,9 @@ export function useAccessibilityAlert() {
   const service = AccessibilityAlertService.getInstance();
 
   return {
-    triggerAutomaticAlert: (config: AccessibilityAlertConfig) => service.triggerAutomaticAlert(config)
+    triggerAutomaticAlert: async (config: AccessibilityAlertConfig) => {
+      console.log('🚀 useAccessibilityAlert 훅에서 알림 실행 시작:', config);
+      await service.triggerAutomaticAlert(config);
+    }
   };
 }
