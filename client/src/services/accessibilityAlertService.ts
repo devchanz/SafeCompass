@@ -153,36 +153,100 @@ export class AccessibilityAlertService {
   }
 
   /**
-   * 시각적 플래시 효과
+   * 시각적 플래시 효과 (화면 + 실제 플래시라이트)
    */
   private async triggerVisualFlash(severity: string): Promise<void> {
     const flashColor = this.getFlashColor(severity);
     const flashCount = severity === 'critical' ? 6 : severity === 'high' ? 4 : 2;
 
-    for (let i = 0; i < flashCount; i++) {
-      // 화면 전체 플래시
-      const overlay = document.createElement('div');
-      overlay.style.position = 'fixed';
-      overlay.style.top = '0';
-      overlay.style.left = '0';
-      overlay.style.width = '100vw';
-      overlay.style.height = '100vh';
-      overlay.style.backgroundColor = flashColor;
-      overlay.style.zIndex = '9999';
-      overlay.style.pointerEvents = 'none';
-      overlay.style.opacity = '0.8';
+    // 실제 카메라 플래시라이트 제어 시도
+    const cameraFlashPromise = this.triggerCameraFlash(flashCount);
 
-      document.body.appendChild(overlay);
+    // 화면 플래시와 카메라 플래시를 동시에 실행
+    const screenFlashPromise = (async () => {
+      for (let i = 0; i < flashCount; i++) {
+        // 화면 전체 플래시
+        const overlay = document.createElement('div');
+        overlay.style.position = 'fixed';
+        overlay.style.top = '0';
+        overlay.style.left = '0';
+        overlay.style.width = '100vw';
+        overlay.style.height = '100vh';
+        overlay.style.backgroundColor = flashColor;
+        overlay.style.zIndex = '9999';
+        overlay.style.pointerEvents = 'none';
+        overlay.style.opacity = '0.8';
 
-      // 플래시 지속 시간
-      await new Promise(resolve => setTimeout(resolve, 200));
-      
-      document.body.removeChild(overlay);
-      
-      // 플래시 간격
-      if (i < flashCount - 1) {
-        await new Promise(resolve => setTimeout(resolve, 100));
+        document.body.appendChild(overlay);
+
+        // 플래시 지속 시간
+        await new Promise(resolve => setTimeout(resolve, 200));
+        
+        document.body.removeChild(overlay);
+        
+        // 플래시 간격
+        if (i < flashCount - 1) {
+          await new Promise(resolve => setTimeout(resolve, 100));
+        }
       }
+    })();
+
+    // 화면 플래시와 카메라 플래시를 병렬 실행
+    await Promise.all([screenFlashPromise, cameraFlashPromise]);
+  }
+
+  /**
+   * 실제 카메라 플래시라이트 제어 (안드로이드/iOS)
+   */
+  private async triggerCameraFlash(flashCount: number): Promise<void> {
+    try {
+      console.log('📸 실제 플래시라이트 제어 시도...');
+      
+      // 카메라 스트림 요청 (플래시 제어를 위해)
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: {
+          facingMode: 'environment', // 후면 카메라
+          width: { ideal: 1 },
+          height: { ideal: 1 }
+        }
+      });
+
+      const track = stream.getVideoTracks()[0];
+      const capabilities = track.getCapabilities() as any;
+
+      // 플래시 지원 여부 확인
+      if (capabilities.torch) {
+        console.log('📸 플래시라이트 지원됨 - 제어 시작');
+        
+        for (let i = 0; i < flashCount; i++) {
+          // 플래시 켜기
+          await track.applyConstraints({
+            advanced: [{ torch: true } as any]
+          });
+          
+          await new Promise(resolve => setTimeout(resolve, 200));
+          
+          // 플래시 끄기
+          await track.applyConstraints({
+            advanced: [{ torch: false } as any]
+          });
+          
+          if (i < flashCount - 1) {
+            await new Promise(resolve => setTimeout(resolve, 100));
+          }
+        }
+        
+        console.log('📸 실제 플래시라이트 제어 완료');
+      } else {
+        console.log('📸 플래시라이트 미지원 - 화면 플래시만 사용');
+      }
+
+      // 카메라 스트림 종료
+      stream.getTracks().forEach(track => track.stop());
+      
+    } catch (error) {
+      console.log('📸 카메라 접근 실패 - 화면 플래시만 사용:', error);
+      // 카메라 접근이 실패해도 화면 플래시는 계속 진행
     }
   }
 

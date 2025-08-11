@@ -26,6 +26,7 @@ import { useEmergencySystem } from "@/hooks/useEmergencySystem";
 import PushNotification from "@/components/PushNotification";
 import AccessibilityTest from "@/components/AccessibilityTest";
 import VibrationTestTool from "@/components/VibrationTestTool";
+import FlashlightTestTool from "@/components/FlashlightTestTool";
 
 function AppContent() {
   const { language, setLanguage } = useLanguage();
@@ -248,6 +249,7 @@ function AppContent() {
           <Route path="/test" component={AccessibilityTest} />
           <Route path="/accessibility-test" component={AccessibilityTest} />
           <Route path="/vibration-test" component={VibrationTestTool} />
+          <Route path="/flashlight-test" component={FlashlightTestTool} />
           <Route path="/emergency-demo" component={EmergencyDemo} />
           <Route path="/emergency-manuals" component={EmergencyManuals} />
           <Route component={NotFound} />
