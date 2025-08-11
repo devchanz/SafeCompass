@@ -388,7 +388,7 @@ export default function ModernDashboard() {
               className="group hover:shadow-2xl transition-all duration-300 cursor-pointer border-0 bg-white dark:bg-gray-800 shadow-lg hover:scale-105"
               onClick={async () => {
                 try {
-                  await triggerEmergencyDemo('earthquake', language);
+                  await triggerEmergencyDemo({ disasterType: 'earthquake', language });
                   if (navigator.vibrate) {
                     navigator.vibrate([200, 100, 200]);
                   }
@@ -512,7 +512,7 @@ export default function ModernDashboard() {
                   className="w-full justify-start rounded-xl text-orange-600 border-orange-200 hover:bg-orange-50"
                   onClick={async () => {
                     try {
-                      await triggerEmergencyDemo('earthquake', language);
+                      await triggerEmergencyDemo({ disasterType: 'earthquake', language });
                       if (navigator.vibrate) {
                         navigator.vibrate([200, 100, 200]);
                       }
@@ -548,11 +548,19 @@ export default function ModernDashboard() {
                   className="w-full justify-start rounded-xl"
                   onClick={() => {
                     debugStorageState();
-                    forcePageReload('/');
+                    forcePageReload();
                   }}
                 >
                   <i className="fas fa-refresh mr-2" aria-hidden="true"></i>
                   {getText('reload_page')}
+                </Button>
+                <Button 
+                  variant="outline" 
+                  className="w-full justify-start rounded-xl text-purple-600 border-purple-200 hover:bg-purple-50"
+                  onClick={() => setLocation('/vibration-test')}
+                >
+                  <i className="fas fa-mobile-alt mr-2" aria-hidden="true"></i>
+                  📳 진동 테스트 도구
                 </Button>
               </CardContent>
             </Card>

@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useLocation } from "wouter";
 import { useUserProfile } from "@/hooks/useUserProfile";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useAccessibilityAlert } from "@/services/accessibilityAlertService";
@@ -29,10 +30,13 @@ export default function AccessibilityAlertMonitor() {
   const hasHearingSupport = userProfile?.accessibility?.includes('hearing') || false;
   const needsAccessibilitySupport = hasVisualSupport || hasHearingSupport;
 
-  // 접근성 알림 폴링
+  // 접근성 알림 폴링 - 언어 설정 페이지에서는 비활성화
+  const [location] = useLocation();
+  const isLanguagePage = location === '/language';
+
   const { data: alertResponse } = useQuery<{ success: boolean; alert: AccessibilityAlertData | null }>({
     queryKey: ['/api/accessibility/latest-alert'],
-    enabled: needsAccessibilitySupport, // 접근성 지원이 필요한 사용자만 활성화
+    enabled: needsAccessibilitySupport && !isLanguagePage, // 언어 설정 페이지에서는 비활성화
     refetchInterval: 3000, // 3초마다 확인
     staleTime: 0, // 항상 fresh 체크
   });

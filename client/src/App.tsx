@@ -257,8 +257,8 @@ function AppContent() {
       {/* SOS Floating Button */}
       <SOSButton />
       
-      {/* 전역 PUSH 알림 - 단 하나만 렌더링 */}
-      {currentAlert && currentAlert.isActive && (
+      {/* 전역 PUSH 알림 - 언어 설정 페이지에서는 표시하지 않음 */}
+      {currentAlert && currentAlert.isActive && location !== '/language' && (
         <PushNotification
           alert={currentAlert}
           onDismiss={() => console.log('전역 알림 무시됨')}
