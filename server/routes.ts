@@ -77,6 +77,49 @@ export async function registerRoutes(app: Express): Promise<Server> {
     });
   });
 
+  // 실제 재난 API에서 최신 재난 정보 가져오기
+  app.get('/api/disaster/latest', async (req, res) => {
+    try {
+      const { disasterMessageAPI } = await import('./services/disasterMessageAPI.js');
+      
+      // 실제 정부 재난 API에서 최신 정보 확인
+      const activeDisaster = await disasterMessageAPI.hasActiveDisaster();
+      
+      if (!activeDisaster.active || !activeDisaster.latestMessage) {
+        return res.json({
+          success: true,
+          message: '현재 활성화된 재난 정보가 없습니다',
+          data: null
+        });
+      }
+      
+      const message = activeDisaster.latestMessage;
+      
+      res.json({
+        success: true,
+        message: '최신 재난 정보를 성공적으로 가져왔습니다',
+        data: {
+          id: message.SN,
+          title: message.DST_SE_NM || '재난문자',
+          content: message.MSG_CN,
+          location: message.RCPTN_RGN_NM,
+          severity: message.EMRGC_STEP_NM || '알 수 없음',
+          timestamp: message.CRT_DT,
+          type: '재난문자',
+          source: '행정안전부'
+        }
+      });
+      
+    } catch (error) {
+      console.error('최신 재난 정보 조회 실패:', error);
+      res.status(500).json({
+        success: false,
+        error: '재난 정보 조회에 실패했습니다',
+        message: (error as Error).message
+      });
+    }
+  });
+
   // 재난 모니터링 시작/중지 API
   app.post('/api/disaster-monitoring/start', async (req, res) => {
     try {
@@ -250,7 +293,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
 
       // 한국수어 키워드 생성
-      const { extractKSLKeywords } = require('./services/openai');
+      const { extractKSLKeywords } = await import('./services/openai.js');
       const kslKeywords = extractKSLKeywords(
         guide.audioText + ' ' + guide.guide.primaryActions.join(' '), 
         requestData.disasterType

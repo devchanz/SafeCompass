@@ -581,33 +581,31 @@ export default function ModernDashboard() {
                   className="w-full justify-start rounded-xl text-green-600 border-green-200 hover:bg-green-50"
                   onClick={async () => {
                     try {
-                      console.log('🧪 실제 재난 API 테스트 시작');
-                      const response = await fetch('/api/emergency/test-real-api', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ testMode: true })
-                      });
-                      
+                      console.log('🔍 최신 재난문자 조회 시작');
+                      const response = await fetch('/api/disaster/latest');
                       const result = await response.json();
-                      console.log('📊 실제 재난 API 테스트 결과:', result);
+                      console.log('📡 최신 재난 정보:', result);
                       
-                      if (result.success) {
-                        if (result.realData.found) {
-                          alert('🚨 실제 재난 발견! ' + result.realData.message);
-                        } else {
-                          alert('✅ API 연동 성공! 현재 위급 재난 없음');
-                        }
+                      if (result.success && result.data) {
+                        const disaster = result.data;
+                        alert(`📨 최신 재난문자 정보\n\n` +
+                          `제목: ${disaster.title}\n` +
+                          `내용: ${disaster.content}\n` +
+                          `위치: ${disaster.location}\n` +
+                          `단계: ${disaster.severity}\n` +
+                          `시간: ${new Date(disaster.timestamp).toLocaleString('ko-KR')}\n` +
+                          `출처: ${disaster.source}`);
                       } else {
-                        alert('❌ API 테스트 실패: ' + result.error);
+                        alert(`✅ API 연결 성공\n\n${result.message}\n\n현재 활성화된 재난문자가 없습니다.`);
                       }
                     } catch (error) {
-                      console.error('API 테스트 오류:', error);
-                      alert('❌ API 테스트 실행 실패');
+                      console.error('최신 재난 정보 조회 오류:', error);
+                      alert('최신 재난문자 조회에 실패했습니다.\n\n' + (error as Error).message);
                     }
                   }}
                 >
                   <i className="fas fa-satellite-dish mr-2" aria-hidden="true"></i>
-                  📡 실제 재난 API 테스트
+                  📡 최신 재난문자 확인
                 </Button>
                 
                 {/* 접근성 알림 데모 버튼들 */}
