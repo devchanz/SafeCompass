@@ -345,8 +345,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         console.log("✅ 최종 사용자 프로필:", finalUserProfile);
         
         // RAG 서비스 사용으로 변경하여 신뢰성 높은 정보 제공
-        const { RAGService } = await import('./services/ragService.js');
-        const ragService = new RAGService();
+        const { ragService } = await import('./services/ragService.js');
         const guide = await ragService.generatePersonalizedGuide({
           userProfile: {
             ...finalUserProfile,
