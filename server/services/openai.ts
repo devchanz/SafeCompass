@@ -77,7 +77,7 @@ export function extractKSLKeywords(text: string, disasterType: string = 'unknown
 
   const essentialKeywords = disasterKeywords[disasterType] || ['안전', '대피'];
   
-  return [...new Set([...foundKeywords, ...essentialKeywords])].slice(0, 5);
+  return Array.from(new Set([...foundKeywords, ...essentialKeywords])).slice(0, 5);
 }
 
 /**
@@ -194,11 +194,48 @@ ${request.relevantManuals?.map((manual, idx) => `${idx + 1}. ${manual}`).join('\
 
     let result: PersonalizedGuideResponse;
     try {
-      result = JSON.parse(content);
+      const parsedContent = JSON.parse(content);
+      console.log("🔍 파싱된 응답 구조:", JSON.stringify(parsedContent, null, 2));
+      
+      // OpenAI 응답 구조가 예상과 다를 수 있으므로 확인 후 변환
+      if (parsedContent.guide) {
+        result = parsedContent;
+      } else {
+        // 직접 가이드 내용만 있는 경우 래핑
+        result = {
+          guide: parsedContent,
+          audioText: parsedContent.audioText || "지진이 발생했습니다. 즉시 대피하세요.",
+          estimatedReadingTime: parsedContent.estimatedReadingTime || 3
+        };
+      }
     } catch (parseError) {
       console.error("❌ JSON 파싱 오류:", parseError);
       console.log("원본 응답:", content);
-      throw new Error("OpenAI 응답을 JSON으로 파싱할 수 없습니다");
+      
+      // 파싱 실패시 기본 응답 구조 반환
+      result = {
+        guide: {
+          primaryActions: [
+            "즉시 머리와 목을 보호하세요",
+            "튼튼한 테이블 아래로 피하세요", 
+            "흔들림이 멈출 때까지 기다리세요",
+            "안전한 경로로 대피하세요"
+          ],
+          safetyTips: [
+            "엘리베이터를 사용하지 마세요",
+            "계단을 이용해 천천히 대피하세요",
+            "낙하물에 주의하세요"
+          ],
+          specialConsiderations: [
+            "개인 이동 능력에 따른 대피",
+            "주변 도움 요청하기",
+            "비상용품 준비"
+          ],
+          emergencyContacts: ["119", "112", "1588-3650"]
+        },
+        audioText: "지진이 발생했습니다. 즉시 대피하세요.",
+        estimatedReadingTime: 2
+      };
     }
 
     return result;

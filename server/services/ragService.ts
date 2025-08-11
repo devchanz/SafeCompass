@@ -167,7 +167,8 @@ export class RagService {
    */
   async saveKnowledgeBase(): Promise<void> {
     try {
-      const vectorStoreDir = require('path').join(process.cwd(), 'data', 'vector_store');
+      const path = await import('path');
+      const vectorStoreDir = path.join(process.cwd(), 'data', 'vector_store');
       await vectorStoreService.saveVectorStore(vectorStoreDir);
       console.log('💾 지식베이스 저장 완료');
     } catch (error) {
@@ -179,7 +180,7 @@ export class RagService {
   /**
    * 개인화된 가이드 생성 (RAG 통합)
    */
-  async generatePersonalizedGuide(request: PersonalizedGuideRequest): Promise<string> {
+  async generatePersonalizedGuide(request: PersonalizedGuideRequest): Promise<any> {
     try {
       // RAG로 관련 매뉴얼 검색
       const relevantManuals = await this.searchRelevantManuals(
@@ -203,11 +204,25 @@ export class RagService {
 
       // OpenAI API로 가이드 생성
       const result = await generatePersonalizedGuide(enhancedRequest);
-      return typeof result === 'string' ? result : result.guide;
+      return result;
 
     } catch (error) {
       console.error('❌ RAG 기반 가이드 생성 실패:', error);
-      return this.generateBasicEmergencyGuide(request);
+      return {
+        guide: {
+          title: "긴급 지진 대응 가이드",
+          primaryActions: [
+            "머리와 목을 보호하세요",
+            "튼튼한 테이블 아래로 피하세요",  
+            "흔들림이 멈출 때까지 기다리세요",
+            "안전한 경로로 대피하세요"
+          ],
+          detailedInstructions: this.generateBasicEmergencyGuide(request),
+          emergencyContacts: ["119", "112", "1588-3650"]
+        },
+        audioText: "지진이 발생했습니다. 즉시 안전한 곳으로 피하세요.",
+        estimatedReadingTime: 2
+      };
     }
   }
 

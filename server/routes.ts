@@ -299,7 +299,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // 한국수어 키워드 생성
       const { extractKSLKeywords } = await import('./services/openai.js');
       const kslKeywords = extractKSLKeywords(
-        guide.audioText + ' ' + guide.guide.primaryActions.join(' '), 
+        guide.audioText + ' ' + (guide.guide?.primaryActions?.join(' ') || '지진 대피'), 
         requestData.disasterType
       );
 
