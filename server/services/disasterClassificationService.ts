@@ -366,7 +366,7 @@ JSON 형식으로 응답해주세요:
 
       console.log('📡 실제 정부 재난문자 API 호출 중...');
       
-      const fetch = (await import('node-fetch')).default as any;
+      // Node.js 18+ 내장 fetch 사용
       const apiUrl = 'https://www.safetydata.go.kr/V2/api/DSSP-IF-00247';
       const params = new URLSearchParams({
         serviceKey: serviceKey,

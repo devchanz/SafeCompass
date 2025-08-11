@@ -24,6 +24,10 @@ const generateManualSchema = z.object({
   })
 });
 
+// 서비스 인스턴스 생성
+const disasterService = new DisasterClassificationService();
+const notificationService = new EmergencyNotificationService(disasterService);
+
 // Mock shelter data
 const mockShelters = [
   {
