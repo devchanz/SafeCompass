@@ -1,6 +1,7 @@
 import { useState } from "react";
 import * as React from "react";
 import { Link, useLocation } from "wouter";
+import DemoAccessibilityButton from "@/components/DemoAccessibilityButton";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -512,10 +513,15 @@ export default function ModernDashboard() {
                   className="w-full justify-start rounded-xl text-orange-600 border-orange-200 hover:bg-orange-50"
                   onClick={async () => {
                     try {
+                      console.log('🚨 재난 시뮬레이션 시작 - 개인화된 접근성 알림 포함');
                       await triggerEmergencyDemo({ disasterType: 'earthquake', language });
+                      
+                      // 기본 진동 피드백
                       if (navigator.vibrate) {
                         navigator.vibrate([200, 100, 200]);
                       }
+                      
+                      console.log('✅ 재난 시뮬레이션 완료 - 접근성 알림이 활성화된 사용자에게 개인화된 알림 제공');
                     } catch (error) {
                       console.error('재난 시뮬레이션 오류:', error);
                     }
@@ -562,6 +568,11 @@ export default function ModernDashboard() {
                   <i className="fas fa-mobile-alt mr-2" aria-hidden="true"></i>
                   📳 진동 테스트 도구
                 </Button>
+                
+                {/* 접근성 알림 데모 버튼들 */}
+                <div className="border-t pt-3">
+                  <DemoAccessibilityButton />
+                </div>
               </CardContent>
             </Card>
           </div>

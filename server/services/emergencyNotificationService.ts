@@ -274,15 +274,18 @@ export class EmergencyNotificationService {
 
     await this.sendEmergencyAlert(mockAlert, userLanguage);
     
-    // 접근성 알림도 함께 준비
-    this.setAccessibilityAlert({
+    // 접근성 알림도 함께 준비 (개인화된 알림을 위해)
+    const accessibilityAlert = {
       type: 'accessibility_alert',
       disasterType: mockAlert.type,
       severity: mockAlert.severity,
       location: mockAlert.location,
       message: mockAlert.description || '',
       timestamp: new Date().toISOString()
-    });
+    };
+    
+    this.setAccessibilityAlert(accessibilityAlert);
+    console.log('🔔 데모 접근성 알림 생성됨:', accessibilityAlert);
     
     return this.activeAlert!;
   }

@@ -30,6 +30,19 @@ export default function AccessibilityAlertMonitor() {
   const hasHearingSupport = userProfile?.accessibility?.includes('hearing') || false;
   const needsAccessibilitySupport = hasVisualSupport || hasHearingSupport;
 
+  // 사용자 프로필 디버깅
+  useEffect(() => {
+    if (process.env.NODE_ENV === 'development') {
+      console.log('👤 사용자 프로필 정보:', {
+        userProfile,
+        accessibility: userProfile?.accessibility,
+        hasVisualSupport,
+        hasHearingSupport,
+        needsAccessibilitySupport
+      });
+    }
+  }, [userProfile, hasVisualSupport, hasHearingSupport, needsAccessibilitySupport]);
+
   // 접근성 알림 폴링 - 언어 설정 페이지에서는 비활성화
   const [location] = useLocation();
   const isLanguagePage = location === '/language';
