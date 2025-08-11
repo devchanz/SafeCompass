@@ -21,8 +21,8 @@ export default function AccessibilityTest() {
   const testTTS = async () => {
     try {
       addResult("TTS 테스트 시작...");
-      await speak("안전나침반 음성 지원 테스트입니다. 시각 장애인을 위한 음성 안내 기능이 정상적으로 작동하고 있습니다.", "ko");
-      addResult("✅ TTS 음성 재생 완료 - 시각장애인 지원 정상");
+      await speak("안전나침반 음성 지원 테스트입니다. 시각 지원이 필요한 분을 위한 음성 안내 기능이 정상적으로 작동하고 있습니다.", "ko");
+      addResult("✅ TTS 음성 재생 완료 - 시각 지원 정상");
     } catch (error) {
       addResult(`❌ TTS 오류: ${error}`);
     }
@@ -33,7 +33,7 @@ export default function AccessibilityTest() {
       addResult("진동 테스트 시작...");
       // 긴급 상황 패턴: 짧은-긴-짧은-긴-짧은
       await vibrate([100, 100, 300, 100, 100, 100, 300, 100, 100]);
-      addResult("✅ 진동 패턴 실행 완료 - 청각장애인 지원 정상");
+      addResult("✅ 진동 패턴 실행 완료 - 청각 지원 정상");
     } catch (error) {
       addResult(`❌ 진동 오류: ${error}`);
     }
@@ -112,7 +112,7 @@ export default function AccessibilityTest() {
                   {ttsSupported ? "✅" : "❌"}
                 </div>
                 <p className="font-medium">음성 지원 (TTS)</p>
-                <p className="text-sm text-gray-600">시각장애인 지원</p>
+                <p className="text-sm text-gray-600">시각 지원</p>
               </CardContent>
             </Card>
             
@@ -122,7 +122,7 @@ export default function AccessibilityTest() {
                   {hapticSupported ? "✅" : "❌"}
                 </div>
                 <p className="font-medium">진동 지원</p>
-                <p className="text-sm text-gray-600">청각장애인 지원</p>
+                <p className="text-sm text-gray-600">청각 지원</p>
               </CardContent>
             </Card>
           </div>
@@ -138,7 +138,7 @@ export default function AccessibilityTest() {
             >
               🔊 음성 지원 테스트
               <br />
-              <span className="text-xs">시각장애인용</span>
+              <span className="text-xs">시각 지원용</span>
             </Button>
             
             <Button 
@@ -148,7 +148,7 @@ export default function AccessibilityTest() {
             >
               📳 진동 알림 테스트
               <br />
-              <span className="text-xs">청각장애인용</span>
+              <span className="text-xs">청각 지원용</span>
             </Button>
             
             <Button 

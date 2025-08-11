@@ -51,9 +51,9 @@ export default function Registration() {
         accessibility_normal: '일반',
         accessibility_normal_desc: '특별한 지원이 필요하지 않음',
         accessibility_visual: '시각 지원',
-        accessibility_visual_desc: '시각 장애인을 위한 음성 안내',
+        accessibility_visual_desc: '시각 지원이 필요한 분을 위한 음성 안내',
         accessibility_hearing: '청각 지원', 
-        accessibility_hearing_desc: '청각 장애인을 위한 진동/시각 알림',
+        accessibility_hearing_desc: '청각 지원이 필요한 분을 위한 진동/시각 알림',
         mobility: '이동성',
         independent: '독립적 이동',
         assistance: '도움 필요',
@@ -87,9 +87,9 @@ export default function Registration() {
         accessibility_normal: 'Normal',
         accessibility_normal_desc: 'No special support needed',
         accessibility_visual: 'Visual Support',
-        accessibility_visual_desc: 'Voice guidance for visually impaired',
+        accessibility_visual_desc: 'Voice guidance for those who need visual support',
         accessibility_hearing: 'Hearing Support',
-        accessibility_hearing_desc: 'Vibration/visual alerts for hearing impaired',
+        accessibility_hearing_desc: 'Vibration/visual alerts for those who need hearing support',
         mobility: 'Mobility',
         independent: 'Independent movement',
         assistance: 'Assistance needed',
@@ -123,9 +123,9 @@ export default function Registration() {
         accessibility_normal: 'Bình thường',
         accessibility_normal_desc: 'Không cần hỗ trợ đặc biệt',
         accessibility_visual: 'Hỗ trợ thị giác',
-        accessibility_visual_desc: 'Hướng dẫn giọng nói cho người khiếm thị',
+        accessibility_visual_desc: 'Hướng dẫn giọng nói cho người cần hỗ trợ thị giác',
         accessibility_hearing: 'Hỗ trợ thính giác',
-        accessibility_hearing_desc: 'Cảnh báo rung/hình ảnh cho người khiếm thính',
+        accessibility_hearing_desc: 'Cảnh báo rung/hình ảnh cho người cần hỗ trợ thính giác',
         mobility: 'Tính di động',
         independent: 'Di chuyển độc lập',
         assistance: 'Cần hỗ trợ',
@@ -159,9 +159,9 @@ export default function Registration() {
         accessibility_normal: '正常',
         accessibility_normal_desc: '不需要特殊支持',
         accessibility_visual: '视觉支持',
-        accessibility_visual_desc: '为视障人士提供语音指导',
+        accessibility_visual_desc: '为需要视觉支持的人士提供语音指导',
         accessibility_hearing: '听觉支持',
-        accessibility_hearing_desc: '为听障人士提供振动/视觉提醒',
+        accessibility_hearing_desc: '为需要听觉支持的人士提供振动/视觉提醒',
         mobility: '行动能力',
         independent: '独立行动',
         assistance: '需要帮助',
@@ -418,7 +418,7 @@ export default function Registration() {
                       : 'bg-white hover:bg-blue-50 shadow-md hover:shadow-lg'
                   }`}
                   onClick={() => toggleAccessibility('visual')}
-                  aria-label="시각 지원 필요 - 음성 안내와 큰 글씨를 제공합니다"
+                  aria-label="시각 지원 - 음성 안내와 큰 글씨를 제공합니다"
                 >
                   <div className="w-12 h-12 bg-blue-100 rounded-2xl flex items-center justify-center">
                     <i className="fas fa-low-vision text-2xl text-blue-600" aria-hidden="true"></i>
@@ -442,7 +442,7 @@ export default function Registration() {
                       : 'bg-white hover:bg-yellow-50 shadow-md hover:shadow-lg'
                   }`}
                   onClick={() => toggleAccessibility('hearing')}
-                  aria-label="청각 지원 필요 - 진동 알림과 시각적 신호를 제공합니다"
+                  aria-label="청각 지원 - 진동 알림과 시각적 신호를 제공합니다"
                 >
                   <div className="w-12 h-12 bg-yellow-100 rounded-2xl flex items-center justify-center">
                     <i className="fas fa-assistive-listening-systems text-2xl text-yellow-600" aria-hidden="true"></i>
