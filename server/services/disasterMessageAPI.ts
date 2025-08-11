@@ -56,11 +56,16 @@ export class DisasterMessageAPI {
     }
 
     try {
+      // 최신 데이터부터 조회하기 위해 현재 날짜부터 시작
+      const today = new Date();
+      const startDate = today.toISOString().split('T')[0].replace(/-/g, ''); // YYYYMMDD 형식
+      
       const params = new URLSearchParams({
         serviceKey: this.serviceKey,
         pageNo: pageNo.toString(),
         numOfRows: numOfRows.toString(),
-        returnType: 'json'
+        returnType: 'json',
+        crtDt: startDate  // 조회시작일자 - 최신 데이터부터 조회
       });
 
       console.log(`🌐 재난안전데이터공유플랫폼 API 호출: ${this.baseUrl}?${params.toString()}`);
@@ -142,12 +147,19 @@ export class DisasterMessageAPI {
       return { active: false };
     }
 
-    // 최근 1시간 이내 메시지 확인
-    const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);
+    // 최근 7일 이내 메시지 확인 (테스트용으로 범위 확장)
+    const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
     const latestMessage = recentMessages[0];
     const messageTime = new Date(latestMessage.CRT_DT);
 
-    if (messageTime > oneHourAgo) {
+    console.log('🔍 재난 시간 확인:', {
+      latestMessage: latestMessage.CRT_DT,
+      sevenDaysAgo: sevenDaysAgo.toISOString(),
+      messageTime: messageTime.toISOString(),
+      isActive: messageTime > sevenDaysAgo
+    });
+
+    if (messageTime > sevenDaysAgo) {
       console.log('🚨 활성 재난 상황 감지:', latestMessage.DST_SE_NM, latestMessage.RCPTN_RGN_NM);
       return { active: true, latestMessage };
     }

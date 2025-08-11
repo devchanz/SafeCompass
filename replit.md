@@ -35,3 +35,4 @@ The core workflow involves disaster detection (currently simulated) triggering p
 - **shadcn/ui**: Component library for UI.
 - **Tailwind CSS**: Utility-first CSS framework.
 - **행정안전부_지진_대피장소 API (DSSP-IF-00706)**: For real earthquake shelter data.
+- **재난안전데이터공유플랫폼 API (DSSP-IF-00247)**: Real-time emergency disaster message monitoring from Korean government.
