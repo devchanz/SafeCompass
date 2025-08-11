@@ -533,6 +533,32 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // 접근성 알림 관련 라우트
+  app.get('/api/accessibility/latest-alert', (req, res) => {
+    try {
+      const latestAlert = emergencyService.getLatestAccessibilityAlert?.() || null;
+      res.json({ 
+        success: true, 
+        alert: latestAlert 
+      });
+    } catch (error) {
+      console.error('접근성 알림 조회 실패:', error);
+      res.status(500).json({ success: false, message: '접근성 알림 조회에 실패했습니다' });
+    }
+  });
+
+  app.post('/api/accessibility/clear-alert', (req, res) => {
+    try {
+      if (emergencyService.clearAccessibilityAlert) {
+        emergencyService.clearAccessibilityAlert();
+      }
+      res.json({ success: true, message: '접근성 알림이 초기화되었습니다' });
+    } catch (error) {
+      console.error('접근성 알림 초기화 실패:', error);
+      res.status(500).json({ success: false, message: '접근성 알림 초기화에 실패했습니다' });
+    }
+  });
+
   // OpenAI API 테스트 엔드포인트
   app.post("/api/test/openai", async (req, res) => {
     try {

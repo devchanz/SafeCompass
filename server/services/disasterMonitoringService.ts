@@ -152,12 +152,60 @@ export class DisasterMonitoringService {
 
       console.log('📢 재난 알림 발송:', alertData.title);
       
+      // 접근성 사용자를 위한 자동 알림 발송
+      await this.sendAccessibilityAlerts(disasterAlert);
+      
       // 실제 구현에서는 웹푸시 서비스로 전송
       // await webPushService.sendToAllUsers(alertData);
       
     } catch (error) {
       console.error('❌ 재난 알림 발송 실패:', error);
     }
+  }
+
+  /**
+   * 접근성 사용자를 위한 자동 알림 발송
+   */
+  private async sendAccessibilityAlerts(disasterAlert: any): Promise<void> {
+    try {
+      // 접근성 알림 데이터 준비
+      const accessibilityAlertData = {
+        type: 'accessibility_alert',
+        disasterType: disasterAlert.type,
+        severity: disasterAlert.severity,
+        location: disasterAlert.location,
+        message: disasterAlert.description || '',
+        timestamp: new Date().toISOString()
+      };
+
+      console.log('🔊 접근성 자동 알림 준비:', accessibilityAlertData);
+      
+      // 실제 구현에서는 WebSocket을 통해 클라이언트에 전송
+      // 여기서는 콘솔 로그로 표시하고, 클라이언트에서 polling으로 감지
+      this.latestAccessibilityAlert = accessibilityAlertData;
+      
+    } catch (error) {
+      console.error('❌ 접근성 알림 준비 실패:', error);
+    }
+  }
+
+  /**
+   * 최신 접근성 알림 데이터 저장
+   */
+  private latestAccessibilityAlert: any = null;
+
+  /**
+   * 접근성 알림 데이터 조회
+   */
+  getLatestAccessibilityAlert(): any {
+    return this.latestAccessibilityAlert;
+  }
+
+  /**
+   * 접근성 알림 데이터 초기화
+   */
+  clearAccessibilityAlert(): void {
+    this.latestAccessibilityAlert = null;
   }
 
   /**

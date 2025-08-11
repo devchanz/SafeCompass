@@ -19,6 +19,7 @@ import LanguageSelection from "@/pages/LanguageSelection";
 import EmergencyManuals from "@/pages/EmergencyManuals";
 import SOSButton from "@/components/SOSButton";
 import { AccessibilityProvider } from "@/components/AccessibilityProvider";
+import AccessibilityAlertMonitor from "@/components/AccessibilityAlertMonitor";
 import { LanguageProvider, useLanguage, Language } from "@/contexts/LanguageContext";
 import { useUserProfile } from "@/hooks/useUserProfile";
 import { useEmergencySystem } from "@/hooks/useEmergencySystem";
@@ -273,6 +274,7 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <LanguageProvider>
         <AccessibilityProvider>
+          <AccessibilityAlertMonitor />
           <TooltipProvider>
             <AppContent />
           </TooltipProvider>

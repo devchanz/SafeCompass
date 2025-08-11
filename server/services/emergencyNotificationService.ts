@@ -23,6 +23,7 @@ export class EmergencyNotificationService {
   private disasterService: DisasterClassificationService;
   private activeAlert: EmergencyNotification | null = null;
   private monitoringInterval: NodeJS.Timeout | null = null;
+  private latestAccessibilityAlert: any = null;
 
   constructor() {
     this.disasterService = new DisasterClassificationService();
@@ -272,6 +273,40 @@ export class EmergencyNotificationService {
     };
 
     await this.sendEmergencyAlert(mockAlert, userLanguage);
+    
+    // 접근성 알림도 함께 준비
+    this.setAccessibilityAlert({
+      type: 'accessibility_alert',
+      disasterType: mockAlert.type,
+      severity: mockAlert.severity,
+      location: mockAlert.location,
+      message: mockAlert.description || '',
+      timestamp: new Date().toISOString()
+    });
+    
     return this.activeAlert!;
+  }
+
+  /**
+   * 접근성 알림 저장
+   */
+  setAccessibilityAlert(alertData: any): void {
+    this.latestAccessibilityAlert = alertData;
+    console.log('🔊 접근성 알림 저장됨:', alertData);
+  }
+
+  /**
+   * 최신 접근성 알림 조회
+   */
+  getLatestAccessibilityAlert(): any {
+    return this.latestAccessibilityAlert;
+  }
+
+  /**
+   * 접근성 알림 초기화
+   */
+  clearAccessibilityAlert(): void {
+    this.latestAccessibilityAlert = null;
+    console.log('🔇 접근성 알림 초기화됨');
   }
 }
