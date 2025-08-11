@@ -79,12 +79,26 @@ export class AccessibilityAlertService {
   private async triggerHearingAlert(config: AccessibilityAlertConfig): Promise<void> {
     // 진동 패턴 실행
     const vibrationPattern = this.getVibrationPattern(config.severity);
+    
+    // 진동 지원 여부 확인 및 실행
     if (navigator.vibrate) {
-      navigator.vibrate(vibrationPattern);
+      console.log('📳 진동 패턴 실행:', vibrationPattern);
+      const vibrationResult = navigator.vibrate(vibrationPattern);
+      console.log('📳 진동 실행 결과:', vibrationResult);
+      
+      // iOS Safari 대안: 오디오 기반 햅틱 피드백
+      this.triggerAudioHaptic(config.severity);
+    } else {
+      console.log('❌ 진동 미지원 - 대안 피드백 실행');
+      // 진동이 지원되지 않는 경우 대안 실행
+      this.triggerAlternativeHaptic(config.severity);
     }
 
     // 시각적 플래시 효과
     await this.triggerVisualFlash(config.severity);
+    
+    // 모바일 화면 깨우기 (iOS 대응)
+    await this.triggerScreenWake();
   }
 
   /**
@@ -304,6 +318,71 @@ export class AccessibilityAlertService {
     };
 
     return texts[language]?.[disasterType] || texts.ko[disasterType] || '안전한 곳으로 대피하세요.';
+  }
+
+  /**
+   * iOS Safari용 오디오 기반 햅틱 피드백
+   */
+  private triggerAudioHaptic(severity: string): void {
+    try {
+      // 무음 오디오로 iOS 햅틱 트리거
+      const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+      const oscillator = audioContext.createOscillator();
+      const gainNode = audioContext.createGain();
+      
+      oscillator.connect(gainNode);
+      gainNode.connect(audioContext.destination);
+      
+      // 극도로 낮은 볼륨으로 설정 (거의 무음)
+      gainNode.gain.setValueAtTime(0.001, audioContext.currentTime);
+      
+      // 짧은 톤 생성
+      oscillator.frequency.setValueAtTime(200, audioContext.currentTime);
+      oscillator.start();
+      oscillator.stop(audioContext.currentTime + 0.1);
+      
+      console.log('🔊 iOS 오디오 햅틱 실행됨');
+    } catch (error) {
+      console.log('오디오 햅틱 실행 실패:', error);
+    }
+  }
+
+  /**
+   * 진동 미지원 환경용 대안 피드백
+   */
+  private triggerAlternativeHaptic(severity: string): void {
+    // 강한 시각적 피드백으로 대체
+    const flashCount = severity === 'critical' ? 8 : severity === 'high' ? 6 : 4;
+    
+    // 연속 플래시로 진동 효과 대체
+    for (let i = 0; i < flashCount; i++) {
+      setTimeout(() => {
+        document.body.style.backgroundColor = this.getFlashColor(severity);
+        setTimeout(() => {
+          document.body.style.backgroundColor = '';
+        }, 150);
+      }, i * 300);
+    }
+    
+    console.log('⚡ 대안 시각 피드백 실행됨 (진동 대체)');
+  }
+
+  /**
+   * 모바일 화면 깨우기 (iOS 대응)
+   */
+  private async triggerScreenWake(): Promise<void> {
+    try {
+      // Wake Lock API 사용 (지원되는 경우)
+      if ('wakeLock' in navigator) {
+        const wakeLock = await (navigator as any).wakeLock.request('screen');
+        setTimeout(() => {
+          wakeLock.release();
+        }, 1000);
+        console.log('📱 화면 깨우기 실행됨');
+      }
+    } catch (error) {
+      console.log('화면 깨우기 실패:', error);
+    }
   }
 
   /**

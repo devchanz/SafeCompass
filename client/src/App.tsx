@@ -25,6 +25,7 @@ import { useUserProfile } from "@/hooks/useUserProfile";
 import { useEmergencySystem } from "@/hooks/useEmergencySystem";
 import PushNotification from "@/components/PushNotification";
 import AccessibilityTest from "@/components/AccessibilityTest";
+import VibrationTestTool from "@/components/VibrationTestTool";
 
 function AppContent() {
   const { language, setLanguage } = useLanguage();
@@ -246,6 +247,7 @@ function AppContent() {
           <Route path="/shelter-map-fixed" component={ShelterMapFixed} />
           <Route path="/test" component={AccessibilityTest} />
           <Route path="/accessibility-test" component={AccessibilityTest} />
+          <Route path="/vibration-test" component={VibrationTestTool} />
           <Route path="/emergency-demo" component={EmergencyDemo} />
           <Route path="/emergency-manuals" component={EmergencyManuals} />
           <Route component={NotFound} />
