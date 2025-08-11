@@ -88,7 +88,18 @@ export class DisasterClassificationService {
   }
 
   /**
-   * LLM을 사용한 고급 재난 분석
+   * LLM을 사용한 고급 재난 분석 (현재 비활성화 - API 호출 비용 절약)
+   * 
+   * 이 메서드는 OpenAI GPT-4를 사용하여 재난 문자를 정교하게 분석하고
+   * 위급재난/긴급재난/일반재난으로 분류하는 기능입니다.
+   * 
+   * 비용 절약을 위해 현재는 Rule-based 분류만 사용하며,
+   * 필요시 이 메서드의 주석을 해제하여 LLM 분석 기능을 활성화할 수 있습니다.
+   * 
+   * 분류 기준:
+   * - 위급재난: 즉시 대피 필요 (규모 6.0+ 지진, 대형 화재)
+   * - 긴급재난: 신속 대응 필요 (규모 4.5-6.0 지진, 중형 화재)
+   * - 일반재난: 주의 및 경계 필요 (규모 4.5 미만 지진, 소형 화재)
    */
   private async analyzeSeverityWithLLM(
     disasterText: string, 
@@ -98,6 +109,10 @@ export class DisasterClassificationService {
     reasoning: string;
     urgencyScore: number;
   }> {
+    // LLM 분석 기능 비활성화 - API 호출 비용 절약
+    // Rule-based 분류 시스템만 사용하여 기본값 반환
+    
+    /* LLM 기반 분석 코드 (비용 절약을 위해 비활성화)
     try {
       const prompt = `
 대한민국 재난안전관리 전문가로서 다음 재난 정보를 분석해주세요.
@@ -118,7 +133,7 @@ JSON 형식으로 응답해주세요:
 }`;
 
       const response = await openai.chat.completions.create({
-        model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
+        model: "gpt-4o",
         messages: [{ role: "user", content: prompt }],
         response_format: { type: "json_object" },
         temperature: 0.3
@@ -139,6 +154,19 @@ JSON 형식으로 응답해주세요:
         urgencyScore: 5
       };
     }
+    */
+
+    // Rule-based 기본 분류값 반환 (API 호출 없음)
+    const severityAnalysis = this.classifySeverity(disasterText);
+    const classification = severityAnalysis.severity === 'critical' ? '위급재난' :
+                          severityAnalysis.severity === 'urgent' ? '긴급재난' : '일반재난';
+    
+    return {
+      classification,
+      reasoning: 'Rule-based 키워드 분석 결과',
+      urgencyScore: severityAnalysis.severity === 'critical' ? 9 :
+                   severityAnalysis.severity === 'urgent' ? 6 : 3
+    };
   }
 
   /**
@@ -158,15 +186,16 @@ JSON 형식으로 응답해주세요:
         const message = activeDisaster.latestMessage;
         console.log('🚨 실제 재난상황 감지:', message.disaster_name, message.location_name);
         
-        // 실제 재난문자를 분석하여 DisasterAlert로 변환
+        // Rule-based 분석만 사용하여 재난문자를 DisasterAlert로 변환
         const typeAnalysis = this.classifyDisasterType(message.msg);
         const severityAnalysis = this.classifySeverity(message.msg);
-        const llmAnalysis = await this.analyzeSeverityWithLLM(message.msg, message.location_name);
+        // LLM 분석 비활성화 - Rule-based 대체 분류 사용
+        const ruleBasedAnalysis = this.getFallbackClassification(typeAnalysis.type, severityAnalysis.severity, message.msg);
         
         return {
           type: typeAnalysis.type,
           severity: severityAnalysis.severity as 'critical' | 'urgent' | 'moderate',
-          classification: llmAnalysis.classification,
+          classification: ruleBasedAnalysis.classification,
           magnitude: this.extractMagnitude(message.msg),
           location: message.location_name,
           description: message.msg,
@@ -221,7 +250,7 @@ JSON 형식으로 응답해주세요:
   }
 
   /**
-   * 종합 재난 분류 시스템
+   * 종합 재난 분류 시스템 (Rule-based 전용 - LLM 분석 비활성화)
    */
   async classifyDisaster(
     disasterText: string, 
@@ -234,15 +263,15 @@ JSON 형식으로 응답해주세요:
     const typeResult = this.classifyDisasterType(disasterText);
     const severityResult = this.classifySeverity(disasterText);
 
-    // 2단계: LLM을 통한 고급 분석 (API 할당량 문제로 Rule-Based로 대체)
-    const llmAnalysis = this.getFallbackClassification(typeResult.type, severityResult.severity, disasterText);
+    // 2단계: Rule-based 고급 분류 (LLM 분석 비활성화 - API 비용 절약)
+    const ruleBasedAnalysis = this.getFallbackClassification(typeResult.type, severityResult.severity, disasterText);
 
     // 3단계: 위치 관련성 확인
     const isRelevant = userLocation ? 
       this.isLocationRelevant(userLocation, location, typeResult.type) : true;
 
-    // 4단계: 종합 신뢰도 계산
-    const overallConfidence = (typeResult.confidence + severityResult.confidence + llmAnalysis.urgencyScore / 10) / 3;
+    // 4단계: 종합 신뢰도 계산 (Rule-based 점수 사용)
+    const overallConfidence = (typeResult.confidence + severityResult.confidence + ruleBasedAnalysis.urgencyScore / 10) / 3;
 
     // 지진 규모 추출 (지진인 경우)
     let magnitude: string | undefined;
@@ -254,7 +283,7 @@ JSON 형식으로 응답해주세요:
     const result: DisasterAlert = {
       type: typeResult.type,
       severity: severityResult.severity as 'critical' | 'urgent' | 'moderate',
-      classification: llmAnalysis.classification,
+      classification: ruleBasedAnalysis.classification,
       magnitude,
       location,
       description: disasterText,

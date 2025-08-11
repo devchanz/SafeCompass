@@ -21,7 +21,7 @@ The database schema, defined using Drizzle ORM, models users (personal informati
 The application uses a simplified user management system with demo user IDs. User profiles store comprehensive accessibility information (visual/hearing impairments, mobility limitations, language preferences) to enable personalized emergency responses.
 
 ## Emergency Response System
-The core workflow involves disaster detection (currently simulated) triggering push notifications. Users input their current situation, which is combined with their pre-registered profile to generate personalized safety guides using OpenAI's GPT models and a local knowledge base. The system supports multi-language responses and includes features like GPS-based SOS messaging to companions or emergency services, and T-Map API integration for shelter navigation.
+The core workflow involves real-time disaster detection from Korean government APIs triggering push notifications. The system uses a Rule-based classification approach (LLM analysis disabled for cost optimization) to categorize disasters into 위급재난/긴급재난/일반재난. Users input their current situation, which is combined with their pre-registered profile to generate personalized safety guides using OpenAI's GPT models and a local knowledge base. The system supports multi-language responses and includes features like GPS-based SOS messaging to companions or emergency services, and T-Map API integration for shelter navigation.
 
 # External Dependencies
 
