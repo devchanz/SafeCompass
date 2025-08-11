@@ -50,7 +50,6 @@ export default function SimplePersonalizedGuide() {
         generated_guide: '생성된 맞춤형 안전 가이드',
         primary_actions: '즉시 행동사항',
         safety_tips: '안전 수칙',
-        special_considerations: '특별 주의사항',
         emergency_contacts: '긴급 연락처',
         reading_time: '예상 읽기 시간',
         minutes: '분',
@@ -79,7 +78,6 @@ export default function SimplePersonalizedGuide() {
         generated_guide: 'Generated Personalized Safety Guide',
         primary_actions: 'Immediate Actions',
         safety_tips: 'Safety Tips',
-        special_considerations: 'Special Considerations',
         emergency_contacts: 'Emergency Contacts',
         reading_time: 'Estimated Reading Time',
         minutes: 'minutes',
@@ -108,7 +106,6 @@ export default function SimplePersonalizedGuide() {
         generated_guide: 'Hướng dẫn An toàn Cá nhân hóa Đã Tạo',
         primary_actions: 'Hành động Ngay lập tức',
         safety_tips: 'Mẹo An toàn',
-        special_considerations: 'Lưu ý Đặc biệt',
         emergency_contacts: 'Liên lạc Khẩn cấp',
         reading_time: 'Thời gian Đọc Dự kiến',
         minutes: 'phút',
@@ -137,7 +134,6 @@ export default function SimplePersonalizedGuide() {
         generated_guide: '生成的个性化安全指南',
         primary_actions: '立即行动',
         safety_tips: '安全提示',
-        special_considerations: '特别注意事项',
         emergency_contacts: '紧急联系方式',
         reading_time: '预计阅读时间',
         minutes: '分钟',
@@ -633,25 +629,7 @@ export default function SimplePersonalizedGuide() {
               disasterType={currentAlert?.data?.disasterType || 'earthquake'}
             />
 
-            {/* Special Considerations */}
-            <Card className="shadow-xl border-0 bg-white dark:bg-gray-800">
-              <CardHeader className="bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-t-xl">
-                <CardTitle className="flex items-center text-2xl">
-                  <i className="fas fa-star mr-3"></i>
-                  {getText('special_considerations')}
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="p-8">
-                <div className="space-y-6">
-                  {generatedGuide.guide.specialConsiderations.map((consideration, index) => (
-                    <div key={index} className="flex items-start space-x-4 p-4 bg-orange-50 dark:bg-orange-900/20 rounded-xl border-l-4 border-orange-500">
-                      <i className="fas fa-star text-orange-500 text-lg mt-1 flex-shrink-0"></i>
-                      <span className="text-gray-800 dark:text-gray-200 leading-relaxed">{consideration}</span>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
+
 
             {/* Emergency Contacts */}
             <Card className="shadow-xl border-0 bg-white dark:bg-gray-800">
