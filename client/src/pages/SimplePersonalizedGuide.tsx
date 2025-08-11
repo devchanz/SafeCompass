@@ -10,6 +10,7 @@ import { useUserProfile } from "@/hooks/useUserProfile";
 import { useCompanions } from "@/hooks/useCompanions";
 import { useEmergencySystem } from "@/hooks/useEmergencySystem";
 import { useToast } from "@/hooks/use-toast";
+import KSLSupport from "@/components/KSLSupport";
 
 interface PersonalizedGuide {
   guide: {
@@ -20,6 +21,7 @@ interface PersonalizedGuide {
   };
   audioText: string;
   estimatedReadingTime: number;
+  kslKeywords?: string[];
 }
 
 export default function SimplePersonalizedGuide() {
@@ -36,6 +38,9 @@ export default function SimplePersonalizedGuide() {
   const [isGenerating, setIsGenerating] = useState(true);
   const [generatedGuide, setGeneratedGuide] = useState<PersonalizedGuide | null>(null);
   const [isSOSOpen, setIsSOSOpen] = useState(false);
+  
+  // 청각 접근성 확인
+  const isHearingImpaired = userProfile?.accessibility?.includes('hearing') || false;
 
   const getText = (key: string) => {
     const texts: Record<string, Record<string, string>> = {
@@ -620,6 +625,13 @@ export default function SimplePersonalizedGuide() {
                 </div>
               </CardContent>
             </Card>
+
+            {/* Korean Sign Language Support */}
+            <KSLSupport 
+              message={generatedGuide.guide.primaryActions.join(' ')} 
+              isHearingImpaired={isHearingImpaired}
+              disasterType={currentAlert?.data?.disasterType || 'earthquake'}
+            />
 
             {/* Special Considerations */}
             <Card className="shadow-xl border-0 bg-white dark:bg-gray-800">

@@ -249,11 +249,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
         personalizedGuide: JSON.stringify(guide)
       });
 
+      // 한국수어 키워드 생성
+      const { extractKSLKeywords } = require('./services/openai');
+      const kslKeywords = extractKSLKeywords(
+        guide.audioText + ' ' + guide.guide.primaryActions.join(' '), 
+        requestData.disasterType
+      );
+
       res.json({
         message: "맞춤형 안전 가이드가 생성되었습니다",
         guide: guide.guide,
         audioText: guide.audioText,
         estimatedReadingTime: guide.estimatedReadingTime,
+        kslKeywords: kslKeywords, // 한국수어 키워드 추가
         // shelters는 별도 API에서 가져오므로 제거
         shelters: []
       });
