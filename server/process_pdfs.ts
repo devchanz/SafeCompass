@@ -2,18 +2,16 @@ import * as path from 'path';
 import * as fs from 'fs';
 import { ragService } from './services/ragService.js'; // Adjust path if necessary
 
-const pdfFiles = [
-  "C:\\SafeCompass\\SafeCompass-1\\attached_assets\\국민재난안전포탈_지진.pdf",
-  "C:\\SafeCompass\\SafeCompass-1\\attached_assets\\2.시각장애인+지진+재난대응+안내서.pdf",
-  "C:\\SafeCompass\\SafeCompass-1\\attached_assets\\8.그+밖의+장애인+지진+재난대응+안내서.pdf",
-  "C:\\SafeCompass\\SafeCompass-1\\attached_assets\\1. 이동이 어려운 장애인을 위한 재난 안전 가이드.pdf",
-  "C:\\SafeCompass\\SafeCompass-1\\attached_assets\\2_stairs_disabled_guide.pdf",
-  "C:\\SafeCompass\\SafeCompass-1\\attached_assets\\3. 시각 정보 습득이 어려운 장애인을 위한 재난 안전 가이드.pdf",
-  "C:\\SafeCompass\\SafeCompass-1\\attached_assets\\4. 의미 이해가 어려운 장애인을 위한 재난 안전 가이드.pdf"
-];
-
-async function processPdfs() {
+async function processPdfs(directoryPath: string) {
   console.log("Starting PDF processing for RAG...");
+
+  const files = fs.readdirSync(directoryPath);
+  const pdfFiles = files.filter(file => file.endsWith('.pdf')).map(file => path.join(directoryPath, file));
+
+  if (pdfFiles.length === 0) {
+    console.log(`No PDF files found in the directory: ${directoryPath}`);
+    return;
+  }
 
   for (const filePath of pdfFiles) {
     try {
@@ -65,4 +63,11 @@ async function processPdfs() {
   console.log("PDF processing complete.");
 }
 
-processPdfs();
+const args = process.argv.slice(2);
+if (args.length < 1) {
+  console.error("Usage: npx tsx server/process_pdfs.ts <path_to_pdf_directory>");
+  process.exit(1);
+}
+
+const pdfDirectory = args[0];
+processPdfs(pdfDirectory);

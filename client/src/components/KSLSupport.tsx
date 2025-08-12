@@ -126,7 +126,12 @@ const KSLSupport: React.FC<KSLSupportProps> = ({
     });
   };
 
-  if (!isHearingImpaired || selectedWords.length === 0) {
+    if (isHearingImpaired) {
+    return null;
+  }
+
+  // If no words are selected, also return null to avoid rendering an empty component
+  if (selectedWords.length === 0) {
     return null;
   }
 
