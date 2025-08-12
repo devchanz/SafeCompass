@@ -6,6 +6,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import fetch from 'node-fetch';
+import * as pdf from 'pdf-parse'; // Changed import statement
 
 export interface ManualDocument {
   id: string;
@@ -28,6 +29,14 @@ interface DocumentChunk {
     chunkIndex: number;
   };
   embedding?: number[];
+}
+
+// Interface for OpenAI embeddings API response
+interface OpenAIEmbeddingsResponse {
+  data: Array<{ embedding: number[]; object: string; index: number }>;
+  model: string;
+  object: string;
+  usage: { prompt_tokens: number; total_tokens: number };
 }
 
 export class VectorStoreService {
@@ -92,7 +101,7 @@ export class VectorStoreService {
         throw new Error(`OpenAI API 오류: ${response.status} ${response.statusText}`);
       }
 
-      const data = await response.json();
+      const data: OpenAIEmbeddingsResponse = await response.json() as OpenAIEmbeddingsResponse; // Cast to defined interface
       return data.data[0].embedding;
     } catch (error) {
       console.error('임베딩 생성 실패:', error);
@@ -133,35 +142,29 @@ export class VectorStoreService {
   ): Promise<void> {
     try {
       console.log(`📄 PDF 처리 시작: ${metadata.title}`);
+
+      // 1. PDF 파일 읽기
+      if (!fs.existsSync(filePath)) {
+        throw new Error(`파일을 찾을 수 없습니다: ${filePath}`);
+      }
+      const dataBuffer = fs.readFileSync(filePath);
+
+      // 2. pdf-parse를 사용하여 텍스트 추출
+      const pdfData = await pdf.default(dataBuffer);
+      const extractedText = pdfData.text;
+
+      if (!extractedText || extractedText.trim().length === 0) {
+        console.log(`⚠️ PDF에서 텍스트를 추출하지 못했습니다: ${metadata.title}. 이미지만 포함된 파일일 수 있습니다.`);
+        return; // 텍스트가 없으면 처리 중단
+      }
       
-      // PDF 텍스트 추출 (임시 mock 처리를 위해 파일명에서 제목 추출)
-      console.log('⚠️ PDF 텍스트 추출 임시 처리 모드');
-      const pdfData = {
-        text: `재난 안전 가이드: ${metadata.title}
-
-이것은 재난 상황에서의 안전 행동 지침입니다. 지진 발생 시에는 다음과 같은 절차를 따르십시오:
-
-1. 즉시 튼튼한 테이블 아래로 피하여 머리와 몸을 보호하세요.
-2. 흔들림이 멈출 때까지 그 자리에서 기다리세요.
-3. 흔들림이 멈추면 가스와 전기를 차단하고 안전한 곳으로 대피하세요.
-4. 엘리베이터는 절대 사용하지 마세요.
-5. 건물 밖으로 나갈 때는 낙하물에 주의하세요.
-
-장애인을 위한 특별 지침:
-- 시각장애인: 지팡이를 이용하여 장애물을 확인하며 천천히 이동
-- 청각장애인: 시각적 신호와 진동으로 상황 파악
-- 거동불편자: 주변 도움을 요청하고 안전한 장소에서 구조 대기
-
-비상연락처와 대피소 위치를 미리 확인해 두세요.`
-      };
+      console.log(`📝 텍스트 추출 완료: ${extractedText.length}자`);
       
-      console.log(`📝 텍스트 추출 완료: ${pdfData.text.length}자`);
-      
-      // 텍스트를 청크로 분할
-      const textChunks = this.splitText(pdfData.text);
+      // 3. 텍스트를 청크로 분할
+      const textChunks = this.splitText(extractedText);
       console.log(`🔪 텍스트 분할 완료: ${textChunks.length}개 청크`);
       
-      // 각 청크에 대한 임베딩 생성
+      // 4. 각 청크에 대한 임베딩 생성
       console.log('🔄 임베딩 생성 중...');
       const documentChunks: DocumentChunk[] = [];
       
@@ -176,10 +179,7 @@ export class VectorStoreService {
             id: `${metadata.title}_chunk_${i}`,
             content: chunk,
             metadata: {
-              title: metadata.title,
-              disasterType: metadata.disasterType,
-              category: metadata.category,
-              source: metadata.source,
+              ...metadata,
               chunkIndex: i,
             },
             embedding: embedding,
@@ -193,25 +193,20 @@ export class VectorStoreService {
           }
         } catch (error) {
           console.error(`❌ 청크 ${i} 임베딩 실패:`, error);
-          // 임베딩 실패한 청크는 건너뛰기
-          continue;
+          continue; // 임베딩 실패한 청크는 건너뛰기
         }
       }
 
-      // 청크들을 저장소에 추가
+      // 5. 청크들을 저장소에 추가
       this.chunks.push(...documentChunks);
 
-      // 메타데이터 저장
+      // 6. 메타데이터 저장
       const manualDoc: ManualDocument = {
         id: metadata.title,
-        title: metadata.title,
-        content: pdfData.text.substring(0, 2000), // 미리보기용
-        source: metadata.source,
-        disasterType: metadata.disasterType,
-        category: metadata.category,
+        content: extractedText.substring(0, 2000), // 미리보기용
         confidence: 1.0,
+        ...metadata,
       };
-
       this.documents.push(manualDoc);
       
       console.log(`✅ PDF 처리 완료: ${metadata.title} (${documentChunks.length}/${textChunks.length}개 청크 성공)`);

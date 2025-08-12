@@ -54,31 +54,11 @@ export interface PersonalizedGuideResponse {
   };
   audioText: string;
   estimatedReadingTime: number;
-  kslKeywords?: string[]; // 한국수어 키워드
+  
 }
 
 // 한국수어 지원을 위한 수어 키워드 추출
-export function extractKSLKeywords(text: string, disasterType: string = 'unknown'): string[] {
-  const kslDictionary = [
-    '지진', '화재', '홍수', '태풍', '대피', '안전', '위험', '즉시', 
-    '병원', '학교', '집', '밖으로', '아래로', '도움', '연락', '준비'
-  ];
 
-  // 텍스트에서 수어 단어 추출
-  const foundKeywords = kslDictionary.filter(keyword => text.includes(keyword));
-  
-  // 재난 유형별 필수 키워드 추가
-  const disasterKeywords: Record<string, string[]> = {
-    'earthquake': ['지진', '대피', '안전'],
-    'fire': ['화재', '대피', '위험'],
-    'flood': ['홍수', '위험', '안전'],
-    'typhoon': ['태풍', '위험', '준비']
-  };
-
-  const essentialKeywords = disasterKeywords[disasterType] || ['안전', '대피'];
-  
-  return Array.from(new Set([...foundKeywords, ...essentialKeywords])).slice(0, 5);
-}
 
 /**
  * OpenAI를 사용하여 사용자 맞춤형 재난 대응 가이드 생성
