@@ -7,7 +7,7 @@ const pdfFiles = [
   "C:\\SafeCompass\\SafeCompass-1\\attached_assets\\2.시각장애인+지진+재난대응+안내서.pdf",
   "C:\\SafeCompass\\SafeCompass-1\\attached_assets\\8.그+밖의+장애인+지진+재난대응+안내서.pdf",
   "C:\\SafeCompass\\SafeCompass-1\\attached_assets\\1. 이동이 어려운 장애인을 위한 재난 안전 가이드.pdf",
-  "C:\\SafeCompass\\SafeCompass-1\\attached_assets\\2. 계단 이동이 어려운 장애인을 위한 재난 안전 가이드.pdf",
+  "C:\\SafeCompass\\SafeCompass-1\\attached_assets\\2_stairs_disabled_guide.pdf",
   "C:\\SafeCompass\\SafeCompass-1\\attached_assets\\3. 시각 정보 습득이 어려운 장애인을 위한 재난 안전 가이드.pdf",
   "C:\\SafeCompass\\SafeCompass-1\\attached_assets\\4. 의미 이해가 어려운 장애인을 위한 재난 안전 가이드.pdf"
 ];
