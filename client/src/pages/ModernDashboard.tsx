@@ -1,7 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import * as React from "react";
 import { Link, useLocation } from "wouter";
-import DemoAccessibilityButton from "@/components/DemoAccessibilityButton";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -9,9 +8,9 @@ import { useUserProfile } from "@/hooks/useUserProfile";
 import { useEmergency } from "@/hooks/useEmergency";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useEmergencySystem } from "@/hooks/useEmergencySystem";
-import { clearBrowserCache, forcePageReload, resetUserSession, debugStorageState } from "@/utils/cacheUtils";
 
 export default function ModernDashboard() {
+  // 모든 Hook을 컴포넌트 최상단에서 호출 (조건부 호출 금지)
   const { data: userProfile, isLoading } = useUserProfile();
   const { simulateEarthquake } = useEmergency();
   const { language } = useLanguage();
@@ -45,6 +44,8 @@ export default function ModernDashboard() {
         find_shelters_desc: '주변 대피소 위치 및 경로',
         personalized_guide: '맞춤 가이드',
         personalized_guide_desc: 'AI 기반 개인화 안전 가이드',
+        disaster_simulation: '재난 대응 시뮬레이션',
+        disaster_simulation_desc: '재난 상황 대응 시스템 체험',
         alert_test: '알림 테스트',
         alert_test_desc: '재난 알림 시스템 체험',
         my_profile: '내 프로필',
@@ -86,6 +87,8 @@ export default function ModernDashboard() {
         find_shelters_desc: 'Nearby shelter locations & routes',
         personalized_guide: 'Personalized Guide',
         personalized_guide_desc: 'AI-based personalized safety guide',
+        disaster_simulation: 'Disaster Response Simulation',
+        disaster_simulation_desc: 'Experience disaster response system',
         alert_test: 'Alert Test',
         alert_test_desc: 'Experience disaster alert system',
         my_profile: 'My Profile',
@@ -103,48 +106,52 @@ export default function ModernDashboard() {
         demo_tools: 'Development Tools',
         clear_cache: 'Clear Cache',
         reload_page: 'Reload Page',
-        data_sync_error: 'Data Sync Issue',
+        data_sync_error: 'Data Sync Error',
         re_register: 'Re-register',
-        alert_test_executed: 'Alert test executed!'
+        alert_test_executed: 'Alert test has been executed!'
       },
       vi: {
         loading: 'Đang tải...',
-        welcome: 'La bàn An toàn',
-        welcome_subtitle: 'Giải pháp Ứng phó Thảm họa Cá nhân hóa',
+        welcome: 'La Bàn An Toàn',
+        welcome_subtitle: 'Giải Pháp Ứng Phó Thảm Họa Cá Nhân Hóa',
         welcome_desc: 'Vui lòng đăng ký thông tin cá nhân trước để nhận hướng dẫn an toàn tùy chỉnh.',
-        register_now: 'Đăng ký Thông tin',
-        safety_status: 'Tình trạng An toàn Hiện tại',
-        status_safe: 'An toàn',
+        register_now: 'Đăng Ký Thông Tin',
+        safety_status: 'Trạng Thái An Toàn Hiện Tại',
+        status_safe: 'An Toàn',
+        status_danger: 'Nguy Hiểm',
         status_message: 'Không phát hiện yếu tố nguy hiểm',
-        last_updated: 'Cập nhật Lần cuối',
+        status_danger_message: 'Tình huống khẩn cấp được phát hiện',
+        last_updated: 'Cập Nhật Gần Đây',
         just_now: 'Vừa xong',
-        quick_actions: 'Hành động Nhanh',
-        emergency_manual: 'Sổ tay Khẩn cấp',
+        quick_actions: 'Hành Động Nhanh',
+        emergency_manual: 'Sổ Tay Khẩn Cấp',
         emergency_manual_desc: 'Kiểm tra phương pháp ứng phó thảm họa',
-        find_shelters: 'Tìm Nơi trú ẩn',
-        find_shelters_desc: 'Vị trí & lộ trình nơi trú ẩn gần',
-        personalized_guide: 'Hướng dẫn Cá nhân',
-        personalized_guide_desc: 'Hướng dẫn an toàn cá nhân hóa AI',
-        alert_test: 'Kiểm tra Cảnh báo',
+        find_shelters: 'Tìm Nơi Trú Ẩn',
+        find_shelters_desc: 'Vị trí và đường đi nơi trú ẩn gần đây',
+        personalized_guide: 'Hướng Dẫn Cá Nhân Hóa',
+        personalized_guide_desc: 'Hướng dẫn an toàn cá nhân hóa dựa trên AI',
+        disaster_simulation: 'Mô Phỏng Ứng Phó Thảm Họa',
+        disaster_simulation_desc: 'Trải nghiệm hệ thống ứng phó thảm họa',
+        alert_test: 'Kiểm Tra Cảnh Báo',
         alert_test_desc: 'Trải nghiệm hệ thống cảnh báo thảm họa',
-        my_profile: 'Hồ sơ của Tôi',
-        profile_info: 'Thông tin Hồ sơ',
+        my_profile: 'Hồ Sơ Của Tôi',
+        profile_info: 'Thông Tin Hồ Sơ',
         name: 'Tên',
         age: 'Tuổi',
         age_suffix: ' tuổi',
-        address: 'Địa chỉ',
-        mobility: 'Khả năng Di chuyển',
-        accessibility: 'Hỗ trợ Tiếp cận',
-        mobility_independent: 'Độc lập',
-        mobility_assisted: 'Cần Hỗ trợ',
-        mobility_unable: 'Không thể Di chuyển',
-        edit_profile: 'Chỉnh sửa Hồ sơ',
-        demo_tools: 'Công cụ Phát triển',
-        clear_cache: 'Xóa Cache',
-        reload_page: 'Tải lại Trang',
-        data_sync_error: 'Vấn đề Đồng bộ Dữ liệu',
-        re_register: 'Đăng ký lại',
-        alert_test_executed: 'Kiểm tra cảnh báo đã thực hiện!'
+        address: 'Địa Chỉ',
+        mobility: 'Khả Năng Di Chuyển',
+        accessibility: 'Hỗ Trợ Tiếp Cận',
+        mobility_independent: 'Độc Lập',
+        mobility_assisted: 'Cần Hỗ Trợ',
+        mobility_unable: 'Không Thể Di Chuyển',
+        edit_profile: 'Chỉnh Sửa Hồ Sơ',
+        demo_tools: 'Công Cụ Phát Triển',
+        clear_cache: 'Xóa Bộ Nhớ Đệm',
+        reload_page: 'Tải Lại Trang',
+        data_sync_error: 'Lỗi Đồng Bộ Dữ Liệu',
+        re_register: 'Đăng Ký Lại',
+        alert_test_executed: 'Kiểm tra cảnh báo đã được thực hiện!'
       },
       zh: {
         loading: '加载中...',
@@ -154,7 +161,9 @@ export default function ModernDashboard() {
         register_now: '注册信息',
         safety_status: '当前安全状态',
         status_safe: '安全',
+        status_danger: '危险',
         status_message: '未检测到风险因素',
+        status_danger_message: '检测到紧急情况',
         last_updated: '最后更新',
         just_now: '刚刚',
         quick_actions: '快速操作',
@@ -164,6 +173,8 @@ export default function ModernDashboard() {
         find_shelters_desc: '附近避难所位置和路线',
         personalized_guide: '个性化指南',
         personalized_guide_desc: 'AI驱动的个性化安全指南',
+        disaster_simulation: '灾害应对模拟',
+        disaster_simulation_desc: '体验灾害应对系统',
         alert_test: '警报测试',
         alert_test_desc: '体验灾害警报系统',
         my_profile: '我的资料',
@@ -186,98 +197,94 @@ export default function ModernDashboard() {
         alert_test_executed: '警报测试已执行!'
       }
     };
+    
     return texts[language]?.[key] || texts['ko'][key] || key;
   };
 
-  // Loading state
-  if (isLoading) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600 dark:text-gray-300">{getText('loading')}</p>
-        </div>
-      </div>
-    );
-  }
+  // 대시보드 렌더링 시 스크롤을 최상단으로 이동
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
-  // User not registered state
-  if (!userProfile && !hasRegistered) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800 flex items-center justify-center p-4">
-        <div className="max-w-md w-full">
-          <Card className="shadow-2xl border-0 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm">
-            <CardContent className="text-center p-8">
-              <div className="w-20 h-20 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-full flex items-center justify-center mx-auto mb-6">
-                <i className="fas fa-compass text-3xl" aria-hidden="true"></i>
-              </div>
-              <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
-                {getText('welcome')}
-              </h1>
-              <p className="text-gray-600 dark:text-gray-300 text-sm mb-4">
-                {getText('welcome_subtitle')}
-              </p>
-              <p className="text-gray-600 dark:text-gray-400 mb-8">
-                {getText('welcome_desc')}
-              </p>
-              <Link href="/registration">
-                <Button className="w-full bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white py-3 rounded-xl font-medium transition-all duration-200 transform hover:scale-105 shadow-lg">
-                  <i className="fas fa-user-plus mr-2" aria-hidden="true"></i>
-                  {getText('register_now')}
-                </Button>
-              </Link>
-            </CardContent>
-          </Card>
-        </div>
+  // 렌더링 로직을 함수로 분리하여 조건부 Hook 호출 방지
+  const renderLoadingState = () => (
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800 flex items-center justify-center">
+      <div className="text-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+        <p className="text-gray-600 dark:text-gray-300">{getText('loading')}</p>
       </div>
-    );
-  }
+    </div>
+  );
 
-  // Data sync error state
-  if (hasRegistered && !userProfile) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-red-50 to-orange-100 dark:from-gray-900 dark:to-gray-800 flex items-center justify-center p-4">
-        <div className="max-w-md w-full">
-          <Card className="shadow-2xl border-0 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm">
-            <CardContent className="text-center p-8">
-              <div className="w-20 h-20 bg-gradient-to-r from-red-500 to-orange-500 text-white rounded-full flex items-center justify-center mx-auto mb-6">
-                <i className="fas fa-exclamation-triangle text-3xl" aria-hidden="true"></i>
-              </div>
-              <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
-                {getText('data_sync_error')}
-              </h2>
-              <p className="text-gray-600 dark:text-gray-400 mb-8 leading-relaxed">
-                등록 정보가 서버와 동기화되지 않았습니다. 메모리 저장소를 사용 중입니다.
-              </p>
-              <div className="space-y-3">
-                <Button 
-                  onClick={() => setLocation('/registration')}
-                  className="w-full bg-gradient-to-r from-red-500 to-orange-500 hover:from-red-600 hover:to-orange-600 text-white py-3 rounded-xl font-medium"
-                >
-                  <i className="fas fa-user-plus mr-2" aria-hidden="true"></i>
-                  {getText('re_register')}
-                </Button>
-                <Button 
-                  variant="outline"
-                  onClick={() => {
-                    debugStorageState();
-                    window.location.reload();
-                  }}
-                  className="w-full py-3 rounded-xl font-medium"
-                >
-                  <i className="fas fa-refresh mr-2" aria-hidden="true"></i>
-                  {getText('reload_page')}
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
+  const renderRegistrationPrompt = () => (
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800 flex items-center justify-center p-4">
+      <div className="max-w-md w-full">
+        <Card className="shadow-2xl border-0 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm">
+          <CardContent className="text-center p-8">
+            <div className="w-20 h-20 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-full flex items-center justify-center mx-auto mb-6">
+              <i className="fas fa-compass text-3xl" aria-hidden="true"></i>
+            </div>
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
+              {getText('welcome')}
+            </h1>
+            <p className="text-gray-600 dark:text-gray-300 text-sm mb-4">
+              {getText('welcome_subtitle')}
+            </p>
+            <p className="text-gray-600 dark:text-gray-400 mb-8">
+              {getText('welcome_desc')}
+            </p>
+            <Link href="/registration">
+              <Button className="w-full bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white py-3 rounded-xl font-medium transition-all duration-200 transform hover:scale-105 shadow-lg">
+                <i className="fas fa-user-plus mr-2" aria-hidden="true"></i>
+                {getText('register_now')}
+              </Button>
+            </Link>
+          </CardContent>
+        </Card>
       </div>
-    );
-  }
+    </div>
+  );
 
-  // Main dashboard
-  return (
+  const renderDataSyncError = () => (
+    <div className="min-h-screen bg-gradient-to-br from-red-50 to-orange-100 dark:from-gray-900 dark:to-gray-800 flex items-center justify-center p-4">
+      <div className="max-w-md w-full">
+        <Card className="shadow-2xl border-0 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm">
+          <CardContent className="text-center p-8">
+            <div className="w-20 h-20 bg-gradient-to-r from-red-500 to-orange-500 text-white rounded-full flex items-center justify-center mx-auto mb-6">
+              <i className="fas fa-exclamation-triangle text-3xl" aria-hidden="true"></i>
+            </div>
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
+              {getText('data_sync_error')}
+            </h2>
+            <p className="text-gray-600 dark:text-gray-400 mb-8 leading-relaxed">
+              등록 정보가 서버와 동기화되지 않았습니다. 메모리 저장소를 사용 중입니다.
+            </p>
+            <div className="space-y-3">
+              <Button 
+                onClick={() => setLocation('/registration')}
+                className="w-full bg-gradient-to-r from-red-500 to-orange-500 hover:from-red-600 hover:to-orange-600 text-white py-3 rounded-xl font-medium"
+              >
+                <i className="fas fa-user-plus mr-2" aria-hidden="true"></i>
+                {getText('re_register')}
+              </Button>
+              <Button 
+                variant="outline"
+                onClick={() => {
+                  window.location.reload();
+                }}
+                className="w-full py-3 rounded-xl font-medium"
+              >
+                <i className="fas fa-refresh mr-2" aria-hidden="true"></i>
+                {getText('reload_page')}
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    </div>
+  );
+
+  const renderMainDashboard = () => (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
       <div className="container mx-auto px-4 py-8 max-w-7xl">
         
@@ -331,7 +338,7 @@ export default function ModernDashboard() {
           <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
             {getText('quick_actions')}
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             
             {/* Emergency Manual */}
             <Link href="/emergency-manuals">
@@ -351,7 +358,7 @@ export default function ModernDashboard() {
             </Link>
 
             {/* Find Shelters */}
-            <Link href="/shelters">
+            <Link href="/shelter-map-fixed">
               <Card className="group hover:shadow-2xl transition-all duration-300 cursor-pointer border-0 bg-white dark:bg-gray-800 shadow-lg hover:scale-105">
                 <CardContent className="p-6 text-center">
                   <div className="w-16 h-16 bg-gradient-to-r from-blue-500 to-cyan-500 text-white rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
@@ -367,24 +374,7 @@ export default function ModernDashboard() {
               </Card>
             </Link>
 
-            {/* Personalized Guide */}
-            <Link href="/simple-guide">
-              <Card className="group hover:shadow-2xl transition-all duration-300 cursor-pointer border-0 bg-white dark:bg-gray-800 shadow-lg hover:scale-105">
-                <CardContent className="p-6 text-center">
-                  <div className="w-16 h-16 bg-gradient-to-r from-purple-500 to-indigo-500 text-white rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
-                    <i className="fas fa-robot text-2xl" aria-hidden="true"></i>
-                  </div>
-                  <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2">
-                    {getText('personalized_guide')}
-                  </h3>
-                  <p className="text-gray-600 dark:text-gray-400 text-sm">
-                    {getText('personalized_guide_desc')}
-                  </p>
-                </CardContent>
-              </Card>
-            </Link>
-
-            {/* Alert Test */}
+            {/* Disaster Response Simulation */}
             <Card 
               className="group hover:shadow-2xl transition-all duration-300 cursor-pointer border-0 bg-white dark:bg-gray-800 shadow-lg hover:scale-105"
               onClick={async () => {
@@ -393,50 +383,33 @@ export default function ModernDashboard() {
                   if (navigator.vibrate) {
                     navigator.vibrate([200, 100, 200]);
                   }
-                  alert(getText('alert_test_executed'));
+                  alert('재난 대응 시뮬레이션이 실행되었습니다!');
                 } catch (error) {
-                  console.error('Demo 실행 오류:', error);
+                  console.error('시뮬레이션 실행 오류:', error);
                 }
               }}
             >
               <CardContent className="p-6 text-center">
                 <div className="w-16 h-16 bg-gradient-to-r from-orange-500 to-yellow-500 text-white rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
-                  <i className="fas fa-bell text-2xl" aria-hidden="true"></i>
+                  <i className="fas fa-exclamation-triangle text-2xl" aria-hidden="true"></i>
                 </div>
                 <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2">
-                  {getText('alert_test')}
+                  {getText('disaster_simulation')}
                 </h3>
                 <p className="text-gray-600 dark:text-gray-400 text-sm">
-                  {getText('alert_test_desc')}
+                  {getText('disaster_simulation_desc')}
                 </p>
               </CardContent>
             </Card>
-
-            {/* RAG Management (Admin) */}
-            <Link href="/rag-management">
-              <Card className="group hover:shadow-2xl transition-all duration-300 cursor-pointer border-0 bg-white dark:bg-gray-800 shadow-lg hover:scale-105">
-                <CardContent className="p-6 text-center">
-                  <div className="w-16 h-16 bg-gradient-to-r from-green-500 to-emerald-500 text-white rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
-                    <i className="fas fa-database text-2xl" aria-hidden="true"></i>
-                  </div>
-                  <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2">
-                    매뉴얼 관리
-                  </h3>
-                  <p className="text-gray-600 dark:text-gray-400 text-sm">
-                    PDF 매뉴얼 업로드 및 지식베이스 관리
-                  </p>
-                </CardContent>
-              </Card>
-            </Link>
 
           </div>
         </div>
 
         {/* Profile Section */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 gap-8">
           
-          {/* Profile Card */}
-          <div className="lg:col-span-2">
+          {/* Profile Card - 전체 너비로 확장 */}
+          <div>
             <Card className="shadow-xl border-0 bg-white dark:bg-gray-800">
               <CardHeader className="pb-4">
                 <div className="flex items-center justify-between">
@@ -515,127 +488,24 @@ export default function ModernDashboard() {
             </Card>
           </div>
 
-          {/* Demo Tools */}
-          <div>
-            <Card className="shadow-xl border-0 bg-white dark:bg-gray-800">
-              <CardHeader>
-                <CardTitle className="text-lg font-bold text-gray-900 dark:text-white flex items-center">
-                  <i className="fas fa-tools mr-2 text-blue-600" aria-hidden="true"></i>
-                  {getText('demo_tools')}
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                <Button 
-                  variant="outline" 
-                  className="w-full justify-start rounded-xl text-orange-600 border-orange-200 hover:bg-orange-50"
-                  onClick={async () => {
-                    try {
-                      console.log('🚨 재난 시뮬레이션 시작 - 개인화된 접근성 알림 포함');
-                      await triggerEmergencyDemo({ disasterType: 'earthquake', language });
-                      
-                      // 기본 진동 피드백
-                      if (navigator.vibrate) {
-                        navigator.vibrate([200, 100, 200]);
-                      }
-                      
-                      console.log('✅ 재난 시뮬레이션 완료 - 접근성 알림이 활성화된 사용자에게 개인화된 알림 제공');
-                    } catch (error) {
-                      console.error('재난 시뮬레이션 오류:', error);
-                    }
-                  }}
-                >
-                  <i className="fas fa-exclamation-triangle mr-2" aria-hidden="true"></i>
-                  재난 시뮬레이션
-                </Button>
-                <Button 
-                  variant="outline" 
-                  className="w-full justify-start rounded-xl text-blue-600 border-blue-200 hover:bg-blue-50"
-                  onClick={() => setLocation('/registration')}
-                >
-                  <i className="fas fa-user-plus mr-2" aria-hidden="true"></i>
-                  새 사용자 등록
-                </Button>
-                <Button 
-                  variant="outline" 
-                  className="w-full justify-start rounded-xl"
-                  onClick={() => {
-                    clearBrowserCache();
-                    window.location.reload();
-                  }}
-                >
-                  <i className="fas fa-trash mr-2" aria-hidden="true"></i>
-                  {getText('clear_cache')}
-                </Button>
-                <Button 
-                  variant="outline" 
-                  className="w-full justify-start rounded-xl"
-                  onClick={() => {
-                    debugStorageState();
-                    forcePageReload();
-                  }}
-                >
-                  <i className="fas fa-refresh mr-2" aria-hidden="true"></i>
-                  {getText('reload_page')}
-                </Button>
-                <Button 
-                  variant="outline" 
-                  className="w-full justify-start rounded-xl text-purple-600 border-purple-200 hover:bg-purple-50"
-                  onClick={() => setLocation('/vibration-test')}
-                >
-                  <i className="fas fa-mobile-alt mr-2" aria-hidden="true"></i>
-                  📳 진동 테스트 도구
-                </Button>
-                <Button 
-                  variant="outline" 
-                  className="w-full justify-start rounded-xl text-yellow-600 border-yellow-200 hover:bg-yellow-50"
-                  onClick={() => setLocation('/flashlight-test')}
-                >
-                  <i className="fas fa-lightbulb mr-2" aria-hidden="true"></i>
-                  🔦 플래시라이트 테스트 도구
-                </Button>
-                <Button 
-                  variant="outline" 
-                  className="w-full justify-start rounded-xl text-green-600 border-green-200 hover:bg-green-50"
-                  onClick={async () => {
-                    try {
-                      console.log('🔍 최신 재난문자 조회 시작');
-                      const response = await fetch('/api/disaster/latest');
-                      const result = await response.json();
-                      console.log('📡 최신 재난 정보:', result);
-                      
-                      if (result.success && result.data) {
-                        const disaster = result.data;
-                        alert(`📨 최신 재난문자 정보\n\n` +
-                          `제목: ${disaster.title}\n` +
-                          `내용: ${disaster.content}\n` +
-                          `위치: ${disaster.location}\n` +
-                          `단계: ${disaster.severity}\n` +
-                          `시간: ${new Date(disaster.timestamp).toLocaleString('ko-KR')}\n` +
-                          `출처: ${disaster.source}`);
-                      } else {
-                        alert(`✅ API 연결 성공\n\n${result.message}\n\n현재 활성화된 재난문자가 없습니다.`);
-                      }
-                    } catch (error) {
-                      console.error('최신 재난 정보 조회 오류:', error);
-                      alert('최신 재난문자 조회에 실패했습니다.\n\n' + (error as Error).message);
-                    }
-                  }}
-                >
-                  <i className="fas fa-satellite-dish mr-2" aria-hidden="true"></i>
-                  📡 최신 재난문자 확인
-                </Button>
-                
-                {/* 접근성 알림 데모 버튼들 */}
-                <div className="border-t pt-3">
-                  <DemoAccessibilityButton />
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-
         </div>
 
       </div>
     </div>
   );
+
+  // 메인 렌더링 로직 - 조건부 렌더링을 함수 호출로 처리
+  if (isLoading) {
+    return renderLoadingState();
+  }
+
+  if (!userProfile && !hasRegistered) {
+    return renderRegistrationPrompt();
+  }
+
+  if (hasRegistered && !userProfile) {
+    return renderDataSyncError();
+  }
+
+  return renderMainDashboard();
 }

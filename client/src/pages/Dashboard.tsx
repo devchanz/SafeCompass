@@ -371,21 +371,16 @@ export default function Dashboard() {
             </Card>
           </Link>
           
-          <Card 
-            className="emergency-card hover:shadow-lg transition-shadow cursor-pointer"
-            onClick={() => {
-              if (navigator.vibrate) {
-                navigator.vibrate([200, 100, 200]);
-              }
-              alert(getText('alert_test_executed'));
-            }}
-          >
-            <CardContent className="text-center pt-6">
-              <i className="fas fa-bell text-2xl text-warning mb-2" aria-hidden="true"></i>
-              <p className="text-sm font-medium">{getText('alert_test')}</p>
-            </CardContent>
-          </Card>
+          <Link href="/emergency-demo">
+            <Card className="emergency-card hover:shadow-lg transition-shadow cursor-pointer">
+              <CardContent className="text-center pt-6">
+                <i className="fas fa-laptop-code text-2xl text-warning mb-2" aria-hidden="true"></i>
+                <p className="text-sm font-medium">재난 대응 시뮬레이션</p>
+              </CardContent>
+            </Card>
+          </Link>
           
+          {/*
           <Link href="/modify">
             <Card className="emergency-card hover:shadow-lg transition-shadow cursor-pointer">
               <CardContent className="text-center pt-6">
@@ -394,6 +389,7 @@ export default function Dashboard() {
               </CardContent>
             </Card>
           </Link>
+          */}
         </div>
       </div>
 

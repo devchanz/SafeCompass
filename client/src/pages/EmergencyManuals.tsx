@@ -3,59 +3,185 @@ import { useLocation } from "wouter";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { useTranslation } from "@/utils/i18n";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function EmergencyManuals() {
   const { language } = useLanguage();
   const [, setLocation] = useLocation();
-  
-  const { t } = useTranslation(language);
+
+  // 다국어 텍스트 함수를 먼저 정의
+  const getText = (key: string) => {
+    const texts: Record<string, Record<string, string>> = {
+      ko: {
+        title: '응급 매뉴얼',
+        subtitle: '재난 유형별 대응 방법을 확인하세요',
+        back_to_dashboard: '대시보드로 돌아가기',
+        select_disaster_type: '재난 유형을 선택하세요',
+        no_manual_available: '해당 매뉴얼은 준비 중입니다',
+        coming_soon: '준비 중',
+        natural_disasters: '자연재해',
+        man_made_disasters: '인적재해',
+        earthquake: '지진',
+        flood: '홍수',
+        typhoon: '태풍',
+        landslide: '산사태',
+        cold_wave: '한파',
+        heat_wave: '폭염',
+        fire: '화재',
+        gas_leak: '가스누출',
+        chemical_spill: '화학물질 유출',
+        building_collapse: '건물 붕괴',
+        terrorism: '테러'
+      },
+      en: {
+        title: 'Emergency Manuals',
+        subtitle: 'Check response methods by disaster type',
+        back_to_dashboard: 'Back to Dashboard',
+        select_disaster_type: 'Select disaster type',
+        no_manual_available: 'This manual is under preparation',
+        coming_soon: 'Coming Soon',
+        natural_disasters: 'Natural Disasters',
+        man_made_disasters: 'Man-made Disasters',
+        earthquake: 'Earthquake',
+        flood: 'Flood',
+        typhoon: 'Typhoon',
+        landslide: 'Landslide',
+        cold_wave: 'Cold Wave',
+        heat_wave: 'Heat Wave',
+        fire: 'Fire',
+        gas_leak: 'Gas Leak',
+        chemical_spill: 'Chemical Spill',
+        building_collapse: 'Building Collapse',
+        terrorism: 'Terrorism'
+      },
+      vi: {
+        title: 'Sổ Tay Khẩn Cấp',
+        subtitle: 'Kiểm tra phương pháp ứng phó theo loại thảm họa',
+        back_to_dashboard: 'Quay lại Bảng điều khiển',
+        select_disaster_type: 'Chọn loại thảm họa',
+        no_manual_available: 'Sổ tay này đang được chuẩn bị',
+        coming_soon: 'Sắp ra mắt',
+        natural_disasters: 'Thảm họa Tự nhiên',
+        man_made_disasters: 'Thảm họa Nhân tạo',
+        earthquake: 'Động đất',
+        flood: 'Lũ lụt',
+        typhoon: 'Bão',
+        landslide: 'Sạt lở đất',
+        cold_wave: 'Rét đậm',
+        heat_wave: 'Nắng nóng',
+        fire: 'Cháy',
+        gas_leak: 'Rò rỉ khí',
+        chemical_spill: 'Tràn hóa chất',
+        building_collapse: 'Sập nhà',
+        terrorism: 'Khủng bố'
+      },
+      zh: {
+        title: '应急手册',
+        subtitle: '按灾害类型查看应对方法',
+        back_to_dashboard: '返回仪表板',
+        select_disaster_type: '选择灾害类型',
+        no_manual_available: '该手册正在准备中',
+        coming_soon: '即将推出',
+        natural_disasters: '自然灾害',
+        man_made_disasters: '人为灾害',
+        earthquake: '地震',
+        flood: '洪水',
+        typhoon: '台风',
+        landslide: '山体滑坡',
+        cold_wave: '寒潮',
+        heat_wave: '热浪',
+        fire: '火灾',
+        gas_leak: '气体泄漏',
+        chemical_spill: '化学品泄漏',
+        building_collapse: '建筑物倒塌',
+        terrorism: '恐怖主义'
+      }
+    };
+    
+    return texts[language]?.[key] || texts['ko'][key] || key;
+  };
 
   const manualCategories = [
     {
       id: 'natural',
-      title: language === 'ko' ? '자연재해' : 
-             language === 'en' ? 'Natural Disasters' : 
-             language === 'vi' ? 'Thảm họa Tự nhiên' : 
-             '自然灾害',
+      title: getText('natural_disasters'),
       icon: '🌍',
       color: 'bg-green-100 border-green-300 hover:bg-green-200',
       items: [
-        { key: 'earthquake', icon: '🏚️', severity: 'critical' },
-        { key: 'flood', icon: '🌊', severity: 'high' },
-        { key: 'typhoon', icon: '🌀', severity: 'high' },
-        { key: 'landslide', icon: '⛰️', severity: 'high' },
-        { key: 'cold_wave', icon: '❄️', severity: 'medium' },
-        { key: 'heat_wave', icon: '🌡️', severity: 'medium' }
+        { 
+          key: 'earthquake', 
+          icon: '🏚️', 
+          severity: 'critical',
+          name: getText('earthquake')
+        },
+        { 
+          key: 'flood', 
+          icon: '🌊', 
+          severity: 'high',
+          name: getText('flood')
+        },
+        { 
+          key: 'typhoon', 
+          icon: '🌀', 
+          severity: 'high',
+          name: getText('typhoon')
+        },
+        { 
+          key: 'landslide', 
+          icon: '⛰️', 
+          severity: 'high',
+          name: getText('landslide')
+        },
+        { 
+          key: 'cold_wave', 
+          icon: '❄️', 
+          severity: 'medium',
+          name: getText('cold_wave')
+        },
+        { 
+          key: 'heat_wave', 
+          icon: '🌡️', 
+          severity: 'medium',
+          name: getText('heat_wave')
+        }
       ]
     },
     {
       id: 'man_made',
-      title: language === 'ko' ? '인적재해' : 
-             language === 'en' ? 'Man-made Disasters' : 
-             language === 'vi' ? 'Thảm họa Nhân tạo' : 
-             '人为灾害',
+      title: getText('man_made_disasters'),
       icon: '🏭',
       color: 'bg-red-100 border-red-300 hover:bg-red-200',
       items: [
-        { key: 'fire', icon: '🔥', severity: 'critical' },
-        { key: 'gas_leak', icon: '💨', severity: 'critical' },
-        { key: 'chemical', icon: '⚗️', severity: 'critical' },
-        { key: 'nuclear', icon: '☢️', severity: 'critical' },
-        { key: 'blackout', icon: '💡', severity: 'medium' }
-      ]
-    },
-    {
-      id: 'social',
-      title: language === 'ko' ? '사회적재해' : 
-             language === 'en' ? 'Social Disasters' : 
-             language === 'vi' ? 'Thảm họa Xã hội' : 
-             '社会灾害',
-      icon: '🏢',
-      color: 'bg-orange-100 border-orange-300 hover:bg-orange-200',
-      items: [
-        { key: 'terror', icon: '🚨', severity: 'critical' }
+        { 
+          key: 'fire', 
+          icon: '🔥', 
+          severity: 'critical',
+          name: getText('fire')
+        },
+        { 
+          key: 'gas_leak', 
+          icon: '💨', 
+          severity: 'critical',
+          name: getText('gas_leak')
+        },
+        { 
+          key: 'chemical_spill', 
+          icon: '☣️', 
+          severity: 'critical',
+          name: getText('chemical_spill')
+        },
+        { 
+          key: 'building_collapse', 
+          icon: '🏢', 
+          severity: 'high',
+          name: getText('building_collapse')
+        },
+        { 
+          key: 'terrorism', 
+          icon: '🚨', 
+          severity: 'critical',
+          name: getText('terrorism')
+        }
       ]
     }
   ];
@@ -88,8 +214,13 @@ export default function EmergencyManuals() {
   };
 
   const handleManualClick = (manualKey: string) => {
-    // 현재는 UI만 구현하므로 바로 대시보드로 이동
-    setLocation('/');
+    if (manualKey === 'earthquake') {
+      // 지진 매뉴얼은 전용 페이지로 이동
+      setLocation('/earthquake-manual');
+    } else {
+      // 다른 재난은 현재는 대시보드로 이동
+      setLocation('/');
+    }
   };
 
   return (
@@ -102,71 +233,50 @@ export default function EmergencyManuals() {
               <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
                 {getText('title')}
               </h1>
-              <p className="text-gray-600 dark:text-gray-300 mt-2">
+              <p className="text-gray-600 dark:text-gray-400 mt-2">
                 {getText('subtitle')}
               </p>
             </div>
             <Button 
               onClick={() => setLocation('/')}
               variant="outline"
-              className="flex items-center gap-2"
+              className="rounded-full"
             >
-              <i className="fas fa-arrow-left" aria-hidden="true"></i>
+              <i className="fas fa-arrow-left mr-2" aria-hidden="true"></i>
               {getText('back_to_dashboard')}
             </Button>
           </div>
         </div>
 
         {/* Manual Categories */}
-        <div className="space-y-8">
+        <div className="space-y-6">
           {manualCategories.map((category) => (
-            <Card key={category.id} className={`${category.color} transition-all duration-200`}>
+            <Card key={category.id} className="shadow-lg border-0 bg-white dark:bg-gray-800">
               <CardHeader>
-                <CardTitle className="flex items-center gap-3 text-xl">
-                  <span className="text-2xl">{category.icon}</span>
+                <CardTitle className="text-xl font-bold text-gray-900 dark:text-white flex items-center">
+                  <span className="text-2xl mr-3">{category.icon}</span>
                   {category.title}
-                  <Badge variant="secondary" className="ml-2">
-                    {category.items.length}
-                  </Badge>
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
                   {category.items.map((item) => {
                     const severityConfig = getSeverityBadge(item.severity);
                     return (
-                      <Card 
+                      <Button
                         key={item.key}
-                        className="bg-white dark:bg-gray-800 hover:shadow-lg transition-all duration-200 cursor-pointer border-2 hover:border-blue-300"
+                        variant="outline"
+                        className={`h-24 flex flex-col items-center justify-center p-4 border-2 hover:scale-105 transition-transform duration-200 ${category.color}`}
                         onClick={() => handleManualClick(item.key)}
                       >
-                        <CardHeader className="pb-3">
-                          <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-3">
-                              <span className="text-3xl">{item.icon}</span>
-                              <div>
-                                <CardTitle className="text-lg">
-                                  {getText(item.key)}
-                                </CardTitle>
-                                <Badge className={`${severityConfig.color} text-xs mt-1`}>
-                                  {severityConfig.text}
-                                </Badge>
-                              </div>
-                            </div>
-                          </div>
-                        </CardHeader>
-                        <CardContent className="pt-0">
-                          <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
-                            {getText(`${item.key}_desc`)}
-                          </p>
-                          <div className="flex items-center justify-between">
-                            <Badge variant="outline" className="text-xs">
-                              {getText('coming_soon')}
-                            </Badge>
-                            <i className="fas fa-arrow-right text-blue-600" aria-hidden="true"></i>
-                          </div>
-                        </CardContent>
-                      </Card>
+                        <span className="text-2xl mb-2">{item.icon}</span>
+                        <Badge className={`${severityConfig.color} text-xs mb-1`}>
+                          {severityConfig.text}
+                        </Badge>
+                        <span className="text-xs text-gray-600 dark:text-gray-400 text-center">
+                          {item.name}
+                        </span>
+                      </Button>
                     );
                   })}
                 </div>
@@ -175,25 +285,24 @@ export default function EmergencyManuals() {
           ))}
         </div>
 
-        {/* Footer Info */}
-        <div className="mt-12 text-center">
-          <Card className="bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-center gap-2 mb-3">
-                <i className="fas fa-info-circle text-blue-600 dark:text-blue-400" aria-hidden="true"></i>
-                <h3 className="text-lg font-semibold text-blue-800 dark:text-blue-200">
-                  {language === 'ko' ? '개발 진행 중' : 
-                   language === 'en' ? 'Under Development' : 
-                   language === 'vi' ? 'Đang phát triển' : 
-                   '开发中'}
-                </h3>
+        {/* Info Card */}
+        <Card className="mt-8 shadow-lg border-0 bg-blue-50 dark:bg-blue-900/20">
+          <CardContent className="p-6">
+            <div className="flex items-start space-x-4">
+              <div className="w-12 h-12 bg-blue-500 text-white rounded-full flex items-center justify-center flex-shrink-0">
+                <i className="fas fa-info-circle text-xl" aria-hidden="true"></i>
               </div>
-              <p className="text-blue-700 dark:text-blue-300 text-sm">
-                {getText('manual_placeholder')}
-              </p>
-            </CardContent>
-          </Card>
-        </div>
+              <div>
+                <h3 className="text-lg font-semibold text-blue-900 dark:text-blue-100 mb-2">
+                  {getText('select_disaster_type')}
+                </h3>
+                <p className="text-blue-700 dark:text-blue-200 text-sm leading-relaxed">
+                  {getText('no_manual_available')}
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );

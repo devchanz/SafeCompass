@@ -17,6 +17,8 @@ import SimplePersonalizedGuide from "@/pages/SimplePersonalizedGuide";
 import ShelterMapFixed from "@/pages/ShelterMapFixed";
 import LanguageSelection from "@/pages/LanguageSelection";
 import EmergencyManuals from "@/pages/EmergencyManuals";
+import EarthquakeManual from "@/pages/EarthquakeManual";
+import DevTools from "@/pages/DevTools";
 import SOSButton from "@/components/SOSButton";
 import { AccessibilityProvider } from "@/components/AccessibilityProvider";
 import AccessibilityAlertMonitor from "@/components/AccessibilityAlertMonitor";
@@ -253,6 +255,8 @@ function AppContent() {
           <Route path="/flashlight-test" component={FlashlightTestTool} />
           <Route path="/emergency-demo" component={EmergencyDemo} />
           <Route path="/emergency-manuals" component={EmergencyManuals} />
+          <Route path="/earthquake-manual" component={EarthquakeManual} />
+          <Route path="/dev-tools" component={DevTools} />
           <Route path="/rag-management" component={RAGManagement} />
           <Route component={NotFound} />
         </Switch>
