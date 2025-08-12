@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import * as React from "react";
 import { Link, useLocation } from "wouter";
 import { Card, CardContent } from "@/components/ui/card";
@@ -11,12 +11,17 @@ import { useEmergencySystem } from "@/hooks/useEmergencySystem";
 import { clearBrowserCache, forcePageReload, resetUserSession, debugStorageState } from "@/utils/cacheUtils";
 
 export default function Dashboard() {
+  const topRef = useRef<HTMLDivElement>(null);
   const { data: userProfile, isLoading } = useUserProfile();
   const { simulateEarthquake } = useEmergency();
   const { language } = useLanguage();
   const [, setLocation] = useLocation();
   const { currentAlert, triggerEmergencyDemo } = useEmergencySystem();
   const [showNotification, setShowNotification] = useState(false);
+
+  useEffect(() => {
+    topRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [isLoading]);
 
   // Dashboard에서는 전역 알림이 이미 App.tsx에서 처리되므로 별도 처리 불필요
   const handleDismissAlert = () => {
@@ -320,7 +325,7 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6" ref={topRef}>
       {/* Push Notification */}
       {/* 🚫 중복 알림 제거됨 - App.tsx에서 전역으로 처리 */}
       {/* Emergency Status Card */}
