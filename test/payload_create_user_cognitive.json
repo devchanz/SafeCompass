@@ -1,0 +1,9 @@
+{
+  "name": "테스트사용자_인지",
+  "age": 25,
+  "gender": "male",
+  "address": "서울시 서대문구",
+  "language": "ko",
+  "accessibility": ["cognitive"],
+  "mobility": "independent"
+}

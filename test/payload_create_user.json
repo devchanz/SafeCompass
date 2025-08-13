@@ -1,0 +1,9 @@
+{
+  "name": "테스트사용자",
+  "age": 35,
+  "gender": "female",
+  "address": "서울시 강남구",
+  "language": "ko",
+  "accessibility": ["visual"],
+  "mobility": "unable"
+}

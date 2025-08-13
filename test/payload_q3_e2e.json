@@ -1,0 +1,8 @@
+{
+  "userId": "9a25a7a8-7057-4009-8158-4e41343496d5",
+  "disasterType": "earthquake",
+  "situation": {
+    "locationContext": "지적장애가 있는 사람을 위한 지진 대응 가이드가 있나요?",
+    "canMove": true
+  }
+}

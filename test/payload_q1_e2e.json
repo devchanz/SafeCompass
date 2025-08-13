@@ -1,0 +1,8 @@
+{
+  "userId": "0efa1761-f703-4fff-8529-973d3de43967",
+  "disasterType": "earthquake",
+  "situation": {
+    "locationContext": "시각장애인을 위한 지진 대피 요령은 무엇인가요?",
+    "canMove": true
+  }
+}

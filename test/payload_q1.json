@@ -1,0 +1,8 @@
+{
+  "userId": "test-user-1",
+  "disasterType": "earthquake",
+  "situation": {
+    "locationContext": "시각장애인을 위한 지진 대피 요령은 무엇인가요?",
+    "canMove": true
+  }
+}
